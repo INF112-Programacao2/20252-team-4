@@ -12,4 +12,4 @@
 
 4 Educação de qualidade: Garantir o acesso à educação inclusiva, de qualidade e equitativa, e promover oportunidades de aprendizagem ao longo da vida para todos
 
-#**Tema:** Avaliação de disciplinas da UFV
+# **Tema:** Avaliação de disciplinas da UFV
