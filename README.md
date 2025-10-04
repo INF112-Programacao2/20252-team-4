@@ -1,12 +1,15 @@
-GRUPO 4:]
+GRUPO 4:
 
 Bianca Solleny Souza Silva, 116235 
 
-Janaína Aparecida da Silva, 78860 
+Janaína Aparecida da Silva, 78860
+
 Júlia Ester Cirino de Oliveira, 120586
+
 Maria Clara Souza Silva, 120559.
 
 Objetivo de Desenvolvimento Sustentável:
+
 4 Educação de qualidade: Garantir o acesso à educação inclusiva, de qualidade e equitativa, e promover oportunidades de aprendizagem ao longo da vida para todos
 
 Tema: Avaliação de disciplinas da UFV
