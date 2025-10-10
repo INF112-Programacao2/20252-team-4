@@ -14,4 +14,4 @@
 
 # **Tema:** 
 
-Avaliação de disciplinas da UFV
+Avaliação de disciplinas do departamento de informática da UFV
