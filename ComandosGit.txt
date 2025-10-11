@@ -1,0 +1,11 @@
+git config --global user.email "you@example.com"
+
+git config --global user.name "Your Name"
+
+git add . (adiciona todos os arquivos criados localmente)
+
+git add arquivo.extensão
+
+git commit -m "Comentário."
+
+git push origin main (push na branch principal)
