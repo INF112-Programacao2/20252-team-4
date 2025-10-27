@@ -13,9 +13,9 @@ public:
     Professor (int ID, int senha, std::string nome);
     ~Professor ();
     std::string get_nome ();
-    virtual void avaliar_disciplina (Disciplina disciplina, int turma) override;
+    virtual void avaliar_disciplina (Disciplina& disciplina, Turma& turma) override;
     virtual void meu_historico_de_avaliacoes () override;
-    virtual void visualizar_avaliacoes (Disciplina disciplina) override;
+    virtual void visualizar_avaliacoes (Disciplina& disciplina) override;
     
 };
 

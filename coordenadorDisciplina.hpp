@@ -9,7 +9,7 @@ private:
 public:
     CoordenadorDisciplina (int ID, int senha, std::string nome, Disciplina disciplina); //REVER!!!!!!!!!!!!
     Disciplina get_disciplina ();
-    virtual void visualizar_avaliacoes (Disciplina disciplina) override;
+    virtual void visualizar_avaliacoes (Disciplina& disciplina) override;
     void escrever_feedback_das_avaliacoes ();
 
     

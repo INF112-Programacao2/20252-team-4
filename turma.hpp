@@ -12,8 +12,8 @@ private:
     Professor _professor;
 
 public:
-    Turma (int ID, Professor professor);
-    Turma (int ID, Aluno alunos); //verificar depois
+    Turma (int ID, Professor& professor);
+    Turma (int ID, Aluno& alunos); //verificar depois
     ~Turma ();
     int get_ID ();
     Aluno get_alunos (); //verificar depois

@@ -11,14 +11,14 @@ private:
     int _senha;
     std::vector<Disciplina> disciplinas;
 public:
-    int get_ID ();
-    int get_senha ();
-    Disciplina* get_disciplinas ();
+    int get_ID () const;
+    int get_senha () const;
+    Disciplina* const get_disciplinas () const;
     Usuario (int ID, int senha);
     ~Usuario ();
-    virtual void avaliar_disciplina (Disciplina disciplina, int turma);
+    virtual void avaliar_disciplina (Disciplina& disciplina, Turma& turma);
     virtual void meu_historico_de_avaliacoes ();
-    virtual void visualizar_avaliacoes (Disciplina disciplina);
+    virtual void visualizar_avaliacoes (Disciplina& disciplina);
     
 };
 
