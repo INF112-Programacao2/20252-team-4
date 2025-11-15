@@ -9,12 +9,13 @@
 
 class Avaliacao {
 private:
+    int _idAvaliacao;
     std::string _tipo;
     Disciplina _disciplina;
     Turma _turma;
     Usuario _usuario;
     std::string _comentario;
-    
+
 public:
     Avaliacao(Disciplina& disciplina, Turma& turma, Usuario& usuario);
     ~Avaliacao();
