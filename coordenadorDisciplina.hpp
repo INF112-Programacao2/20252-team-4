@@ -1,20 +1,17 @@
-#ifndef COORDENADORDISCIPLINA_HPP
-#define COORDENADORDISCIPLINA_HPP
+#ifndef COORDDISCIPLINA_HPP
+#define COORDDISCIPLINA_HPP
 
-#include "professor.hpp"
+#include "Usuario.hpp"
 
-class CoordenadorDisciplina : public Professor {
-private:
-    Disciplina disciplina;
+// Coordenador de disciplina.
+// Pode ver avaliações da disciplina específica.
+class CoordDisciplina : public Usuario {
 public:
-    CoordenadorDisciplina (int ID, int senha, std::string nome, Disciplina disciplina); //REVER!!!!!!!!!!!!
-    Disciplina get_disciplina ();
-    virtual void visualizar_avaliacoes (Disciplina& disciplina) override;
-    void escrever_feedback_das_avaliacoes ();
-
-    
+    CoordDisciplina() = default;
+    CoordDisciplina(int id, const std::string &nome,
+                    const std::string &email,
+                    const std::string &senha)
+        : Usuario(id, nome, email, senha, "COORD_DISC") {}
 };
-
-
 
 #endif

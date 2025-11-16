@@ -1,15 +1,17 @@
-#ifndef COORDENADORCURSO_HPP
-#define COORDENADORCURSO_HPP
+#ifndef COORDCURSO_HPP
+#define COORDCURSO_HPP
 
-#include "professor.hpp"
+#include "Usuario.hpp"
 
-class CoordenadorCurso : public Professor {
+// Coordenador de curso é o administrador do sistema.
+// Cadastra usuários e disciplinas.
+class CoordCurso : public Usuario {
 public:
-    CoordenadorCurso (int ID, int senha, std::string nome); //REVER!!!!!!!!!!!!
-    virtual void visualizar_avaliacoes (Disciplina& disciplina) override;
-    void escrever_feedback_das_avaliacoes ();
-    
+    CoordCurso() = default;
+    CoordCurso(int id, const std::string &nome,
+               const std::string &email,
+               const std::string &senha)
+        : Usuario(id, nome, email, senha, "COORD_CURSO") {}
 };
-
 
 #endif

@@ -1,3 +1,7 @@
+/*
+
+CODIGO DE JULIA
+
 #ifndef GERENCIADORDADOS_HPP
 #define GERENCIADORDADOS_HPP
 
@@ -55,6 +59,47 @@ public:
 
     // Funcao de busca do usuario pelo seu ID.
     Usuario* buscar_usuario_por_ID(int ID); 
+};
+
+#endif
+
+*/
+
+
+
+#ifndef FILEMANAGER_HPP
+#define FILEMANAGER_HPP
+
+#include <string>
+#include <vector>
+
+#include "../models/Usuario.hpp"
+#include "../models/Disciplina.hpp"
+#include "../models/Turma.hpp"
+#include "../models/Avaliacao.hpp"
+
+// Classe responsável por ler e salvar arquivos .txt do sistema.
+// Cada entidade tem seu próprio arquivo:
+//   usuarios.txt
+//   disciplinas.txt
+//   turmas.txt
+//   avaliacoes.txt
+// O formato é CSV simples.
+class FileManager {
+public:
+    FileManager() {}
+
+    // CARREGAMENTO
+    std::vector<Usuario*> carregarUsuarios();
+    std::vector<Disciplina> carregarDisciplinas();
+    std::vector<Turma> carregarTurmas();
+    std::vector<Avaliacao> carregarAvaliacoes();
+
+    // SALVAMENTO
+    void salvarUsuarios(const std::vector<Usuario*>& lista);
+    void salvarDisciplinas(const std::vector<Disciplina>& lista);
+    void salvarTurmas(const std::vector<Turma>& lista);
+    void salvarAvaliacoes(const std::vector<Avaliacao>& lista);
 };
 
 #endif
