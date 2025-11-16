@@ -1,24 +1,28 @@
 #ifndef TURMA_HPP
 #define TURMA_HPP
 
-#include "aluno.hpp"
-#include "professor.hpp"
-#include <vector>
+#include <string>
 
 class Turma {
 private:
-    int _ID;
-    std::vector<Aluno> _alunos;
-    Professor _professor;
+    int id;
+    int disciplinaId;
+    std::string codigoTurma;
+    int professorId;
 
 public:
-    Turma (int ID, Professor& professor);
-    Turma (int ID, Aluno& alunos); //verificar depois
-    ~Turma ();
-    int get_ID ();
-    Aluno get_alunos (); //verificar depois
-    Professor get_professor ();
-};
+    Turma() = default;
 
+    Turma(int id, int disciplinaId,
+          const std::string &codigoTurma,
+          int professorId)
+        : id(id), disciplinaId(disciplinaId),
+          codigoTurma(codigoTurma), professorId(professorId) {}
+
+    int getId() const { return id; }
+    int getDisciplinaId() const { return disciplinaId; }
+    std::string getCodigoTurma() const { return codigoTurma; }
+    int getProfessorId() const { return professorId; }
+};
 
 #endif

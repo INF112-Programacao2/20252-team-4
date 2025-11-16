@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+
+#include "services/SistemaAvaliacao.hpp"
+#include "services/AuthSystem.hpp"
+
+using namespace std;
+
+// ===== FUNÇÕES AUXILIARES DE MENUS =====
+
+void menuAluno(SistemaAvaliacao &sistema) {
+    int opc;
+    do {
+        cout << "\n===== MENU ALUNO =====\n";
+        cout << "1 - Avaliar disciplina\n";
+        cout << "2 - Avaliar professor\n";
+        cout << "3 - Avaliar turma\n";
+        cout << "0 - Sair\n";
+        cout << "Escolha: ";
+        cin >> opc;
+
+        switch (opc) {
+            case 1: sistema.avaliarDisciplina(); break;
+            case 2: sistema.avaliarProfessor(); break;
+            case 3: sistema.avaliarTurma(); break;
+            case 0: cout << "Saindo...\n"; break;
+            default: cout << "Opcao invalida!\n";
+        }
+    } while (opc != 0);
+}
+
+void menuProfessor(SistemaAvaliacao &sistema) {
+    int opc;
+    do {
+        cout << "\n===== MENU PROFESSOR =====\n";
+        cout << "1 - Ver avaliacoes da minha disciplina\n";
+        cout << "2 - Ver avaliacoes das minhas turmas\n";
+        cout << "0 - Sair\n";
+        cout << "Escolha: ";
+        cin >> opc;
+
+        switch (opc) {
+            case 1: sistema.listarAvaliacoes("DISCIPLINA"); break;
+            case 2: sistema.listarAvaliacoes("TURMA"); break;
+            case 0: cout << "Saindo...\n"; break;
+            default: cout << "Opcao invalida!\n";
+        }
+    } while (opc != 0);
+}
+
+void menuCoordDisciplina(SistemaAvaliacao &sistema) {
+    int opc;
+    do {
+        cout << "\n===== MENU COORDENADOR DE DISCIPLINA =====\n";
+        cout << "1 - Ver avaliacoes das minhas disciplinas\n";
+        cout << "0 - Sair\n";
+        cout << "Escolha: ";
+        cin >> opc;
+
+        switch (opc) {
+            case 1: sistema.listarAvaliacoes("DISCIPLINA"); break;
+            case 0: cout << "Saindo...\n"; break;
+            default: cout << "Opcao invalida!\n";
+        }
+    } while (opc != 0);
+}
+
+void menuCoordCurso(SistemaAvaliacao &sistema) {
+    int opc;
+    do {
+        cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
+        cout << "1 - Cadastrar usuario\n";
+        cout << "2 - Cadastrar disciplina\n";
+        cout << "3 - Cadastrar turma\n";
+        cout << "4 - Ver avaliacoes gerais\n";
+        cout << "0 - Sair\n";
+        cout << "Escolha: ";
+        cin >> opc;
+
+        switch (opc) {
+            case 1: {
+                string tipo;
+                cout << "Tipo de usuario (ALUNO, PROFESSOR, COORD_DISC, COORD_CURSO): ";
+                cin >> tipo;
+                sistema.cadastrarUsuario(tipo);
+                break;
+            }
+            case 2: sistema.cadastrarDisciplina(); break;
+            case 3: sistema.cadastrarTurma(); break;
+            case 4: sistema.listarAvaliacoes("GERAL"); break;
+            case 0: cout << "Saindo...\n"; break;
+            default: cout << "Opcao invalida!\n";
+        }
+    } while (opc != 0);
+}
+
+
+// =================== MAIN ===================
+
+int main() {
+    SistemaAvaliacao sistema;
+    AuthSystem auth;
+
+    cout << "===== SISTEMA DE AVALIACAO UNIVERSITARIO =====\n";
+
+    while (true) {
+        string email, senha;
+
+        cout << "\nLogin\n";
+        cout << "Email: ";
+        cin >> email;
+        cout << "Senha: ";
+        cin >> senha;
+
+        Usuario* u = auth.login(sistema.getUsuarios(), email, senha);
+
+        if (u == nullptr) {
+            cout << "Credenciais incorretas! Tente novamente.\n";
+            continue;
+        }
+
+        cout << "\nBem-vindo, " << u->getNome() << " (" << u->getTipo() << ")\n";
+
+        // Redireciona para o menu apropriado
+        if (u->getTipo() == "ALUNO") menuAluno(sistema);
+        else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema);
+        else if (u->getTipo() == "COORD_DISC") menuCoordDisciplina(sistema);
+        else if (u->getTipo() == "COORD_CURSO") menuCoordCurso(sistema);
+
+        // Salva tudo ao sair do menu
+        sistema.salvarTudo();
+    }
+
+    return 0;
+}
