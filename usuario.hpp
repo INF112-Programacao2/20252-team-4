@@ -11,7 +11,7 @@ protected:
     std::string nome;
     std::string email;
     std::string senha;   // Não criptografada no trabalho.
-    std::string tipo;    // "ALUNO", "PROFESSOR", "COORD_DISC", "COORD_CURSO"
+    std::string tipo;    // "ALUNO", "PROFESSOR", "COORDENADOR_DA_DISCIPLINA", "COORDENADOR_DO_CURSO"
 
 public:
     Usuario() = default;

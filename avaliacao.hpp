@@ -18,14 +18,14 @@ private:
 
 public:
     Avaliacao() = default;
-    Avaliacao(int id, int alvoId, std::string &tipo, int nota, std::string &comentario, std::string &data);
+    Avaliacao(int id, int alvoId, const std::string &tipo, int nota, const std::string &comentario, const std::string &data);
 
-    int getId();
-    int getAlvoId();
-    std::string getTipo();
-    int getNota();
-    std::string getComentario();
-    std::string getData();
+    int getId() const;
+    int getAlvoId() const;
+    std::string getTipo() const;
+    int getNota() const;
+    std::string getComentario() const;
+    std::string getData() const;
 };
 
 #endif

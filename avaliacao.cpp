@@ -1,6 +1,6 @@
 #include "avaliacao.hpp"
         
-Avaliacao::Avaliacao(int id, int alvoId, std::string &tipo, int nota, std::string &comentario, std::string &data){
+Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, int nota, const std::string &comentario, const std::string &data){
     this-> _id = id;
     this-> _alvoId = alvoId;
     this-> _tipo = tipo;
@@ -9,26 +9,26 @@ Avaliacao::Avaliacao(int id, int alvoId, std::string &tipo, int nota, std::strin
     this-> _data = data;
 }
 
-int Avaliacao::getId() { 
+int Avaliacao::getId() const { 
     return _id; 
 }
 
-int Avaliacao::getAlvoId() { 
+int Avaliacao::getAlvoId() const { 
     return _alvoId; 
 }
 
-std::string Avaliacao::getTipo() { 
+std::string Avaliacao::getTipo() const { 
     return _tipo; 
 }
 
-int Avaliacao::getNota() { 
+int Avaliacao::getNota() const { 
     return _nota; 
 }
 
-std::string Avaliacao::getComentario() { 
+std::string Avaliacao::getComentario() const { 
     return _comentario; 
 }
 
-std::string Avaliacao::getData() {
+std::string Avaliacao::getData() const {
     return _data; 
 }

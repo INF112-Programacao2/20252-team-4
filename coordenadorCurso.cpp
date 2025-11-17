@@ -5,5 +5,5 @@ CoordCurso::CoordCurso(int id, const std::string &nome, const std::string &email
     this->nome = nome;
     this->email = email;
     this->senha = senha;
-    this->tipo = "COORD_CURSO";
+    this->tipo = "COORDENADOR_DO_CURSO";
 }

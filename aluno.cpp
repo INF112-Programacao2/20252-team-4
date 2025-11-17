@@ -2,7 +2,7 @@
 #include "iostream"
 
 //Construtor com parametros
-Aluno::Aluno(int id, std::string &nome, std::string &email, std::string &senha) {
+Aluno::Aluno(int id, const std::string &nome, const std::string &email, const std::string &senha) {
     this->id = id;
     this->nome = nome;
     this->email = email;

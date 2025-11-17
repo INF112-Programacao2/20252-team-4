@@ -10,7 +10,7 @@ class Aluno : public Usuario { //herda da classe usuario e so' tem direito a log
 
   public:
     Aluno() = default;
-    Aluno(int id, std::string &nome, std::string &email, std::string &senha);
+    Aluno(int id, const std::string &nome, const std::string &email, const std::string &senha);
 };
 
 #endif
