@@ -298,11 +298,7 @@ void FileManager::salvarDisciplinas(const std::vector<Disciplina>& lista) {
         return;
     }
     for (const auto &d : lista) {
-        out << d.getId() << ';'
-            << d.getCodigo() << ';'
-            << d.getNome() << ';'
-            << d.getProfessorId() << ';'
-            << d.getCoordDiscId() << '\n';
+        out << d.getId() << ';' << d.getCodigo() << ';' << d.getNome() << ';' << d.getProfessorId() << ';' << d.getCoordDiscId() << '\n';
     }
     out.close();
 }

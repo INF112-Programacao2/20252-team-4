@@ -3,31 +3,29 @@
 
 #include <string>
 
-// Representa uma avaliação anônima.
-// Pode ser destinada a disciplina, professor ou turma.
+// Representa uma avaliação anonima
+// Pode ser destinada a disciplina, professor ou turma
+
 class Avaliacao {
+
 private:
-    std::string _tipo;
-    Disciplina _disciplina;
-    Turma _turma;
-    Usuario _usuario;
-    std::string _comentario;
-    
+    int _id;                   // id da avaliacao
+    int _alvoId;              // id da disciplina/professor/turma
+    std::string _tipo;        // disciplina, professor ou turma
+    int _nota;                // 0 a 10
+    std::string _comentario;  // comentario do avaliador
+    std::string _data;        // data da avaliacao
+
 public:
     Avaliacao() = default;
+    Avaliacao(int id, int alvoId, std::string &tipo, int nota, std::string &comentario, std::string &data);
 
-    Avaliacao(int id, int alvoId,
-              const std::string &tipo,
-              int nota,
-              const std::string &comentario)
-        : id(id), alvoId(alvoId), tipo(tipo),
-          nota(nota), comentario(comentario) {}
-
-    int getId() const { return id; }
-    int getAlvoId() const { return alvoId; }
-    std::string getTipo() const { return tipo; }
-    int getNota() const { return nota; }
-    std::string getComentario() const { return comentario; }
+    int getId();
+    int getAlvoId();
+    std::string getTipo();
+    int getNota();
+    std::string getComentario();
+    std::string getData();
 };
 
 #endif

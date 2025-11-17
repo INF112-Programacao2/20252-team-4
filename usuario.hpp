@@ -27,7 +27,7 @@ public:
     std::string getEmail() const {}
     std::string getTipo() const {}
 
-    // Verifica senha para login.
+    // Verifica senha para login
     bool autenticar(const std::string &entrada) const {}
 };
 
