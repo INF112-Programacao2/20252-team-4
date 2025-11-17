@@ -98,7 +98,7 @@ disciplinas
 
 avaliacoesClasses principais
 
--
+================================
 
 1. Usuario (classe abstrata)
 
@@ -116,7 +116,7 @@ Métodos:
 
 virtual void menu() = 0;
 
--
+===============================
 
 2. Aluno : public Usuario
 
@@ -128,7 +128,7 @@ disciplinas cursando
 
 pode avaliar disciplinas e professores
 
--
+===============================
 
 3. Professor : public Usuario
 
@@ -138,7 +138,7 @@ disciplinas ministradas
 
 pode avaliar turma (comportamento diferente → polimorfismo)
 
--
+================================
 
 4. Disciplina
 
@@ -156,7 +156,7 @@ adicionarAvaliação()
 
 calcularMédia()
 
--
+==================================
 
 5. Avaliacao
 
@@ -172,7 +172,7 @@ comentário
 
 data
 
--
+=================================
 
 6. Sistema (classe central)
 
