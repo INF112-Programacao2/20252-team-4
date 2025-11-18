@@ -5,24 +5,20 @@
 
 class Turma {
 private:
-    int id;
-    int disciplinaId;
-    std::string codigoTurma;
-    int professorId;
+    int _id;
+    int _disciplinaId;
+    std::string _codigoTurma;
+    int _professorId;
 
 public:
     Turma() = default;
 
-    Turma(int id, int disciplinaId,
-          const std::string &codigoTurma,
-          int professorId)
-        : id(id), disciplinaId(disciplinaId),
-          codigoTurma(codigoTurma), professorId(professorId) {}
+    Turma(int id, int disciplinaId, const std::string &codigoTurma, int professorId){}
 
-    int getId() const { return id; }
-    int getDisciplinaId() const { return disciplinaId; }
-    std::string getCodigoTurma() const { return codigoTurma; }
-    int getProfessorId() const { return professorId; }
+    int getId() const{}
+    int getDisciplinaId() const{}
+    std::string getCodigoTurma() const{}
+    int getProfessorId() const{}
 };
 
 #endif

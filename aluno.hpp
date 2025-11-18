@@ -1,15 +1,11 @@
 #ifndef ALUNO_HPP
 #define ALUNO_HPP
 
-<<<<<<< HEAD
-#include "Usuario.hpp"
-=======
 #include "usuario.hpp"
->>>>>>> c767c5b4cc3d829afa566cbebce30e6b461d96f5
 #include <string>
 
 // Representa um aluno no sistema
-// Nao tem permissões administrativas
+// Nao tem permissoes administrativas
 class Aluno : public Usuario { //herda da classe usuario e so' tem direito a login
 
   public:

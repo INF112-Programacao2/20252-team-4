@@ -3,30 +3,26 @@
 
 #include <string>
 
-// Objeto básico da avaliação.
+// Objeto basico da avaliacao.
 // Referencia professor e coordenador.
 class Disciplina {
 private:
-    int id;
-    std::string codigo;
-    std::string nome;
-    int professorId;
-    int coordDiscId;
+    int _id;
+    std::string _codigo;
+    std::string _nome;
+    int _professorId;
+    int _coordDiscId;
 
 public:
     Disciplina() = default;
 
-    Disciplina(int id, const std::string &codigo,
-               const std::string &nome,
-               int professorId, int coordDiscId)
-        : id(id), codigo(codigo), nome(nome),
-          professorId(professorId), coordDiscId(coordDiscId) {}
+    Disciplina(int id, const std::string &codigo, const std::string &nome, int professorId, int coordDiscId) {}
 
-    int getId() const { return id; }
-    std::string getCodigo() const { return codigo; }
-    std::string getNome() const { return nome; }
-    int getProfessorId() const { return professorId; }
-    int getCoordDiscId() const { return coordDiscId; }
+    int getId() const {}
+    std::string getCodigo() const {}
+    std::string getNome() const {}
+    int getProfessorId() const {}
+    int getCoordDiscId() const {}
 };
 
 #endif

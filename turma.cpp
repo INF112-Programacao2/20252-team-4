@@ -1,3 +1,5 @@
+#include "turma.cpp"
+
     Turma::Turma() = default;
 
     Turma::Turma(int id, int disciplinaId, const std::string &codigoTurma, int professorId)

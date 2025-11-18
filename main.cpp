@@ -99,9 +99,9 @@ void menuCoordCurso(SistemaAvaliacao &sistema) {
 
 int main() {
     SistemaAvaliacao sistema;
-    AuthSystem auth;
+    Login log;
 
-    cout << "===== SISTEMA DE AVALIACAO UNIVERSITARIO =====\n";
+    cout << "===== SISTEMA DE AVALIACAO =====\n";
 
     while (true) {
         string email, senha;
@@ -112,7 +112,7 @@ int main() {
         cout << "Senha: ";
         cin >> senha;
 
-        Usuario* u = auth.login(sistema.getUsuarios(), email, senha);
+        Usuario* u = log.login(sistema.getUsuarios(), email, senha);
 
         if (u == nullptr) {
             cout << "Credenciais incorretas! Tente novamente.\n";

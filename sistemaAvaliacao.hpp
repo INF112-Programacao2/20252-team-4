@@ -5,48 +5,48 @@
 #include <string>
 
 #include "usuario.hpp"
-#include "../models/Aluno.hpp"
-#include "../models/Professor.hpp"
-#include "../models/CoordDisciplina.hpp"
-#include "../models/CoordCurso.hpp"
-#include "../models/Disciplina.hpp"
-#include "../models/Turma.hpp"
-#include "../models/Avaliacao.hpp"
-#include "../storage/FileManager.hpp"
+#include "aluno.hpp"
+#include "professor.hpp"
+#include "coordenadorDisciplina.hpp"
+#include "coordenadorCurso.hpp"
+#include "disciplina.hpp"
+#include "turma.hpp"
+#include "avaliacao.hpp"
+#include "gerenciadorDados.hpp"
 
-// Esta classe é o núcleo do sistema.
-// Controla:
-//   - criação de usuários (apenas coordenador do curso)
-//   - criação de disciplinas e turmas
-//   - registro de avaliações
-//   - exibição das avaliações
+// Essa classe e' o nucleo do sistema
+// ela controla:
+//   - criacao de usuarios (apenas coordenador do curso)
+//   - criacao de disciplinas e turmas
+//   - registro de avaliacoes
+//   - exibicao das avaliacoes
 class SistemaAvaliacao {
 private:
-    FileManager arquivo;
+    GerenciadorDados arquivo;
 
-    // Dados carregados na memória
-    std::vector<Usuario*> usuarios;
-    std::vector<Disciplina> disciplinas;
-    std::vector<Turma> turmas;
-    std::vector<Avaliacao> avaliacoes;
+    // Dados carregados na memoria
+    std::vector<Usuario*> _usuarios;
+    std::vector<Disciplina> _disciplinas;
+    std::vector<Turma> _turmas;
+    std::vector<Avaliacao> _avaliacoes;
 
 public:
     SistemaAvaliacao();
 
-    // Funções de cadastro
+    // Funcoes de cadastro
     void cadastrarUsuario(const std::string &tipo);
     void cadastrarDisciplina();
     void cadastrarTurma();
 
-    // Avaliação
+    // Avaliacao
     void avaliarDisciplina();
     void avaliarProfessor();
     void avaliarTurma();
 
-    // Visualização
+    // Visualizacao
     void listarAvaliacoes(const std::string &tipo);
 
-    // Persistência
+    // Persistencia
     void salvarTudo();
 };
 
