@@ -1,194 +1,3 @@
-/*
-
-#include "gerenciadordados.hpp"
-#include <iostream>
-#include <stdexcept>
-
-//Construtor
-GerenciadorDados::GerenciadorDados() {
-    try {
-        //Carrega todos os dados do arquivo .tvt 
-        carregar_usuarios();
-        carregar_disciplinas();
-        carregar_turmas();
-        carregar_avaliacoes(); 
-    } catch (const std::exception& e) {
-        //Reporta o erro se ouver falha ao carreagar os dados.
-        std::cerr << "AVISO: Falha ao carregar alguns dados. Iniciando com dados vazios." << std::endl;
-    }
-}
-
-//Destrutor
-GerenciadorDados::~GerenciadorDados() {
-    try {
-        //Salva todos  os dados modificados no arquivo
-        salvar_usuarios();
-        salvar_disciplinas();
-        salvar_turmas();
-        salvar_avaliacoes();
-    } catch (const std::exception& e) {
-        //Reporta o erro casso o os dados nao seja salvos
-        std::cerr << "ERRO: Falha ao salvar os dados. Algumas alteracoes podem ter sido perdidas." << std::endl;
-    }
-}
-
-void GerenciadorDados::salvar_avaliacoes() const {
-    //Abre o arquivo para a escrita
-    std::ofstream arquivo(ARQ_AVALIACOES);
-    
-    //Verifica se o arquivo abriu 
-    if (arquivo.is_open()) {
-        //Itera sobre todos os objeto da Avaliacao na memoria para salvar
-        for (const auto& avaliacao : _avaliacoes) {
-            //Vou ainda implementar os objetos da classe para texto para salva no .txt 
-             
-        }
-        //Fecha a conexao do .txt
-        arquivo.close();
-    } else {
-        std::cerr << "ERRO: Nao foi possivel abrir o arquivo " << ARQ_AVALIACOES << " para salvar." << std::endl;
-    }
-}
-
-void GerenciadorDados::carregar_avaliacoes() {
-     //Abre o arquivo para a leitura
-    std::ifstream arquivo(ARQ_AVALIACOES);
-    //linpa a lista na memoria antes de carregar-la para que nao haja mistura de dados 
-    _avaliacoes.clear(); 
-
-      
-    //Verifica se o arquivo abriu 
-    if (arquivo.is_open()) {
-        //loop para que a leitura do arquivo nao pare ate chegar no fim
-        while (!arquivo.eof()) {
-            try {//terei ainda de implementar o codigo de leitura de acordo com modificacao da classe 
-                
-                
-            } catch (const std::exception& e) {
-                // Se der erro ao ler um dado
-                break; 
-            }
-        }
-         //Fecha a conexao do .txt
-        arquivo.close();
-    } 
-}
-
-void GerenciadorDados::salvar_usuarios() const {
-    //Abre o arquivo para a escrita
-    std::ofstream arquivo(ARQ_USUARIOS);
-    if (arquivo.is_open()) {
-        for (const auto& usuario : _usuarios) {
-        }
-        arquivo.close();
-    } else {
-        std::cerr << "ERRO: Nao foi possivel abrir o arquivo " << ARQ_USUARIOS << " para salvar." << std::endl;
-    }
-}
-
-void GerenciadorDados::carregar_usuarios() {
-    std::ifstream arquivo(ARQ_USUARIOS);
-    _usuarios.clear(); 
-    if (arquivo.is_open()) {
-        while (!arquivo.eof()) {
-            try {
-                
-                
-            } catch (const std::exception& e) {
-                break; 
-            }
-        }
-        arquivo.close();
-    }
-}
-
-void GerenciadorDados::salvar_disciplinas() const {
-    //Abre o arquivo para a escrita
-    std::ofstream arquivo(ARQ_DISCIPLINAS);
-    if (arquivo.is_open()) {
-        for (const auto& disciplina : _disciplinas) {
-        }
-        arquivo.close();
-    } else {
-        std::cerr << "ERRO: Nao foi possivel abrir o arquivo " << ARQ_DISCIPLINAS << " para salvar." << std::endl;
-    }
-}
-
-void GerenciadorDados::carregar_disciplinas() {
-    std::ifstream arquivo(ARQ_DISCIPLINAS);
-    _disciplinas.clear();
-}
-
-void GerenciadorDados::salvar_turmas() const {
-    std::ofstream arquivo(ARQ_TURMAS);
-    if (arquivo.is_open()) {
-        for (const auto& turma : _turmas) {
-        }
-        arquivo.close();
-    } else {
-        std::cerr << "ERRO: Nao foi possivel abrir o arquivo " << ARQ_TURMAS << " para salvar." << std::endl;
-    }
-}
-
-void GerenciadorDados::carregar_turmas() {
-    std::ifstream arquivo(ARQ_TURMAS);
-    _turmas.clear();
-}
-
-void GerenciadorDados::adicionar_avaliacao(const Avaliacao& avaliacao) {
-    // Adiciona uma nova Avaliacao ao final da lista de avaliacoes na memoria.
-    _avaliacoes.push_back(avaliacao);
-}
-
-const std::vector<Avaliacao>& GerenciadorDados::get_avaliacoes() const {
-    // Devolve a lista completa de avaliacoes. O 'const' garante que ninguem vai mudar a lista.
-    return _avaliacoes;
-}
-
-void GerenciadorDados::adicionar_usuario(const Usuario& usuario) {
-    // Adiciona um novo Usuario ao final da lista de usuarios na memoria.
-    _usuarios.push_back(usuario);
-}
-
-const std::vector<Usuario>& GerenciadorDados::get_usuarios() const {
-    // Devolve a lista completa de usuarios.
-    return _usuarios;
-}
-
-Usuario* GerenciadorDados::buscar_usuario_por_ID(int ID) {
-    // Busca um usuario na lista usando o numero de identificacao (ID).
-    for (auto& usuario : _usuarios) {
-        if (usuario.get_ID() == ID) {
-            // Se achar, devolve o endereco do usuario (ponteiro).
-            return &usuario; 
-        }
-    }
-    // Se nao achar ninguem com esse ID, devolve 'nullptr' (nada).
-    return nullptr; 
-}
-
-void GerenciadorDados::adicionar_disciplina(const Disciplina& disciplina) {
-    // Adiciona uma nova Disciplina ao final da lista na memoria.
-    _disciplinas.push_back(disciplina);
-}
-
-const std::vector<Disciplina>& GerenciadorDados::get_disciplinas() const {
-    // Devolve a lista completa de disciplinas.
-    return _disciplinas;
-}
-
-void GerenciadorDados::adicionar_turma(const Turma& turma) {
-    // Adiciona uma nova Turma ao final da lista na memoria.
-    _turmas.push_back(turma);
-}
-
-const std::vector<Turma>& GerenciadorDados::get_turmas() const {
-    // Devolve a lista completa de turmas.
-    return _turmas;
-}
-
-*/
-
 #include "FileManager.hpp"
 #include <fstream>
 #include <sstream>
@@ -209,42 +18,54 @@ FileManager::FileManager() {
     std::filesystem::create_directories("data");
 }
 
-// ----------------- USUÁRIOS -----------------
-std::vector<Usuario*> FileManager::carregarUsuarios() {
-    std::vector<Usuario*> res;
-    std::ifstream in("data/usuarios.txt");
+//USUARIOS
+void FileManager::carregarUsuarios(std::vector<Usuario>& usuarios) {
+    std::ifstream in("usuarios.txt");
     if (!in.is_open()) {
-        // cria arquivo vazio
-        std::ofstream out("data/usuarios.txt", std::ios::app);
-        out.close();
-        return res;
+        std::cout << "Nenhum arquivo de usuarios encontrado. Criando novo..." << std::endl;
+        return;
     }
 
     std::string linha;
     while (std::getline(in, linha)) {
         if (linha.empty()) continue;
-        auto campos = splitLine(linha, ';');
-        if (campos.size() < 5) continue;
-        int id = std::stoi(campos[0]);
-        std::string nome = campos[1];
-        std::string email = campos[2];
-        std::string senha = campos[3];
-        std::string tipo = campos[4];
 
-        if (tipo == "ALUNO") {
-            res.push_back(new Aluno(id, nome, email, senha));
-        } else if (tipo == "PROFESSOR") {
-            res.push_back(new Professor(id, nome, email, senha));
-        } else if (tipo == "COORD_DISC") {
-            res.push_back(new CoordDisciplina(id, nome, email, senha));
-        } else if (tipo == "COORD_CURSO") {
-            res.push_back(new CoordCurso(id, nome, email, senha));
-        } else {
-            // tipo desconhecido -> ignora
+        std::stringstream ss(linha);
+        std::string idStr, nome, email, hash, tipo;
+
+        std::getline(ss, idStr, ';');
+        std::getline(ss, nome, ';');
+        std::getline(ss, email, ';');
+        std::getline(ss, hash, ';');
+        std::getline(ss, tipo, ';');
+
+        int id = std::stoi(idStr);
+        Usuario u = nullptr;
+
+      
+        // Instanciar com o construtor de HASH
+       
+        if (tipo == "Aluno") {
+            u = new Aluno(id, nome, email, hash, tipo, true);
         }
+        else if (tipo == "Professor") {
+            u = new Professor(id, nome, email, hash, tipo, true);
+        }
+        else if (tipo == "CoordenadorCurso") {
+            u = new CoordenadorCurso(id, nome, email, hash, tipo, true);
+        }
+        else if (tipo == "CoordenadorDisciplina") {
+            u = new CoordenadorDisciplina(id, nome, email, hash, tipo, true);
+        }
+        else {
+            std::cout << "Tipo de usuario desconhecido: " << tipo << std::endl;
+            continue;
+        }
+
+        _usuarios.push_back(u);
     }
+
     in.close();
-    return res;
 }
 
 void FileManager::salvarUsuarios(const std::vector<Usuario*>& lista) {
@@ -254,14 +75,12 @@ void FileManager::salvarUsuarios(const std::vector<Usuario*>& lista) {
         return;
     }
     for (auto u : lista) {
-        out << u->getId() << ';'
-            << u->getNome() << ';'
-            << u->getEmail() << ';'
-            // não há método direto para senha no header (campo privado), 
-            // assumimos que no header senha é acessível ou adicionamos um getter;
-            // para simplicidade assumo que existe getSenha()
-            << /* u->getSenha() */ "senha" << ';'
-            << u->getTipo() << '\n';
+        out << u->getId() << ";"
+        << u->getNome() << ";"
+        << u->getEmail() << ";"
+        << u->getHash() << ";"    
+        << u->getTipo() << "\n";
+            
     }
     out.close();
 }

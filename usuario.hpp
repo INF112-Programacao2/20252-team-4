@@ -10,13 +10,20 @@ protected:
     int _id;
     std::string _nome;
     std::string _email;
-    std::string _senha;
+    std::string senha_hash;
     std::string _tipo;   // "ALUNO", "PROFESSOR", "COORDENADOR_DISCIPLINA", "COORDENADOR_DO_CURSO"
 
 public:
     Usuario() = default;
 
-    Usuario(int id, const std::string &_nome, const std::string &_email, const std::string &_senha, const std::string &_tipo){}
+    Usuario(int id, const std::string &_nome, const std::string &_email,
+         const std::string &_senha, const std::string &_tipo){}
+
+    // Construtor usado APENAS quando carregamos do TXT
+    Usuario(int id, const std::string& nome, const std::string& email,
+        const std::string& hashPronto, const std::string& tipo,
+        bool hashJaGerado)
+    : _id(id), _nome(nome), _email(email), senha_hash(hashPronto), _tipo(tipo) {}
 
     virtual ~Usuario(){}
 
@@ -25,8 +32,11 @@ public:
     std::string getEmail() const{}
     std::string getTipo() const{}
 
+    // Sera usada pelo gerenciadorDados para gravar no TXT
+    std::string getHash() const {}
+
     //Autenticar login
-    bool autenticar(const std::string &entrada) const{}
+     bool autenticar(const std::string& senhaDigitada) const {}
 };
 
 #endif

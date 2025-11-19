@@ -13,3 +13,15 @@ public:
 };
 
 #endif
+// --- ALTERAR APENAS A PARTE DO LOGIN ---
+/*
+bool Sistema::login(const std::string& email, const std::string& senha) {
+    for (auto u : usuarios) {
+        if (u->getEmail() == email && u->autenticar(senha)) {
+            usuarioLogado = u;
+            return true;
+        }
+    }
+    return false;
+}
+*/
