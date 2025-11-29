@@ -35,6 +35,11 @@ public:
     SistemaAvaliacao();
     ~SistemaAvaliacao();
 
+    int ProximoIdUsuarios(const std::vector<Usuario*> &v);
+    int ProximoIdDisciplinas(const std::vector<Disciplina> &v);
+    int ProximoIdTurmas(const std::vector<Turma> &v);
+    int ProximoIdAvaliacoes(const std::vector<Avaliacao> &v);
+
     std::vector<Usuario*>& getUsuarios();
 
     // Funcoes de cadastro

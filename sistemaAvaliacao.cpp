@@ -5,7 +5,7 @@
 
 // carrega tudo do GerenciadorDados
 SistemaAvaliacao::SistemaAvaliacao() {
-    _usuarios = arquivo.carregarUsuarios();
+    arquivo.carregarUsuarios(_usuarios);
     _disciplinas = arquivo.carregarDisciplinas();
     _turmas = arquivo.carregarTurmas();
     _avaliacoes = arquivo.carregarAvaliacoes();
@@ -19,7 +19,8 @@ SistemaAvaliacao::SistemaAvaliacao() {
     }
     if (!temCoord) {
         // adiciona um administrador padrao
-        CoordenadorCurso *admin = new CoordenadorCurso(1, "Admin Curso", "admin@ufv.br", "admin123");
+        int proximoId = ProximoIdUsuarios(_usuarios);
+        CoordenadorCurso *admin = new CoordenadorCurso(proximoId, "Admin Curso", "admin@ufv.br", "admin123");
         _usuarios.insert(_usuarios.begin(), admin);
     }
 }
@@ -31,25 +32,25 @@ SistemaAvaliacao::~SistemaAvaliacao() {
 
 // gerar novo id para cada tipo
 
-    static int ProximoIdUsuarios(const std::vector<Usuario*> &v) {
+    int SistemaAvaliacao::ProximoIdUsuarios(const std::vector<Usuario*> &v) {
         int ultimoId = 0;
         for (auto u : v) if (u->getId() > ultimoId) ultimoId = u->getId();
         return ultimoId + 1;
     }
 
-    static int ProximoIdDisciplinas(const std::vector<Disciplina> &v) {
+    int SistemaAvaliacao::ProximoIdDisciplinas(const std::vector<Disciplina> &v) {
         int ultimoId = 0;
         for (auto &d : v) if (d.getId() > ultimoId) ultimoId = d.getId();
         return ultimoId + 1;
     }
 
-    static int ProximoIdTurmas(const std::vector<Turma> &v) {
+    int SistemaAvaliacao::ProximoIdTurmas(const std::vector<Turma> &v) {
         int ultimoId = 0;
         for (auto &t : v) if (t.getId() > ultimoId) ultimoId = t.getId();
         return ultimoId + 1;
     }
 
-    static int ProximoIdAvaliacoes(const std::vector<Avaliacao> &v) {
+    int SistemaAvaliacao::ProximoIdAvaliacoes(const std::vector<Avaliacao> &v) {
         int ultimoId = 0;
         for (auto &a : v) if (a.getId() > ultimoId) ultimoId = a.getId();
         return ultimoId + 1;

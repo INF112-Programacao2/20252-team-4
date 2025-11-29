@@ -12,7 +12,7 @@
 #include "disciplina.hpp"
 #include "turma.hpp"
 #include "avaliacao.hpp"
-#include "sistemaAvaliacao.hpp"
+#include "getDataAtual.hpp"
 
 // Classe responsável por ler e salvar arquivos .txt do sistema.
 // Cada entidade tem seu próprio arquivo:

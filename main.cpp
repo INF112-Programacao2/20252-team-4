@@ -80,7 +80,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema) {
         switch (opc) {
             case 1: {
                 string tipo;
-                cout << "Tipo de usuario (ALUNO, PROFESSOR, COORD_DISC, COORD_CURSO): ";
+                cout << "Tipo de usuario (ALUNO, PROFESSOR, COORDENADOR_DISCIPLINA, COORDENADOR_DO_CURSO): ";
                 cin >> tipo;
                 sistema.cadastrarUsuario(tipo);
                 break;
@@ -124,8 +124,8 @@ int main() {
         // Redireciona para o menu apropriado
         if (u->getTipo() == "ALUNO") menuAluno(sistema);
         else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema);
-        else if (u->getTipo() == "COORD_DISC") menuCoordDisciplina(sistema);
-        else if (u->getTipo() == "COORD_CURSO") menuCoordCurso(sistema);
+        else if (u->getTipo() == "COORDENADOR_DISCIPLINA") menuCoordDisciplina(sistema);
+        else if (u->getTipo() == "COORDENADOR_DO_CURSO") menuCoordCurso(sistema);
 
         // Salva tudo ao sair do menu
         sistema.salvarTudo();

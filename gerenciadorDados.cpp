@@ -18,6 +18,8 @@ GerenciadorDados::GerenciadorDados() {
     std::filesystem::create_directories("data");
 }
 
+GerenciadorDados::~GerenciadorDados() {}
+
 //USUARIOS
 void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
     std::ifstream in("usuarios.txt");
@@ -141,7 +143,7 @@ std::vector<Turma> GerenciadorDados::carregarTurmas() {
         int discId = std::stoi(campos[1]);
         std::string codigo = campos[2];
         int profId = std::stoi(campos[3]);
-        res.emplace_back(id, discId, codigo, profId, getDataAtual());
+        res.emplace_back(id, discId, codigo, profId);
     }
     in.close();
     return res;
@@ -181,7 +183,8 @@ std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
         std::string tipo = campos[2];
         int nota = std::stoi(campos[3]);
         std::string comentario = campos[4];
-        res.emplace_back(id, alvoId, tipo, nota, comentario, getDataAtual());
+        std::string data = campos[5];
+        res.emplace_back(id, alvoId, tipo, nota, comentario, data);
     }
     in.close();
     return res;
@@ -198,7 +201,8 @@ void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
             << a.getAlvoId() << ';'
             << a.getTipo() << ';'
             << a.getNota() << ';'
-            << a.getComentario() << '\n';
+            << a.getComentario() << ';' 
+            << getDataAtual() << '\n';
     }
     out.close();
 }
