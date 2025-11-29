@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <string>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
+
 
 #include "usuario.hpp"
 #include "aluno.hpp"
@@ -41,7 +45,10 @@ public:
     void cadastrarDisciplina();
     void cadastrarTurma();
 
+
+
     // Avaliacao
+    std::string getDataAtual();
     void avaliarDisciplina();
     void avaliarProfessor();
     void avaliarTurma();
@@ -51,6 +58,9 @@ public:
 
     // Persistencia
     void salvarTudo();
+
+
+    
 };
 
 #endif

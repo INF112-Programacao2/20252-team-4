@@ -19,7 +19,7 @@ GerenciadorDados::GerenciadorDados() {
 }
 
 //USUARIOS
-void GerenciadorDados::carregarUsuarios(std::vector<Usuario>& usuarios) {
+void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
     std::ifstream in("usuarios.txt");
     if (!in.is_open()) {
         std::cout << "Nenhum arquivo de usuarios encontrado. Criando novo..." << std::endl;
@@ -40,7 +40,8 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario>& usuarios) {
         std::getline(ss, tipo, ';');
 
         int id = std::stoi(idStr);
-        Usuario u = nullptr;
+        Usuario* u= nullptr;
+        
 
       
         // Instanciar com o construtor de HASH
@@ -62,7 +63,7 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario>& usuarios) {
             continue;
         }
 
-        _usuarios.push_back(u);
+        usuarios.push_back(u);
     }
 
     in.close();

@@ -23,7 +23,7 @@ public:
     ~GerenciadorDados();
 
     // CARREGAMENTO
-    std::vector<Usuario*> carregarUsuarios();
+    void carregarUsuarios(std::vector<Usuario*>& usuarios);
     std::vector<Disciplina> carregarDisciplinas();
     std::vector<Turma> carregarTurmas();
     std::vector<Avaliacao> carregarAvaliacoes();

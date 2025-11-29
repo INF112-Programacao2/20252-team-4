@@ -123,7 +123,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 void SistemaAvaliacao::cadastrarTurma() {
 
     int disciplinaId;
-    int codigoTurma;
+    std::string codigoTurma;
     int professorId;
 
     std::cout << "Disciplinas disponiveis:\n";
@@ -147,6 +147,16 @@ void SistemaAvaliacao::cadastrarTurma() {
 }
 
 // AVALIACOES
+
+std::string SistemaAvaliacao::getDataAtual() {
+    time_t agora = time(nullptr);
+    tm *ltm = localtime(&agora);
+
+    std::ostringstream oss;
+    oss << std::put_time(ltm, "%Y-%m-%d");
+    return oss.str();
+}
+
 void SistemaAvaliacao::avaliarDisciplina() {
 
     if (_disciplinas.empty()) {
@@ -170,7 +180,7 @@ void SistemaAvaliacao::avaliarDisciplina() {
     std::getline(std::cin >> std::ws, comentario);
 
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", nota, comentario);
+    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", nota, comentario,getDataAtual());
     std::cout << "Avaliacao de disciplina registrada.\n";
 }
 
@@ -193,7 +203,7 @@ void SistemaAvaliacao::avaliarProfessor() {
     std::getline(std::cin >> std::ws, comentario);
 
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, profId, "PROFESSOR", nota, comentario);
+    _avaliacoes.emplace_back(id, profId, "PROFESSOR", nota, comentario, getDataAtual());
     std::cout << "Avaliacao de professor registrada.\n";
 }
 
@@ -221,7 +231,7 @@ void SistemaAvaliacao::avaliarTurma() {
     std::getline(std::cin >> std::ws, comentario);
 
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, turmaId, "TURMA", nota, comentario);
+    _avaliacoes.emplace_back(id, turmaId, "TURMA", nota, comentario, getDataAtual());
     std::cout << "Avaliacao de turma registrada.\n";
 }
 
