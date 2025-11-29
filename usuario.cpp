@@ -2,25 +2,25 @@
 
 #include "usuario.hpp"
 
-    Usuario(int id, const std::string& nome, const std::string& email,
+   Usuario::Usuario(int id, const std::string& nome, const std::string& email,
             const std::string& senhaClaro, const std::string& tipo)
         : _id(id), _nome(nome), _email(email), _tipo(tipo)
     {
         // transforma a senha pura em SHA-256
         senha_hash = picosha2::hash256_hex_string(senhaClaro);
     }
-    ~Usuario() {}
+    Usuario::~Usuario() {}
     //get
-    int Usuario::getId() const { return id; }
-    std::string Usuario::getNome() const { return nome; }
-    std::string Usuario::getEmail() const { return email; }
-    std::string Usuario::getTipo() const { return tipo; }
+    int Usuario::getId() const { return _id; }
+    std::string Usuario::getNome() const { return _nome; }
+    std::string Usuario::getEmail() const { return _email; }
+    std::string Usuario::getTipo() const { return _tipo; }
 
     
     // Sera usada pelo gerenciadorDados para gravar no TXT
-    std::string getHash() const { return senha_hash; }
+    std::string Usuario::getHash() const { return senha_hash; }
 
     // Autenticacao no login
-    bool autenticar(const std::string& senhaDigitada) const {
+    bool Usuario::autenticar(const std::string& senhaDigitada){
         return senha_hash == picosha2::hash256_hex_string(senhaDigitada);
     }

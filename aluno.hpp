@@ -9,7 +9,7 @@
 class Aluno : public Usuario { //herda da classe usuario e so' tem direito a login
 
   public:
-    Aluno() = default;
+    Aluno();
     Aluno(int id, const std::string &nome, const std::string &email, const std::string &senha);
 };
 

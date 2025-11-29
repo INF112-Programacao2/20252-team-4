@@ -7,7 +7,7 @@
 // Cadastra usuarios e disciplinas
 class CoordenadorCurso : public Usuario {
 public:
-    CoordenadorCurso() = default;
+    CoordenadorCurso();
     CoordenadorCurso(int id, const std::string &nome, const std::string &email, const std::string &senha);
 };
 

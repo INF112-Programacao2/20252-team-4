@@ -2,6 +2,7 @@
 #define USUARIO_HPP
 
 #include <string>
+#include "picosha2.hpp"
 
 //Classe base para todos os usuários (aluno, professor, coordenador ..)
 //Ter a herança para permitir diferentes tipos de usuários.
@@ -17,26 +18,25 @@ public:
     Usuario() = default;
 
     Usuario(int id, const std::string &_nome, const std::string &_email,
-         const std::string &_senha, const std::string &_tipo){}
+         const std::string &_senha, const std::string &_tipo);
 
     // Construtor usado APENAS quando carregamos do TXT
     Usuario(int id, const std::string& nome, const std::string& email,
         const std::string& hashPronto, const std::string& tipo,
-        bool hashJaGerado)
-    : _id(id), _nome(nome), _email(email), senha_hash(hashPronto), _tipo(tipo) {}
+        bool hashJaGerado);
 
-    virtual ~Usuario(){}
+    virtual ~Usuario();
 
-    int getId() const{}
-    std::string getNome() const{}
-    std::string getEmail() const{}
-    std::string getTipo() const{}
+    int getId() const;
+    std::string getNome() const;
+    std::string getEmail() const;
+    std::string getTipo() const;
 
     // Sera usada pelo gerenciadorDados para gravar no TXT
-    std::string getHash() const {}
+    std::string getHash() const ;
 
     //Autenticar login
-     bool autenticar(const std::string& senhaDigitada) const {}
+     bool autenticar(const std::string& senhaDigitada);
 };
 
 #endif
