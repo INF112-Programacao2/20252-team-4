@@ -67,6 +67,7 @@ void menuCoordDisciplina(SistemaAvaliacao &sistema) {
 
 void menuCoordCurso(SistemaAvaliacao &sistema) {
     int opc;
+    bool feito = false;
     do {
         cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
         cout << "1 - Cadastrar usuario\n";
@@ -83,15 +84,21 @@ void menuCoordCurso(SistemaAvaliacao &sistema) {
                 cout << "Tipo de usuario (ALUNO, PROFESSOR, COORDENADOR_DISCIPLINA, COORDENADOR_DO_CURSO): ";
                 cin >> tipo;
                 sistema.cadastrarUsuario(tipo);
+                feito = true;
                 break;
             }
-            case 2: sistema.cadastrarDisciplina(); break;
-            case 3: sistema.cadastrarTurma(); break;
-            case 4: sistema.listarAvaliacoes("GERAL"); break;
-            case 0: cout << "Saindo...\n"; break;
+            case 2: sistema.cadastrarDisciplina(); feito = true; break;
+            case 3: 
+                try {sistema.cadastrarTurma();}
+                catch (char const* e) {
+                    std::cerr << e << std::endl;
+                }
+                break;
+            case 4: sistema.listarAvaliacoes("GERAL"); feito = true; break;
+            case 0: cout << "Saindo...\n"; feito = true; break;
             default: cout << "Opcao invalida!\n";
         }
-    } while (opc != 0);
+    } while (!feito);
 }
 
 

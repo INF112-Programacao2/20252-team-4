@@ -72,7 +72,7 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
 }
 
 void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
-    std::ofstream out("data/usuarios.txt", std::ios::trunc);
+    std::ofstream out("data/usuarios.txt", std::ios::app);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/usuarios.txt para escrita\n";
         return;
@@ -114,7 +114,7 @@ std::vector<Disciplina> GerenciadorDados::carregarDisciplinas() {
 }
 
 void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
-    std::ofstream out("data/disciplinas.txt", std::ios::trunc);
+    std::ofstream out("data/disciplinas.txt", std::ios::app);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/disciplinas.txt\n";
         return;
@@ -127,12 +127,12 @@ void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
 
 // ----------------- TURMAS -----------------
 std::vector<Turma> GerenciadorDados::carregarTurmas() {
-    std::vector<Turma> res;
+    std::vector<Turma> turma;
     std::ifstream in("data/turmas.txt");
     if (!in.is_open()) {
         std::ofstream out("data/turmas.txt", std::ios::app);
         out.close();
-        return res;
+        return turma;
     }
     std::string linha;
     while (std::getline(in, linha)) {
@@ -143,14 +143,14 @@ std::vector<Turma> GerenciadorDados::carregarTurmas() {
         int discId = std::stoi(campos[1]);
         std::string codigo = campos[2];
         int profId = std::stoi(campos[3]);
-        res.emplace_back(id, discId, codigo, profId);
+        turma.emplace_back(id, discId, codigo, profId);
     }
     in.close();
-    return res;
+    return turma;
 }
 
 void GerenciadorDados::salvarTurmas(const std::vector<Turma>& lista) {
-    std::ofstream out("data/turmas.txt", std::ios::trunc);
+    std::ofstream out("data/turmas.txt", std::ios::app);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/turmas.txt\n";
         return;
@@ -191,7 +191,7 @@ std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
 }
 
 void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
-    std::ofstream out("data/avaliacoes.txt", std::ios::trunc);
+    std::ofstream out("data/avaliacoes.txt", std::ios::app);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/avaliacoes.txt\n";
         return;

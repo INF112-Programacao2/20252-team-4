@@ -33,6 +33,7 @@ SistemaAvaliacao::~SistemaAvaliacao() {
 // gerar novo id para cada tipo
 
     int SistemaAvaliacao::ProximoIdUsuarios(const std::vector<Usuario*> &v) {
+        
         int ultimoId = 0;
         for (auto u : v) if (u->getId() > ultimoId) ultimoId = u->getId();
         return ultimoId + 1;
@@ -127,8 +128,14 @@ void SistemaAvaliacao::cadastrarTurma() {
     std::string codigoTurma;
     int professorId;
 
+    if (_disciplinas.empty()) {
+        throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
+    }
     std::cout << "Disciplinas disponiveis:\n";
-    for (auto &d : _disciplinas) std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
+
+
+    for (auto &d : _disciplinas) 
+        std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
 
     std::cout << "Escolha ID da disciplina: ";
     std::cin >> disciplinaId;
