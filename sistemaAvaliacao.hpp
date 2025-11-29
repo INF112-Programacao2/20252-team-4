@@ -3,9 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <ctime>
-#include <sstream>
-#include <iomanip>
 
 
 #include "usuario.hpp"
@@ -17,7 +14,7 @@
 #include "turma.hpp"
 #include "avaliacao.hpp"
 #include "gerenciadorDados.hpp"
-
+#include "getDataAtual.hpp"
 // Essa classe e' o nucleo do sistema
 // ela controla:
 //   - criacao de usuarios (apenas coordenador do curso)
@@ -48,7 +45,6 @@ public:
 
 
     // Avaliacao
-    std::string getDataAtual();
     void avaliarDisciplina();
     void avaliarProfessor();
     void avaliarTurma();

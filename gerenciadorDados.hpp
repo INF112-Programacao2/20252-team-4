@@ -5,9 +5,14 @@
 #include <vector>
 
 #include "usuario.hpp"
+#include "aluno.hpp"
+#include "professor.hpp"
+#include "coordenadorCurso.hpp"
+#include "coordenadorDisciplina.hpp"
 #include "disciplina.hpp"
 #include "turma.hpp"
 #include "avaliacao.hpp"
+#include "sistemaAvaliacao.hpp"
 
 // Classe responsável por ler e salvar arquivos .txt do sistema.
 // Cada entidade tem seu próprio arquivo:

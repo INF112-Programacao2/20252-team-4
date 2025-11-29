@@ -118,7 +118,7 @@ void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
         return;
     }
     for (const auto &d : lista) {
-        out << d.getId() << ';' << d.getCodigo() << ';' << d.getNome() << ';' << d.getProfessorId() << ';' << d.getCoordDiscId() << '\n';
+        out << d.getId() << ';' << d.getCodigo() << ';' << d.getNome() << ';' << d.getProfessorId() << ';' << d.getCoordenadorDiscId() << '\n';
     }
     out.close();
 }
@@ -141,7 +141,7 @@ std::vector<Turma> GerenciadorDados::carregarTurmas() {
         int discId = std::stoi(campos[1]);
         std::string codigo = campos[2];
         int profId = std::stoi(campos[3]);
-        res.emplace_back(id, discId, codigo, profId);
+        res.emplace_back(id, discId, codigo, profId, getDataAtual());
     }
     in.close();
     return res;
@@ -181,7 +181,7 @@ std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
         std::string tipo = campos[2];
         int nota = std::stoi(campos[3]);
         std::string comentario = campos[4];
-        res.emplace_back(id, alvoId, tipo, nota, comentario);
+        res.emplace_back(id, alvoId, tipo, nota, comentario, getDataAtual());
     }
     in.close();
     return res;
