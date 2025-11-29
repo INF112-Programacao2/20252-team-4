@@ -11,18 +11,18 @@ private:
     std::string _codigo;
     std::string _nome;
     int _professorId;
-    int _coordDiscId;
+    int _coordenadorDiscId;
 
 public:
-    Disciplina() = default;
+    Disciplina();
 
-    Disciplina(int id, const std::string &codigo, const std::string &nome, int professorId, int coordDiscId) {}
+    Disciplina(int id, const std::string &codigo, const std::string &nome, int professorId, int coordenadorDiscId);
 
-    int getId() const {}
-    std::string getCodigo() const {}
-    std::string getNome() const {}
-    int getProfessorId() const {}
-    int getCoordDiscId() const {}
+    int getId() const;
+    std::string getCodigo() const;
+    std::string getNome() const;
+    int getProfessorId() const;
+    int getCoordenadorDiscId() const;
 };
 
 #endif

@@ -1,4 +1,6 @@
 #include "avaliacao.hpp"
+
+Avaliacao::Avaliacao() = default;
         
 Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, int nota, const std::string &comentario, const std::string &data){
     this-> _id = id;

@@ -1,11 +1,11 @@
-#include "turma.cpp"
+#include "turma.hpp"
 
     Turma::Turma() = default;
 
     Turma::Turma(int id, int disciplinaId, const std::string &codigoTurma, int professorId)
-        : id(_id), disciplinaId(_disciplinaId), codigoTurma(_codigoTurma), professorId(_professorId){}
+        : _id(id), _disciplinaId(disciplinaId), _codigoTurma(codigoTurma), _professorId(professorId){}
 
-    int Turma::getId() const{ return id; }
-    int Turma::getDisciplinaId() const{ return disciplinaId; }
-    std::string Turma::getCodigoTurma() const{ return codigoTurma; }
-    int Turma::getProfessorId() const{ return professorId; }
+    int Turma::getId() const{ return _id; }
+    int Turma::getDisciplinaId() const{ return _disciplinaId; }
+    std::string Turma::getCodigoTurma() const{ return _codigoTurma; }
+    int Turma::getProfessorId() const{ return _professorId; }

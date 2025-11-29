@@ -32,6 +32,9 @@ private:
 
 public:
     SistemaAvaliacao();
+    ~SistemaAvaliacao();
+
+    std::vector<Usuario*>& getUsuarios();
 
     // Funcoes de cadastro
     void cadastrarUsuario(const std::string &tipo);

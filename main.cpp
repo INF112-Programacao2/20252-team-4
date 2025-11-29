@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "services/SistemaAvaliacao.hpp"
-#include "services/AuthSystem.hpp"
+#include "sistemaAvaliacao.hpp"
+#include "login.hpp"
 
 using namespace std;
 

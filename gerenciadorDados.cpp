@@ -1,4 +1,4 @@
-#include "FileManager.hpp"
+#include "gerenciadorDados.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -13,13 +13,13 @@ static std::vector<std::string> splitLine(const std::string &line, char delim=';
     return parts;
 }
 
-FileManager::FileManager() {
+GerenciadorDados::GerenciadorDados() {
     // assegura que a pasta data exista
     std::filesystem::create_directories("data");
 }
 
 //USUARIOS
-void FileManager::carregarUsuarios(std::vector<Usuario>& usuarios) {
+void GerenciadorDados::carregarUsuarios(std::vector<Usuario>& usuarios) {
     std::ifstream in("usuarios.txt");
     if (!in.is_open()) {
         std::cout << "Nenhum arquivo de usuarios encontrado. Criando novo..." << std::endl;
@@ -68,7 +68,7 @@ void FileManager::carregarUsuarios(std::vector<Usuario>& usuarios) {
     in.close();
 }
 
-void FileManager::salvarUsuarios(const std::vector<Usuario*>& lista) {
+void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
     std::ofstream out("data/usuarios.txt", std::ios::trunc);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/usuarios.txt para escrita\n";
@@ -86,7 +86,7 @@ void FileManager::salvarUsuarios(const std::vector<Usuario*>& lista) {
 }
 
 // ----------------- DISCIPLINAS -----------------
-std::vector<Disciplina> FileManager::carregarDisciplinas() {
+std::vector<Disciplina> GerenciadorDados::carregarDisciplinas() {
     std::vector<Disciplina> res;
     std::ifstream in("data/disciplinas.txt");
     if (!in.is_open()) {
@@ -110,7 +110,7 @@ std::vector<Disciplina> FileManager::carregarDisciplinas() {
     return res;
 }
 
-void FileManager::salvarDisciplinas(const std::vector<Disciplina>& lista) {
+void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
     std::ofstream out("data/disciplinas.txt", std::ios::trunc);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/disciplinas.txt\n";
@@ -123,7 +123,7 @@ void FileManager::salvarDisciplinas(const std::vector<Disciplina>& lista) {
 }
 
 // ----------------- TURMAS -----------------
-std::vector<Turma> FileManager::carregarTurmas() {
+std::vector<Turma> GerenciadorDados::carregarTurmas() {
     std::vector<Turma> res;
     std::ifstream in("data/turmas.txt");
     if (!in.is_open()) {
@@ -146,7 +146,7 @@ std::vector<Turma> FileManager::carregarTurmas() {
     return res;
 }
 
-void FileManager::salvarTurmas(const std::vector<Turma>& lista) {
+void GerenciadorDados::salvarTurmas(const std::vector<Turma>& lista) {
     std::ofstream out("data/turmas.txt", std::ios::trunc);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/turmas.txt\n";
@@ -162,7 +162,7 @@ void FileManager::salvarTurmas(const std::vector<Turma>& lista) {
 }
 
 // ----------------- AVALIAÇÕES -----------------
-std::vector<Avaliacao> FileManager::carregarAvaliacoes() {
+std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
     std::vector<Avaliacao> res;
     std::ifstream in("data/avaliacoes.txt");
     if (!in.is_open()) {
@@ -186,7 +186,7 @@ std::vector<Avaliacao> FileManager::carregarAvaliacoes() {
     return res;
 }
 
-void FileManager::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
+void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
     std::ofstream out("data/avaliacoes.txt", std::ios::trunc);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/avaliacoes.txt\n";

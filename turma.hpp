@@ -11,14 +11,14 @@ private:
     int _professorId;
 
 public:
-    Turma() = default;
+    Turma();
 
-    Turma(int id, int disciplinaId, const std::string &codigoTurma, int professorId){}
+    Turma(int id, int disciplinaId, const std::string &codigoTurma, int professorId);
 
-    int getId() const{}
-    int getDisciplinaId() const{}
-    std::string getCodigoTurma() const{}
-    int getProfessorId() const{}
-};
+    int getId() const;
+    int getDisciplinaId() const;
+    std::string getCodigoTurma() const;
+    int getProfessorId() const;
+};   
 
 #endif

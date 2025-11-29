@@ -5,7 +5,7 @@
 
 // carrega tudo do GerenciadorDados
 SistemaAvaliacao::SistemaAvaliacao() {
-    __usuarios = arquivo.carregarUsuario();
+    _usuarios = arquivo.carregarUsuarios();
     _disciplinas = arquivo.carregarDisciplinas();
     _turmas = arquivo.carregarTurmas();
     _avaliacoes = arquivo.carregarAvaliacoes();
@@ -13,7 +13,7 @@ SistemaAvaliacao::SistemaAvaliacao() {
 
     // Se nao existir nenhum coordenador do curso, cria um padrao
     bool temCoord = false;
-    for (auto u : __usuarios) if (u->getTipo() == "COORDENADOR_DO_CURSO") { 
+    for (auto u : _usuarios) if (u->getTipo() == "COORDENADOR_DO_CURSO") { 
         temCoord = true; 
         break; 
     }
@@ -78,7 +78,7 @@ void SistemaAvaliacao::cadastrarUsuario(const std::string &tipo) {
 
         if (tipo == "ALUNO") novo = new Aluno(id, nome, email, senha);
         else if (tipo == "PROFESSOR") novo = new Professor(id, nome, email, senha);
-        else if (tipo == "COORDENADOR_DISCIPLINA") novo = new CoordDisciplina(id, nome, email, senha);
+        else if (tipo == "COORDENADOR_DISCIPLINA") novo = new CoordenadorDisciplina(id, nome, email, senha);
         else if (tipo == "COORDENADOR_DO_CURSO") novo = new CoordenadorCurso(id, nome, email, senha);
         else {
             std::cerr << "ERRO: Voce nao se encaixa em nenhum tipo de usuario dessa organizacao.\n";
