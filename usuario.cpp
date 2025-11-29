@@ -9,6 +9,11 @@
         // transforma a senha pura em SHA-256
         senha_hash = picosha2::hash256_hex_string(senhaClaro);
     }
+
+    Usuario::Usuario(int id, const std::string& nome, const std::string& email,
+        const std::string& hashPronto, const std::string& tipo,
+        bool hashJaGerado) : _id(id), _nome(nome), _email(email), senha_hash(hashPronto), _tipo(tipo) {}
+
     Usuario::~Usuario() {}
     //get
     int Usuario::getId() const { return _id; }

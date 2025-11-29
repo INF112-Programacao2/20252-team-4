@@ -46,16 +46,16 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
       
         // Instanciar com o construtor de HASH
        
-        if (tipo == "Aluno") {
+        if (tipo == "ALUNO") {
             u = new Aluno(id, nome, email, hash, tipo, true);
         }
-        else if (tipo == "Professor") {
+        else if (tipo == "PROFESSOR") {
             u = new Professor(id, nome, email, hash, tipo, true);
         }
-        else if (tipo == "CoordenadorCurso") {
+        else if (tipo == "COORDENADOR_DO_CURSO") {
             u = new CoordenadorCurso(id, nome, email, hash, tipo, true);
         }
-        else if (tipo == "CoordenadorDisciplina") {
+        else if (tipo == "COORDENADOR_DISCIPLINA") {
             u = new CoordenadorDisciplina(id, nome, email, hash, tipo, true);
         }
         else {
