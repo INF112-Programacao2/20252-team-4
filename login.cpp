@@ -1,10 +1,10 @@
 #include "login.hpp"
 
-Usuario* Login::login(const std::vector<Usuario*>& usuarios, const std::string &email, const std::string &senha) {
+Usuario* Login::login(const std::vector<Usuario*>& usuarios, const std::string &matricula, const std::string &senha) {
 
     for (auto u : usuarios) {
 
-        if (u->getEmail() == email) {
+        if (u->getmatricula() == matricula) {
             if (u->autenticar(senha)) {
                 return u;
             }

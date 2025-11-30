@@ -33,11 +33,11 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
         if (linha.empty()) continue;
 
         std::stringstream ss(linha);
-        std::string idStr, nome, email, hash, tipo;
+        std::string idStr, nome, matricula, hash, tipo;
 
         std::getline(ss, idStr, ';');
         std::getline(ss, nome, ';');
-        std::getline(ss, email, ';');
+        std::getline(ss, matricula, ';');
         std::getline(ss, hash, ';');
         std::getline(ss, tipo, ';');
 
@@ -49,16 +49,16 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
         // Instanciar com o construtor de HASH
        
         if (tipo == "ALUNO") {
-            u = new Aluno(id, nome, email, hash, tipo, true);
+            u = new Aluno(id, nome, matricula, hash, tipo, true);
         }
         else if (tipo == "PROFESSOR") {
-            u = new Professor(id, nome, email, hash, tipo, true);
+            u = new Professor(id, nome, matricula, hash, tipo, true);
         }
         else if (tipo == "COORDENADOR_DO_CURSO") {
-            u = new CoordenadorCurso(id, nome, email, hash, tipo, true);
+            u = new CoordenadorCurso(id, nome, matricula, hash, tipo, true);
         }
         else if (tipo == "COORDENADOR_DISCIPLINA") {
-            u = new CoordenadorDisciplina(id, nome, email, hash, tipo, true);
+            u = new CoordenadorDisciplina(id, nome, matricula, hash, tipo, true);
         }
         else {
             std::cout << "Tipo de usuario desconhecido: " << tipo << std::endl;
@@ -80,7 +80,7 @@ void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
     for (auto u : lista) {
         out << u->getId() << ";"
         << u->getNome() << ";"
-        << u->getEmail() << ";"
+        << u->getmatricula() << ";"
         << u->getHash() << ";"    
         << u->getTipo() << "\n";
             

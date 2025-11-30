@@ -7,7 +7,7 @@
 class Professor : public Usuario {
 public:
     Professor();
-    Professor(int id, const std::string &nome, const std::string &email, const std::string &senha);
-    Professor(int id, const std::string& nome, const std::string& email, const std::string& hashPronto, const std::string& tipo, bool hashJaGerado);
+    Professor(int id, const std::string &nome, const std::string &matricula, const std::string &senha);
+    Professor(int id, const std::string& nome, const std::string& matricula, const std::string& hashPronto, const std::string& tipo, bool hashJaGerado);
 };
 #endif

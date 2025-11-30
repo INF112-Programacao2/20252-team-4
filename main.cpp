@@ -111,15 +111,15 @@ int main() {
     cout << "===== SISTEMA DE AVALIACAO =====\n";
 
     while (true) {
-        string email, senha;
+        string matricula, senha;
 
         cout << "\nLogin\n";
-        cout << "Email: ";
-        cin >> email;
+        cout << "matricula: ";
+        cin >> matricula;
         cout << "Senha: ";
         cin >> senha;
 
-        Usuario* u = log.login(sistema.getUsuarios(), email, senha);
+        Usuario* u = log.login(sistema.getUsuarios(), matricula, senha);
 
         if (u == nullptr) {
             cout << "Credenciais incorretas! Tente novamente.\n";

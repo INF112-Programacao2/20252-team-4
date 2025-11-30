@@ -8,8 +8,8 @@
 class CoordenadorCurso : public Usuario {
 public:
     CoordenadorCurso();
-    CoordenadorCurso(int id, const std::string &nome, const std::string &email, const std::string &senha);
-    CoordenadorCurso(int id, const std::string& nome, const std::string& email, const std::string& hashPronto, const std::string& tipo, bool hashJaGerado);
+    CoordenadorCurso(int id, const std::string &nome, const std::string &matricula, const std::string &senha);
+    CoordenadorCurso(int id, const std::string& nome, const std::string& matricula, const std::string& hashPronto, const std::string& tipo, bool hashJaGerado);
 };
 
 #endif

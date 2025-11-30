@@ -66,11 +66,11 @@ std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
 
 void SistemaAvaliacao::cadastrarUsuario(const std::string &tipo) {
 
-    std::string nome, email, senha;
+    std::string nome, matricula, senha;
     std::cout << "Nome: ";
     std::getline(std::cin >> std::ws, nome); //usamos std::ws para descartar espaco em branco, quebra de linha e tabulacao
-    std::cout << "Email: ";
-    std::cin >> email;
+    std::cout << "matricula: ";
+    std::cin >> matricula;
     std::cout << "Senha: ";
     std::cin >> senha;
 
@@ -78,10 +78,10 @@ void SistemaAvaliacao::cadastrarUsuario(const std::string &tipo) {
 
     Usuario* novo = nullptr;
 
-        if (tipo == "ALUNO") novo = new Aluno(id, nome, email, senha);
-        else if (tipo == "PROFESSOR") novo = new Professor(id, nome, email, senha);
-        else if (tipo == "COORDENADOR_DISCIPLINA") novo = new CoordenadorDisciplina(id, nome, email, senha);
-        else if (tipo == "COORDENADOR_DO_CURSO") novo = new CoordenadorCurso(id, nome, email, senha);
+        if (tipo == "ALUNO") novo = new Aluno(id, nome, matricula, senha);
+        else if (tipo == "PROFESSOR") novo = new Professor(id, nome, matricula, senha);
+        else if (tipo == "COORDENADOR_DISCIPLINA") novo = new CoordenadorDisciplina(id, nome, matricula, senha);
+        else if (tipo == "COORDENADOR_DO_CURSO") novo = new CoordenadorCurso(id, nome, matricula, senha);
         else {
             std::cerr << "ERRO: Voce nao se encaixa em nenhum tipo de usuario dessa organizacao.\n";
             return;
