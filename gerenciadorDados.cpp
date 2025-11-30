@@ -22,7 +22,7 @@ GerenciadorDados::~GerenciadorDados() {}
 
 //USUARIOS
 void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
-    std::ifstream in("usuarios.txt");
+    std::ifstream in("data/usuarios.txt");
     if (!in.is_open()) {
         std::cout << "Nenhum arquivo de usuarios encontrado. Criando novo..." << std::endl;
         return;
@@ -72,9 +72,9 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
 }
 
 void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
-    std::ofstream out("data/usuarios.txt", std::ios::app);
+    std::ofstream out("data/usuarios.txt", std::ios::trunc);
     if (!out.is_open()) {
-        std::cerr << "Erro ao abrir data/usuarios.txt para escrita\n";
+        std::cerr << "Erro ao abrir usuarios.txt para escrita\n";
         return;
     }
     for (auto u : lista) {
@@ -114,9 +114,9 @@ std::vector<Disciplina> GerenciadorDados::carregarDisciplinas() {
 }
 
 void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
-    std::ofstream out("data/disciplinas.txt", std::ios::app);
+    std::ofstream out("data/disciplinas.txt", std::ios::trunc);
     if (!out.is_open()) {
-        std::cerr << "Erro ao abrir data/disciplinas.txt\n";
+        std::cerr << "Erro ao abrir disciplinas.txt\n";
         return;
     }
     for (const auto &d : lista) {
@@ -150,9 +150,9 @@ std::vector<Turma> GerenciadorDados::carregarTurmas() {
 }
 
 void GerenciadorDados::salvarTurmas(const std::vector<Turma>& lista) {
-    std::ofstream out("data/turmas.txt", std::ios::app);
+    std::ofstream out("data/turmas.txt", std::ios::trunc);
     if (!out.is_open()) {
-        std::cerr << "Erro ao abrir data/turmas.txt\n";
+        std::cerr << "Erro ao abrir turmas.txt\n";
         return;
     }
     for (const auto &t : lista) {
