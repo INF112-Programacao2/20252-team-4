@@ -191,7 +191,7 @@ std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
 }
 
 void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
-    std::ofstream out("data/avaliacoes.txt", std::ios::app);
+    std::ofstream out("data/avaliacoes.txt", std::ios::trunc);
     if (!out.is_open()) {
         std::cerr << "Erro ao abrir data/avaliacoes.txt\n";
         return;
