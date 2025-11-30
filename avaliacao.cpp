@@ -2,7 +2,7 @@
 
 Avaliacao::Avaliacao() = default;
         
-Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, int nota, const std::string &comentario, const std::string &data){
+Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, double nota, const std::string &comentario, const std::string &data){
     this-> _id = id;
     this-> _alvoId = alvoId;
     this-> _tipo = tipo;
@@ -23,7 +23,7 @@ std::string Avaliacao::getTipo() const {
     return _tipo; 
 }
 
-int Avaliacao::getNota() const { 
+double Avaliacao::getNota() const { 
     return _nota; 
 }
 

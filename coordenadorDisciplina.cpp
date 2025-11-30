@@ -7,3 +7,7 @@ CoordenadorDisciplina::CoordenadorDisciplina(int id, const std::string& nome, co
 
 CoordenadorDisciplina::CoordenadorDisciplina(int id, const std::string& nome, const std::string& matricula, const std::string& hashPronto, const std::string& tipo, bool hashJaGerado)
     : Usuario(id, nome, matricula, hashPronto, tipo, hashJaGerado) {}
+
+const Disciplina* CoordenadorDisciplina::getDisciplinaCoordenada() const {
+    return _disciplinaCoordenada;
+}

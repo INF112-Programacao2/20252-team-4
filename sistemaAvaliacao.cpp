@@ -3,6 +3,30 @@
 #include <algorithm>
 #include <limits>
 
+int lerInteiroComExcecao(const std::string& pergunta) {
+    std::string entrada;
+
+    while (true) {
+        std::cout << pergunta;
+        std::getline(std::cin, entrada);
+
+        try {
+            int valor = std::stoi(entrada);
+
+            // Verifica intervalo permitido
+            if (valor < 0 || valor > 5) {
+                std::cout << "Erro: o valor deve estar entre 0 e 5.\n";
+                continue; // volta ao início do loop
+            }
+
+            return valor; // valor válido
+        }
+        catch (const std::invalid_argument&) {
+            std::cout << "Erro: digite apenas números inteiros.\n";
+        }
+    }
+}
+
 // carrega tudo do GerenciadorDados
 SistemaAvaliacao::SistemaAvaliacao() {
     arquivo.carregarUsuarios(_usuarios);
@@ -102,14 +126,6 @@ void SistemaAvaliacao::cadastrarDisciplina() {
     std::cout << "Nome da disciplina: ";
     std::getline(std::cin >> std::ws, nome);
 
-    // listar professores disponiveis
-    std::cout << "Professores disponiveis:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR")
-        std::cout << u->getId() << " - " << u->getNome() << '\n';
-
-        std::cout << "Escolha o ID do professor responsavel: ";
-        std::cin >> profId;
-
     std::cout << "Coordenadores de disciplina disponiveis:\n";
     for (auto u : _usuarios) if (u->getTipo() == "COORDENADOR_DISCIPLINA")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
@@ -155,82 +171,229 @@ void SistemaAvaliacao::cadastrarTurma() {
 }
 
 // AVALIACOES
-void SistemaAvaliacao::avaliarDisciplina() {
+void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
+    std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
 
-    if (_disciplinas.empty()) {
-        std::cout << "Nenhuma disciplina cadastrada.\n";
-        return;
+    if (turmasMatriculadas.empty()) {
+        throw "Voce nao esta matriculado em nenhuma disciplina. Nenhuma disciplina disponivel para avaliacao.\n";
     }
-    std::cout << "Disciplinas:\n";
-    for (auto &d : _disciplinas) 
-    std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
+
+    std::vector<int> disciplinasIds;
+    for (const auto* t : turmasMatriculadas) {
+        disciplinasIds.push_back(t->getDisciplinaId()); // Turma sabe sua Disciplina
+    }
+
+    // 3. Remover duplicatas (se o aluno estiver em várias turmas da mesma disciplina)
+    //std::sort(disciplinasIds.begin(), disciplinasIds.end());
+    //disciplinasIds.erase(std::unique(disciplinasIds.begin(), disciplinasIds.end()), disciplinasIds.end());
+
+    // 4. Listar apenas as disciplinas que o aluno está cursando
+    std::cout << "Disciplinas matriculadas disponiveis para avaliacao:\n";
+    std::vector<Disciplina*> disciplinasDisponiveis;
+    for (int discId : disciplinasIds) {
+        for (auto &d : _disciplinas) {
+            if (d.getId() == discId) {
+                std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
+                disciplinasDisponiveis.push_back(&d);
+                break;
+            }
+        }
+    }
 
     int idDisc;
-    std::cout << "Escolha ID da disciplina: ";
-    std::cin >> idDisc;
+    bool idValido = false;
+    do {
 
-    int nota;
-    std::cout << "Nota (0-10): ";
-    std::cin >> nota;
+        std::cout << "Escolha ID da disciplina: ";
+        std::cin >> idDisc;
+
+        for(const auto* d : disciplinasDisponiveis) {
+            if (d->getId() == idDisc) {
+                idValido = true;
+                break;
+            }
+        }
+
+        if (!idValido) {
+            std::cerr << "ID invalido. Tente novamente.\n";
+        }
+    } while (!idValido);
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    int nota[5];
+    std::cout << "Como voce avalia a disciplina? (0-5)\n";
+    std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
+
+    nota[0] = lerInteiroComExcecao("Em relacao a ementa: ");
+    nota[1] = lerInteiroComExcecao("\nVoce considera o conteudo da disciplina relevante para sua formacao?: ");
+    nota[2] = lerInteiroComExcecao("\nOs meios de avaliar a aprendizagem foram eficazes? (ex.: provas e seminarios): ");
+    nota[3] = lerInteiroComExcecao("\nO conteudo planejado foi compativel com a carga horaria da disciplina?: ");
+    nota[4] = lerInteiroComExcecao("\nA disciplina complementa/agrega conhecimento para o restante do curso?: ");
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string comentario;
-    std::cout << "Comentario: ";
+    std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da disciplina: ";
     std::getline(std::cin >> std::ws, comentario);
 
+    double mediaNotas = 0.0;
+    for (int i=0; i<5; i++)
+        mediaNotas += nota[i];
+    mediaNotas /= 5.0;
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", nota, comentario,getDataAtual());
+    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", mediaNotas, comentario, getDataAtual());
     std::cout << "Avaliacao de disciplina registrada.\n";
 }
 
-void SistemaAvaliacao::avaliarProfessor() {
+void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
+    std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
 
-    std::cout << "Professores:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR") 
-    std::cout << u->getId() << " - " << u->getNome() << '\n';
+    if (turmasMatriculadas.empty()) {
+        throw "Voce nao esta' matriculado em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
+    }
 
-    int profId; 
-    std::cout << "Escolha ID do professor: "; 
-    std::cin >> profId;
+    std::vector<int> professoresIds;
+    for (const auto* t : turmasMatriculadas) {
+        int profId = t->getProfessorId(); // Turma sabe quem é o professor
+        if (profId > 0) { 
+            professoresIds.push_back(profId); 
+        }
+    }
 
-    int nota; 
-    std::cout << "Nota (0-10): "; 
-    std::cin >> nota;
+    std::cout << "Professores disponiveis para avaliacao:\n";
+    std::vector<Usuario*> professoresDisponiveis;
+    for (int profId : professoresIds) {
+        for (auto &usuario : _usuarios) {
+            if (usuario->getId() == profId && usuario->getTipo() == "PROFESSOR") {
+                std::cout << usuario->getId() << " - " << usuario->getNome() << '\n';
+                professoresDisponiveis.push_back(usuario);
+                break;
+            }
+        }
+    }
+
+    bool idValido = false;
+    int profId;
+    do {
+        std::cout << "Escolha ID do professor: "; 
+        std::cin >> profId;
+
+        for(const auto* p : professoresDisponiveis) {
+            if (p->getId() == profId) {
+                idValido = true;
+                break;
+            }
+        }
+        if (!idValido) {
+            std::cerr << "ID de professor invalido. Tente novamente\n";
+        }
+    } while (!idValido);
+
+    int nota[5]; 
+    std::cout << "Como voce avalia o professor? (0-5)\n";
+    std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
+
+    nota[0] = lerInteiroComExcecao("O professor forneceu feedback das avaliacoes?: ");
+    nota[1] = lerInteiroComExcecao("\nA metodologia de ensino do professor favoreceu a aprendizagem?: ");
+    nota[2] = lerInteiroComExcecao("\nO professor incentivou os alunos a participarem das aulas?: ");
+    nota[3] = lerInteiroComExcecao("\nO professor demonstrou domi'nio no conteu'do da disciplina?: ");
+    nota[4] = lerInteiroComExcecao("\nA dida'tica do professor foi objetiva e clara?: ");
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string comentario; 
-    std::cout << "Comentario: "; 
+    std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da metodologia utilizada: ";
     std::getline(std::cin >> std::ws, comentario);
 
+    double mediaNotas = 0.0;
+    for (int i=0; i<5; i++)
+        mediaNotas += nota[i];
+    mediaNotas /= 5.0;
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, profId, "PROFESSOR", nota, comentario, getDataAtual());
+
+    _avaliacoes.emplace_back(id, profId, "PROFESSOR", mediaNotas, comentario, getDataAtual());
     std::cout << "Avaliacao de professor registrada.\n";
 }
 
-void SistemaAvaliacao::avaliarTurma() {
+void SistemaAvaliacao::avaliarTurma(Usuario* u) {
 
     if (_turmas.empty()) { 
-        std::cout << "Nenhuma turma.\n"; 
-        return; 
+        throw "Nenhuma turma cadastrada no sistema.\n";
     }
 
-    std::cout << "Turmas:\n";
-    for (auto &t : _turmas)
-        std::cout << t.getId() << " - disciplina " << t.getDisciplinaId() << " turma " << t.getCodigoTurma() << '\n';
+    // 2. Filtra as turmas ministradas pelo professor logado
+    int profId = u->getId();
+    std::vector<Turma*> turmasMinistradas;
+    for (auto &t : _turmas) {
+        if (t.getProfessorId() == profId) {
+            turmasMinistradas.push_back(&t);
+        }
+    }
 
-    int turmaId; 
-    std::cout << "Escolha ID da turma: "; 
-    std::cin >> turmaId;
+    if (turmasMinistradas.empty()) {
+        throw "Nao e' possi'vel fazer uma avaliacao, pois voce nao leciona em nenhuma turma.\n";
+    }
 
-    int nota; 
-    std::cout << "Nota (0-10): "; 
-    std::cin >> nota;
+    // 3. Lista as turmas filtradas
+    std::cout << "Suas Turmas (Turmas que voce ministra):\n";
+    for (auto &t : turmasMinistradas) {
+        std::string discInfo = "Disciplina Desconhecida";
+        // Busca o código da disciplina para melhor visualização
+        for (auto &d : _disciplinas) {
+            if (d.getId() == t->getDisciplinaId()) {
+                discInfo = d.getCodigo();
+                break;
+            }
+        }
+        std::cout << t->getId() << " - Disciplina: " << discInfo << " | Turma: " << t->getCodigoTurma() << '\n';
+    }
 
-    std::string comentario; 
-    std::cout << "Comentario: "; 
-    std::getline(std::cin >> std::ws, comentario);
 
-    int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, turmaId, "TURMA", nota, comentario, getDataAtual());
-    std::cout << "Avaliacao de turma registrada.\n";
+    int turmaId;
+    bool idValido = false;
+    do {
+        std::cout << "Escolha ID da turma: "; 
+        std::cin >> turmaId;
+
+        for(const auto* t : turmasMinistradas) {
+            if (t->getId() == turmaId) {
+                idValido = true;
+                break;
+            }
+        }
+
+        if (!idValido) {
+            std::cerr << "ID de turma inva'lido ou voce nao ministra esta turma.\n";
+            continue;
+        }
+    } while (!idValido);
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        int nota[5]; 
+        std::cout << "Como voce avalia a turma? (0-5)\n";
+        std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
+
+        nota[0] = lerInteiroComExcecao("A turma e' participativa?: ");
+        nota[1] = lerInteiroComExcecao("\nVoce considera que os alunos se preparavam com antecendencia?: ");
+        nota[2] = lerInteiroComExcecao("\nVoce considera que a turma possui lacuna quanto aos pre'-requisitos da disciplina?: ");
+        nota[3] = lerInteiroComExcecao("\nOs alunos foram assi'duos?: ");
+        nota[4] = lerInteiroComExcecao("\nA turma se mostrou interessada em integrar os conhecimentos a sua formacao profissional?: ");
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::string comentario; 
+        std::cout << "Comentario: "; 
+        std::getline(std::cin >> std::ws, comentario);
+
+        int mediaNotas = 0;
+        for (int i=0; i<5; i++)
+            mediaNotas += nota[i];
+        mediaNotas /= 5.0;
+        int id = ProximoIdAvaliacoes(_avaliacoes);
+        _avaliacoes.emplace_back(id, turmaId, "TURMA", mediaNotas, comentario, getDataAtual());
+        std::cout << "Avaliacao de turma registrada.\n";
 }
 
 //LISTAGEM

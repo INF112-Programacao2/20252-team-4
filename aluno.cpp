@@ -10,3 +10,4 @@ Aluno::Aluno(int id, const std::string& nome, const std::string& matricula, cons
 : Usuario(id, nome, matricula, hashPronto, tipo, hashJaGerado) {}
 
 
+

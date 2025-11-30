@@ -50,9 +50,9 @@ public:
 
 
     // Avaliacao
-    void avaliarDisciplina();
-    void avaliarProfessor();
-    void avaliarTurma();
+    void avaliarDisciplina(Usuario* u);
+    void avaliarProfessor(Usuario *u);
+    void avaliarTurma(Usuario* u);
 
     // Visualizacao
     void listarAvaliacoes(const std::string &tipo);

@@ -7,7 +7,6 @@
 // Representa um aluno no sistema
 // Nao tem permissoes administrativas
 class Aluno : public Usuario { //herda da classe usuario e so' tem direito a login
-
   public:
     Aluno();
     Aluno(int id, const std::string &nome, const std::string &matricula, const std::string &senha);

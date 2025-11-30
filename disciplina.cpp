@@ -25,5 +25,9 @@ int Disciplina::getCoordenadorDiscId() const {
     return _coordenadorDiscId;
 }
 
+const std::vector<Turma*> Disciplina::getTurmasDisciplina() const {
+    return _turmasDisciplina;
+}
+
 
 

@@ -3,52 +3,76 @@
 
 #include "sistemaAvaliacao.hpp"
 #include "login.hpp"
+#include "usuario.hpp"
 
 using namespace std;
 
 // ===== FUNÇÕES AUXILIARES DE MENUS =====
 
-void menuAluno(SistemaAvaliacao &sistema) {
+bool feito = false;
+void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
+    feito = false;
     int opc;
     do {
         cout << "\n===== MENU ALUNO =====\n";
         cout << "1 - Avaliar disciplina\n";
         cout << "2 - Avaliar professor\n";
+        cout << "0 - Sair\n";
+        cout << "Escolha: ";
+        cin >> opc;
+
+        switch (opc) {
+            case 1: 
+                try {sistema.avaliarDisciplina(u); feito = true;}
+                catch (const char* e) {
+                    std::cerr << e;
+                }
+                break;
+
+            case 2: 
+                try {sistema.avaliarProfessor(u); feito = true;}
+                catch (const char* e) {
+                    std::cerr << e;
+                }
+                break;
+            case 0: cout << "Saindo...\n"; feito = true; break;
+            default: cout << "Opcao invalida!\n";
+        }
+    } while (!feito);
+}
+
+void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
+    feito = false;
+    int opc;
+    do {
+        cout << "\n===== MENU PROFESSOR =====\n";
+        cout << "1 - Ver avaliacoes da minha disciplina\n";
+        cout << "2 - Ver avaliacoes das minhas turmas\n";
         cout << "3 - Avaliar turma\n";
         cout << "0 - Sair\n";
         cout << "Escolha: ";
         cin >> opc;
 
         switch (opc) {
-            case 1: sistema.avaliarDisciplina(); break;
-            case 2: sistema.avaliarProfessor(); break;
-            case 3: sistema.avaliarTurma(); break;
-            case 0: cout << "Saindo...\n"; break;
+            case 1: sistema.listarAvaliacoes("DISCIPLINA"); feito = true; break;
+            case 2: sistema.listarAvaliacoes("TURMA"); feito = true; break;
+            case 3: 
+                try {
+                    sistema.avaliarTurma(u);
+                    feito = true;
+                }
+                catch (const char* e) {
+                    std::cerr << e;
+                }
+                break;
+            case 0: cout << "Saindo...\n"; feito = true; break;
             default: cout << "Opcao invalida!\n";
         }
-    } while (opc != 0);
+    } while (!feito);
 }
 
-void menuProfessor(SistemaAvaliacao &sistema) {
-    int opc;
-    do {
-        cout << "\n===== MENU PROFESSOR =====\n";
-        cout << "1 - Ver avaliacoes da minha disciplina\n";
-        cout << "2 - Ver avaliacoes das minhas turmas\n";
-        cout << "0 - Sair\n";
-        cout << "Escolha: ";
-        cin >> opc;
-
-        switch (opc) {
-            case 1: sistema.listarAvaliacoes("DISCIPLINA"); break;
-            case 2: sistema.listarAvaliacoes("TURMA"); break;
-            case 0: cout << "Saindo...\n"; break;
-            default: cout << "Opcao invalida!\n";
-        }
-    } while (opc != 0);
-}
-
-void menuCoordDisciplina(SistemaAvaliacao &sistema) {
+void menuCoordDisciplina(SistemaAvaliacao &sistema, Usuario* u) {
+    feito = false;
     int opc;
     do {
         cout << "\n===== MENU COORDENADOR DE DISCIPLINA =====\n";
@@ -65,9 +89,9 @@ void menuCoordDisciplina(SistemaAvaliacao &sistema) {
     } while (opc != 0);
 }
 
-void menuCoordCurso(SistemaAvaliacao &sistema) {
+void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
+    feito = false;
     int opc;
-    bool feito = false;
     do {
         cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
         cout << "1 - Cadastrar usuario\n";
@@ -89,7 +113,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema) {
             }
             case 2: sistema.cadastrarDisciplina(); feito = true; break;
             case 3: 
-                try {sistema.cadastrarTurma();}
+                try {sistema.cadastrarTurma(); feito = true;}
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
@@ -129,10 +153,10 @@ int main() {
         cout << "\nBem-vindo, " << u->getNome() << " (" << u->getTipo() << ")\n";
 
         // Redireciona para o menu apropriado
-        if (u->getTipo() == "ALUNO") menuAluno(sistema);
-        else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema);
-        else if (u->getTipo() == "COORDENADOR_DISCIPLINA") menuCoordDisciplina(sistema);
-        else if (u->getTipo() == "COORDENADOR_DO_CURSO") menuCoordCurso(sistema);
+        if (u->getTipo() == "ALUNO") menuAluno(sistema, u);
+        else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema, u);
+        else if (u->getTipo() == "COORDENADOR_DISCIPLINA") menuCoordDisciplina(sistema, u);
+        else if (u->getTipo() == "COORDENADOR_DO_CURSO") menuCoordCurso(sistema, u);
 
         // Salva tudo ao sair do menu
         sistema.salvarTudo();

@@ -1,9 +1,10 @@
 #ifndef USUARIO_HPP
 #define USUARIO_HPP
 
-#include<vector>
 #include <string>
+#include <vector>
 #include "picosha2.hpp"
+#include "turma.hpp"
 
 
 //Classe base para todos os usuários (aluno, professor, coordenador ..)
@@ -15,7 +16,8 @@ protected:
     std::string _matricula;
     std::string senha_hash;
     std::string _tipo;   // "ALUNO", "PROFESSOR", "COORDENADOR_DISCIPLINA", "COORDENADOR_DO_CURSO"
-    std::vector<Turma*> _turmasMatriculadas;
+    std::vector<Turma*> _minhasDisciplinas;
+
 
 
 public:
@@ -35,7 +37,7 @@ public:
     std::string getNome() const;
     std::string getmatricula() const;
     std::string getTipo() const;
-    std::vector<Turma*> getTurmasMatriculadas() const;
+    const std::vector<Turma*> getMinhasDisciplinas() const;
 
     // Sera usada pelo gerenciadorDados para gravar no TXT
     std::string getHash() const ;

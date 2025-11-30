@@ -20,7 +20,7 @@
     std::string Usuario::getNome() const { return _nome; }
     std::string Usuario::getmatricula() const { return _matricula; }
     std::string Usuario::getTipo() const { return _tipo; }
-    std::vector<Turma*> Usuario::getTurmasMatriculadas() const{return _turmasMatriculadas;}
+    const std::vector<Turma*> Usuario::getMinhasDisciplinas() const {return _minhasDisciplinas;}
 
     
     // Sera usada pelo gerenciadorDados para gravar no TXT

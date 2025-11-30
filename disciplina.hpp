@@ -2,6 +2,8 @@
 #define DISCIPLINA_HPP
 
 #include <string>
+#include <vector>
+#include "turma.hpp"
 
 // Objeto basico da avaliacao.
 // Referencia professor e coordenador.
@@ -12,7 +14,7 @@ private:
     std::string _nome;
     int _professorId;
     int _coordenadorDiscId;
-
+    std::vector<Turma*> _turmasDisciplina;
 public:
     Disciplina();
 
@@ -23,6 +25,7 @@ public:
     std::string getNome() const;
     int getProfessorId() const;
     int getCoordenadorDiscId() const;
+    const std::vector<Turma*> getTurmasDisciplina() const;
 };
 
 #endif
