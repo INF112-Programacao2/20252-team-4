@@ -113,11 +113,41 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
     std::string codigo, nome;
     int profId, coordId;
-    // bool codigoValido = false; FAZER O TRATAMENTO DE EXCECAO (VERIFICAR SE O CODIGO DIGITADO NAO CORRESPONDE A NENHUMA OUTRA DISCIPLINA JA' CADASTRADA).
-    // ABAIXOOOOOOOO!!!!!
+    
+    //Tratamento de excecao para o codigo da disciplina
     while (true) {
         std::cout << "Codigo da disciplina (ex: INF112): ";
-        std::cin >> codigo;
+        
+        if (!(std::cin >> codigo)) {
+            std::cerr << "Erro na leitura do codigo.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            continue;
+        }
+
+        if (codigo.length() != 6 || codigo.substr(0, 3) != "INF") {
+            std::cerr << "ERRO: O codigo da disciplina deve ter 6 caracteres, começando com 'INF' (em maiusculas) e seguido por tres numeros (ex: INF112). Tente novamente.\n";
+            continue;
+        }
+        
+        int numCodigo;
+        try {
+            std::string numStr = codigo.substr(3); 
+            numCodigo = std::stoi(numStr);
+
+            if (numCodigo =< 100 || numCodigo => 999) {
+                std::cerr << "ERRO: Os tres numeros do codigo (depois de 'INF') devem estar entre 100 e 999. Tente novamente.\n";
+                continue;
+            }
+        }
+        catch (const std::invalid_argument&) {
+            std::cerr << "ERRO: Os caracteres apos 'INF' devem ser numeros validos. Tente novamente.\n";
+            continue; 
+        } 
+        catch (const std::out_of_range&) {
+            std::cerr << "ERRO: Numero fora do intervalo. Tente novamente.\n";
+            continue; 
+        }
 
         bool codigoExiste = false;
         for (const auto &d : _disciplinas) {
@@ -130,21 +160,47 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         if (codigoExiste) {
             std::cerr << "ERRO: Codigo de disciplina '" << codigo << "' ja' cadastrado. Tente outro.\n";
             continue; 
-        } 
-        else {
-            // Código é válido e único, sai do loop
-            break; }
+        } else {
+            break; 
+        }
+    }
+    
+    //Tratamento de excecao para o nome de disciplina
+    while (true) {
+        std::cout << "Nome da disciplina: ";
+        std::getline(std::cin >> std::ws, nome);
+
+        if (nome.empty()) {
+            std::cerr << "ERRO: O nome da disciplina nao pode ser vazio. Tente novamente.\n";
+            continue;
+        }
+        
+        bool nomeExiste = false;
+        for (const auto &d : _disciplinas) {
+            if (d.getNome() == nome) {
+                nomeExiste = true;
+                break;
+            }
+        }
+
+        if (nomeExiste) {
+            std::cerr << "ERRO: Nome de disciplina '" << nome << "' ja' cadastrado. Tente outro.\n";
+            continue;
+        } else {
+            break;
+        }
     }
 
-    std::cout << "Nome da disciplina: ";
-    std::getline(std::cin >> std::ws, nome);
-
     std::cout << "Professores disponiveis para coordenador:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DO_CURSO")
-        std::cout << u->getId() << " - " << u->getNome() << '\n';
+    for (auto u : _usuarios) {
+        std::string tipo = u->getTipo();
+        if (tipo == "PROFESSOR" || tipo == "COORDENADOR_DO_CURSO") {
+            std::cout << u->getId() << " - " << u->getNome() << '\n';
+        }
+    }
 
-        std::cout << "Escolha o ID do professor da disciplina: ";
-        std::cin >> coordId;
+    std::cout << "Escolha o ID do professor da disciplina: ";
+    std::cin >> coordId;
 
     int id = ProximoIdDisciplinas(_disciplinas);
     _disciplinas.emplace_back(id, codigo, nome, profId, coordId);
