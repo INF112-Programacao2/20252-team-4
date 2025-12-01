@@ -4,17 +4,16 @@
 #include <iostream>
 #include <filesystem>
 
-// helper: split line by delimiter
-static std::vector<std::string> splitLine(const std::string &line, char delim=';') {
-    std::vector<std::string> parts;
-    std::stringstream ss(line);
-    std::string item;
-    while (std::getline(ss, item, delim)) parts.push_back(item);
-    return parts;
+
+static std::vector<std::string> dividirLinha(const std::string &linha, char delim=';') {
+    std::vector<std::string> partes;
+    std::stringstream fluxo(linha);
+    std::string campo;
+    while (std::getline(fluxo, campo, delim)) partes.push_back(campo);
+    return partes;
 }
 
 GerenciadorDados::GerenciadorDados() {
-    // assegura que a pasta data exista
     std::filesystem::create_directories("data");
 }
 
@@ -22,31 +21,27 @@ GerenciadorDados::~GerenciadorDados() {}
 
 //USUARIOS
 void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
-    std::ifstream in("data/usuarios.txt");
-    if (!in.is_open()) {
+    std::ifstream arquivoEntrada("data/usuarios.txt");
+    if (!arquivoEntrada.is_open()) {
         std::cout << "Nenhum arquivo de usuarios encontrado. Criando novo..." << std::endl;
         return;
     }
 
     std::string linha;
-    while (std::getline(in, linha)) {
+    while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
 
-        std::stringstream ss(linha);
-        std::string idStr, nome, matricula, hash, tipo;
+        std::stringstream fluxo(linha);
+        std::string idTexto, nome, matricula, hash, tipo;
 
-        std::getline(ss, idStr, ';');
-        std::getline(ss, nome, ';');
-        std::getline(ss, matricula, ';');
-        std::getline(ss, hash, ';');
-        std::getline(ss, tipo, ';');
+        std::getline(fluxo, idTexto, ';');
+        std::getline(fluxo, nome, ';');
+        std::getline(fluxo, matricula, ';');
+        std::getline(fluxo, hash, ';');
+        std::getline(fluxo, tipo, ';');
 
-        int id = std::stoi(idStr);
+        int id = std::stoi(idTexto);
         Usuario* u= nullptr;
-        
-
-      
-        // Instanciar com o construtor de HASH
        
         if (tipo == "ALUNO") {
             u = new Aluno(id, nome, matricula, hash, tipo, true);
@@ -68,141 +63,160 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
         usuarios.push_back(u);
     }
 
-    in.close();
+    arquivoEntrada.close();
 }
 
 void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
-    std::ofstream out("data/usuarios.txt", std::ios::trunc);
-    if (!out.is_open()) {
+    std::ofstream arquivoSaida("data/usuarios.txt", std::ios::trunc);
+
+    if (!arquivoSaida.is_open()) {
         std::cerr << "Erro ao abrir usuarios.txt para escrita\n";
         return;
     }
+
     for (auto u : lista) {
-        out << u->getId() << ";"
-        << u->getNome() << ";"
-        << u->getmatricula() << ";"
-        << u->getHash() << ";"    
-        << u->getTipo() << "\n";
+        arquivoSaida << u->getId() << ";" << u->getNome() << ";" << u->getmatricula() << ";" << u->getHash() << ";" << u->getTipo() << "\n";
             
     }
-    out.close();
+    arquivoSaida.close();
 }
+
 
 // ----------------- DISCIPLINAS -----------------
 std::vector<Disciplina> GerenciadorDados::carregarDisciplinas() {
-    std::vector<Disciplina> res;
-    std::ifstream in("data/disciplinas.txt");
-    if (!in.is_open()) {
-        std::ofstream out("data/disciplinas.txt", std::ios::app);
-        out.close();
-        return res;
+
+    std::vector<Disciplina> disciplinas;
+    std::ifstream arquivoEntrada("data/disciplinas.txt");
+
+    if (!arquivoEntrada.is_open()) {
+        std::ofstream arquivoSaida("data/disciplinas.txt", std::ios::app);
+        arquivoSaida.close();
+        return disciplinas;
     }
+
     std::string linha;
-    while (std::getline(in, linha)) {
+    while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
-        auto campos = splitLine(linha, ';');
+
+        auto campos = dividirLinha(linha, ';');
         if (campos.size() < 5) continue;
+
         int id = std::stoi(campos[0]);
         std::string codigo = campos[1];
         std::string nome = campos[2];
         int professorId = std::stoi(campos[3]);
         int coordDiscId = std::stoi(campos[4]);
-        res.emplace_back(id, codigo, nome, professorId, coordDiscId);
+        disciplinas.emplace_back(id, codigo, nome, professorId, coordDiscId);
     }
-    in.close();
-    return res;
+    arquivoEntrada.close();
+    return disciplinas;
 }
 
 void GerenciadorDados::salvarDisciplinas(const std::vector<Disciplina>& lista) {
-    std::ofstream out("data/disciplinas.txt", std::ios::trunc);
-    if (!out.is_open()) {
+
+    std::ofstream arquivoSaida("data/disciplinas.txt", std::ios::trunc);
+    if (!arquivoSaida.is_open()) {
         std::cerr << "Erro ao abrir disciplinas.txt\n";
         return;
     }
+
     for (const auto &d : lista) {
-        out << d.getId() << ';' << d.getCodigo() << ';' << d.getNome() << ';' << d.getProfessorId() << ';' << d.getCoordenadorDiscId() << '\n';
+        arquivoSaida << d.getId() << ';' << d.getCodigo() << ';' << d.getNome() << ';' << d.getProfessorId() << ';' << d.getCoordenadorDiscId() << '\n';
     }
-    out.close();
+
+    arquivoSaida.close();
 }
+
+
 
 // ----------------- TURMAS -----------------
 std::vector<Turma> GerenciadorDados::carregarTurmas() {
     std::vector<Turma> turma;
-    std::ifstream in("data/turmas.txt");
-    if (!in.is_open()) {
-        std::ofstream out("data/turmas.txt", std::ios::app);
-        out.close();
+    std::ifstream arquivoEntrada("data/turmas.txt");
+
+    if (!arquivoEntrada.is_open()) {
+        std::ofstream arquivoSaida("data/turmas.txt", std::ios::app);
+        arquivoSaida.close();
         return turma;
     }
+
     std::string linha;
-    while (std::getline(in, linha)) {
+    while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
-        auto campos = splitLine(linha, ';');
+
+        auto campos = dividirLinha(linha, ';');
         if (campos.size() < 4) continue;
+
         int id = std::stoi(campos[0]);
         int discId = std::stoi(campos[1]);
         std::string codigo = campos[2];
         int profId = std::stoi(campos[3]);
+
         turma.emplace_back(id, discId, codigo, profId);
     }
-    in.close();
+
+    arquivoEntrada.close();
     return turma;
 }
 
 void GerenciadorDados::salvarTurmas(const std::vector<Turma>& lista) {
-    std::ofstream out("data/turmas.txt", std::ios::trunc);
-    if (!out.is_open()) {
+    std::ofstream arquivoSaida("data/turmas.txt", std::ios::trunc);
+    if (!arquivoSaida.is_open()) {
         std::cerr << "Erro ao abrir turmas.txt\n";
         return;
     }
+
     for (const auto &t : lista) {
-        out << t.getId() << ';'
-            << t.getDisciplinaId() << ';'
-            << t.getCodigoTurma() << ';'
-            << t.getProfessorId() << '\n';
+        arquivoSaida << t.getId() << ';' << t.getDisciplinaId() << ';' << t.getCodigoTurma() << ';' << t.getProfessorId() << '\n';
     }
-    out.close();
+    arquivoSaida.close();
 }
+
+
 
 // ----------------- AVALIAÇÕES -----------------
 std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
-    std::vector<Avaliacao> res;
-    std::ifstream in("data/avaliacoes.txt");
-    if (!in.is_open()) {
-        std::ofstream out("data/avaliacoes.txt", std::ios::app);
-        out.close();
-        return res;
+    std::vector<Avaliacao> avaliacoes;
+    std::ifstream arquivoEntrada("data/avaliacoes.txt");
+
+    if (!arquivoEntrada.is_open()) {
+        std::ofstream arquivoSaida("data/avaliacoes.txt", std::ios::app);
+        arquivoSaida.close();
+        return avaliacoes;
     }
+
     std::string linha;
-    while (std::getline(in, linha)) {
+    while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
-        auto campos = splitLine(linha, ';');
+
+        auto campos = dividirLinha(linha, ';');
         if (campos.size() < 5) continue;
+
         int id = std::stoi(campos[0]);
         int alvoId = std::stoi(campos[1]);
         std::string tipo = campos[2];
         int nota = std::stoi(campos[3]);
         std::string comentario = campos[4];
         std::string data = campos[5];
-        res.emplace_back(id, alvoId, tipo, nota, comentario, data);
+
+        avaliacoes.emplace_back(id, alvoId, tipo, nota, comentario, data);
     }
-    in.close();
-    return res;
+
+    arquivoEntrada.close();
+    return avaliacoes;
 }
 
+
+
 void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
-    std::ofstream out("data/avaliacoes.txt", std::ios::trunc);
-    if (!out.is_open()) {
+    std::ofstream arquivoSaida("data/avaliacoes.txt", std::ios::trunc);
+    if (!arquivoSaida.is_open()) {
         std::cerr << "Erro ao abrir data/avaliacoes.txt\n";
         return;
     }
+
     for (const auto &a : lista) {
-        out << a.getId() << ';'
-            << a.getAlvoId() << ';'
-            << a.getTipo() << ';'
-            << a.getNota() << ';'
-            << a.getComentario() << ';' 
-            << getDataAtual() << '\n';
+        arquivoSaida << a.getId() << ';' << a.getAlvoId() << ';' << a.getTipo() << ';' << a.getNota() << ';' << a.getComentario() << ';'  << getDataAtual() << '\n';
     }
-    out.close();
+    arquivoSaida.close();
 }
