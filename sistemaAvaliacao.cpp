@@ -89,7 +89,9 @@ std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
 // CADASTROS
 
 void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
-
+    if (tipo != 1 || tipo != 2) {
+        throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
+    }
     std::string nome, matricula, senha;
     std::cout << "Nome: ";
     std::getline(std::cin >> std::ws, nome); //usamos std::ws para descartar espaco em branco, quebra de linha e tabulacao
@@ -102,9 +104,7 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
     Usuario* novo = nullptr;
     if (tipo == 1) novo = new Aluno(id, nome, matricula, senha);
     else if (tipo == 2) novo = new Professor(id, nome, matricula, senha);
-    else {
-        throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor)\n";                
-    }
+
     _usuarios.push_back(novo);
     std::cout << "Usuario cadastrado com ID: " << id << "\n";
 }
@@ -120,11 +120,11 @@ void SistemaAvaliacao::cadastrarDisciplina() {
     std::cout << "Nome da disciplina: ";
     std::getline(std::cin >> std::ws, nome);
 
-    std::cout << "Coordenadores de disciplina disponiveis:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "COORDENADOR_DISCIPLINA")
+    std::cout << "Professores disponiveis para coordenador:\n";
+    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
 
-        std::cout << "Escolha o ID do coordenador da disciplina: ";
+        std::cout << "Escolha o ID do professor da disciplina: ";
         std::cin >> coordId;
 
     int id = ProximoIdDisciplinas(_disciplinas);
