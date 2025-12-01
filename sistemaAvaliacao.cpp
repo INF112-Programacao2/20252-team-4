@@ -88,7 +88,7 @@ std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
 
 // CADASTROS
 
-void SistemaAvaliacao::cadastrarUsuario(const std::string &tipo) {
+void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
 
     std::string nome, matricula, senha;
     std::cout << "Nome: ";
@@ -99,18 +99,12 @@ void SistemaAvaliacao::cadastrarUsuario(const std::string &tipo) {
     std::cin >> senha;
 
     int id = ProximoIdUsuarios(_usuarios);
-
     Usuario* novo = nullptr;
-
-        if (tipo == "ALUNO") novo = new Aluno(id, nome, matricula, senha);
-        else if (tipo == "PROFESSOR") novo = new Professor(id, nome, matricula, senha);
-        else if (tipo == "COORDENADOR_DISCIPLINA") novo = new CoordenadorDisciplina(id, nome, matricula, senha);
-        else if (tipo == "COORDENADOR_DO_CURSO") novo = new CoordenadorCurso(id, nome, matricula, senha);
-        else {
-            std::cerr << "ERRO: Voce nao se encaixa em nenhum tipo de usuario dessa organizacao.\n";
-            return;
+    if (tipo == 1) novo = new Aluno(id, nome, matricula, senha);
+    else if (tipo == 2) novo = new Professor(id, nome, matricula, senha);
+    else {
+        throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor)\n";                
     }
-
     _usuarios.push_back(novo);
     std::cout << "Usuario cadastrado com ID: " << id << "\n";
 }

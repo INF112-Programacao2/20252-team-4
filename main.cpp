@@ -104,11 +104,18 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
 
         switch (opc) {
             case 1: {
-                string tipo;
-                cout << "Tipo de usuario (ALUNO, PROFESSOR, COORDENADOR_DISCIPLINA, COORDENADOR_DO_CURSO): ";
+                int tipo;
+                cout << "Escolha o tipo de usuario:\n";
+                cout << "1 - Aluno\n";
+                cout << "2 - Professor\n";
                 cin >> tipo;
-                sistema.cadastrarUsuario(tipo);
-                feito = true;
+                try {
+                    sistema.cadastrarUsuario(tipo);
+                    feito = true;
+                }
+                catch (const char* e) {
+                    std::cerr << e << std::endl;
+                }
                 break;
             }
             case 2: sistema.cadastrarDisciplina(); feito = true; break;

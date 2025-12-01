@@ -43,7 +43,7 @@ public:
     std::vector<Usuario*>& getUsuarios();
 
     // Funcoes de cadastro
-    void cadastrarUsuario(const std::string &tipo);
+    void cadastrarUsuario(const int &tipo);
     void cadastrarDisciplina();
     void cadastrarTurma();
 
