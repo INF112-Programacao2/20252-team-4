@@ -92,18 +92,54 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
     if (tipo != 1 && tipo != 2) {
         throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
     }
-    std::string nome, matricula, senha;
+    std::string nome, email, senha;
     std::cout << "Nome: ";
     std::getline(std::cin >> std::ws, nome); //usamos std::ws para descartar espaco em branco, quebra de linha e tabulacao
-    std::cout << "matricula: ";
-    std::cin >> matricula;
+
+    const std::string validarEmail = "@ufv.br";
+    const size_t tamanhoEmail = validarEmail.length();
+
+    while (true) {
+        std::cout << "email: ";
+        
+        if (!(std::cin >> email)) {
+            std::cerr << "Erro na leitura do email.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        //Verificar formato do email
+        if (email.length() < tamanhoEmail || 
+            email.substr(email.length() - tamanhoEmail) != validarEmail ||
+            email.length() == tamanhoEmail) {
+            std::cerr << "ERRO: O e-mail deve ser do dominio '@ufv.br'. Tente novamente.\n";
+            continue;
+        }
+
+        //Verificar se email e' repetido
+        bool emailExiste = false;
+        for (const auto* u : _usuarios) {
+            if (u->getemail() == email) {
+                emailExiste = true;
+                break;
+            }
+        }
+
+        if (emailExiste) {
+            std::cerr << "ERRO: Usuario " << email << " ja esta cadastrado no sistema. Tente novamente.\n";
+            continue;
+        }
+        break;
+    }
+
     std::cout << "Senha: ";
     std::cin >> senha;
 
     int id = ProximoIdUsuarios(_usuarios);
     Usuario* novo = nullptr;
-    if (tipo == 1) novo = new Aluno(id, nome, matricula, senha);
-    else if (tipo == 2) novo = new Professor(id, nome, matricula, senha);
+    if (tipo == 1) novo = new Aluno(id, nome, email, senha);
+    else if (tipo == 2) novo = new Professor(id, nome, email, senha);
 
     _usuarios.push_back(novo);
     std::cout << "Usuario cadastrado com ID: " << id << "\n";
@@ -241,14 +277,14 @@ void SistemaAvaliacao::cadastrarTurma() {
 
 // AVALIACOES
 void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
-    std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
+    std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
 
-    if (turmasMatriculadas.empty()) {
-        throw "Voce nao esta matriculado em nenhuma disciplina. Nenhuma disciplina disponivel para avaliacao.\n";
+    if (turmasemaildas.empty()) {
+        throw "Voce nao esta emaildo em nenhuma disciplina. Nenhuma disciplina disponivel para avaliacao.\n";
     }
 
     std::vector<int> disciplinasIds;
-    for (const auto* t : turmasMatriculadas) {
+    for (const auto* t : turmasemaildas) {
         disciplinasIds.push_back(t->getDisciplinaId()); // Turma sabe sua Disciplina
     }
 
@@ -257,7 +293,7 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     //disciplinasIds.erase(std::unique(disciplinasIds.begin(), disciplinasIds.end()), disciplinasIds.end());
 
     // 4. Listar apenas as disciplinas que o aluno está cursando
-    std::cout << "Disciplinas matriculadas disponiveis para avaliacao:\n";
+    std::cout << "Disciplinas emaildas disponiveis para avaliacao:\n";
     std::vector<Disciplina*> disciplinasDisponiveis;
     for (int discId : disciplinasIds) {
         for (auto &d : _disciplinas) {
@@ -316,14 +352,14 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
 }
 
 void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
-    std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
+    std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
 
-    if (turmasMatriculadas.empty()) {
-        throw "Voce nao esta' matriculado em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
+    if (turmasemaildas.empty()) {
+        throw "Voce nao esta' emaildo em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
     }
 
     std::vector<int> professoresIds;
-    for (const auto* t : turmasMatriculadas) {
+    for (const auto* t : turmasemaildas) {
         int profId = t->getProfessorId(); // Turma sabe quem é o professor
         if (profId > 0) { 
             professoresIds.push_back(profId); 

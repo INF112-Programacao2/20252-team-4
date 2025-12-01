@@ -13,7 +13,7 @@ class Usuario {
 protected:
     int _id;
     std::string _nome;
-    std::string _matricula;
+    std::string _email;
     std::string senha_hash;
     std::string _tipo;   // "ALUNO", "PROFESSOR", "COORDENADOR_DISCIPLINA", "COORDENADOR_DO_CURSO"
     std::vector<Turma*> _minhasDisciplinas;
@@ -23,11 +23,11 @@ protected:
 public:
     Usuario() = default;
 
-    Usuario(int id, const std::string &_nome, const std::string &_matricula,
+    Usuario(int id, const std::string &_nome, const std::string &_email,
          const std::string &_senha, const std::string &_tipo);
 
     // Construtor usado APENAS quando carregamos do TXT
-    Usuario(int id, const std::string& nome, const std::string& matricula,
+    Usuario(int id, const std::string& nome, const std::string& email,
         const std::string& hashPronto, const std::string& tipo,
         bool hashJaGerado);
 
@@ -35,7 +35,7 @@ public:
 
     int getId() const;
     std::string getNome() const;
-    std::string getmatricula() const;
+    std::string getemail() const;
     std::string getTipo() const;
     const std::vector<Turma*> getMinhasDisciplinas() const;
 
