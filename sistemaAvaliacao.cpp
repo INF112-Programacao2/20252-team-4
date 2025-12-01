@@ -89,7 +89,7 @@ std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
 // CADASTROS
 
 void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
-    if (tipo != 1 || tipo != 2) {
+    if (tipo != 1 && tipo != 2) {
         throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
     }
     std::string nome, matricula, senha;
@@ -113,7 +113,8 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
     std::string codigo, nome;
     int profId, coordId;
-
+    // bool codigoValido = false; FAZER O TRATAMENTO DE EXCECAO (VERIFICAR SE O CODIGO DIGITADO NAO CORRESPONDE A NENHUMA OUTRA DISCIPLINA JA' CADASTRADA).
+    // ABAIXOOOOOOOO!!!!!
     std::cout << "Codigo da disciplina (ex: INF112): ";
     std::cin >> codigo;
 

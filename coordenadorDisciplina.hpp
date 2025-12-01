@@ -1,13 +1,13 @@
 #ifndef COORDDISCIPLINA_HPP
 #define COORDDISCIPLINA_HPP
 
-#include "usuario.hpp"
+#include "professor.hpp"
 #include "disciplina.hpp"
 #include <vector>
 
 // Coordenador de disciplina.
 // Pode ver avaliacoes da disciplina especifica.
-class CoordenadorDisciplina : public Usuario {
+class CoordenadorDisciplina : public Professor {
 private:
     Disciplina* _disciplinaCoordenada;    
 public:

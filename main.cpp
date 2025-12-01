@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 
 #include "sistemaAvaliacao.hpp"
 #include "login.hpp"
@@ -101,22 +102,36 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
         cout << "0 - Sair\n";
         cout << "Escolha: ";
         cin >> opc;
-        std::cout << "\n";
         switch (opc) {
             case 1: {
                 do {
-                int tipo;
-                    cout << "Escolha o tipo de usuario:\n";
-                    cout << "1 - Aluno\n";
-                    cout << "2 - Professor\n";
-                    cin >> tipo;
+                    std::cout << "\n";
+                    int tipo;
+                    std::cout << "Escolha o tipo de usuario:\n";
+                    std::cout << "1 - Aluno\n";
+                    std::cout << "2 - Professor\n";
+                    std::cout << "Escolha: ";
+                    
+                    if (!(std::cin >> tipo)) { // Verifica se a leitura falhou
+                        std::cerr << "Caractere invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
+                        
+                        // 1. Limpa o estado de erro
+                        std::cin.clear(); 
+                        
+                        // 2. Descarta o buffer (MAX_SIZE é um valor grande para garantir que tudo seja lido, \n é o delimitador)
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+                        
+                        feito = false; // Repete o loop
+                        continue; // Vai para a próxima iteração do 'do-while'
+                    }
+
                     try {
                         sistema.cadastrarUsuario(tipo);
                         feito = true;
                     }
                     catch (const char* e) {
                         std::cerr << e << std::endl;
-                        feito = false;
+                        feito = false; // Repete o loop se o tipo for (ex: 3)
                     }
                 } while (!feito);
                 break;
