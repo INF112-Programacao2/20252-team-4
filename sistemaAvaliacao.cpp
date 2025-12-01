@@ -135,7 +135,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
             std::string numStr = codigo.substr(3); 
             numCodigo = std::stoi(numStr);
 
-            if (numCodigo =< 100 || numCodigo => 999) {
+            if (numCodigo <= 100 || numCodigo >= 999) {
                 std::cerr << "ERRO: Os tres numeros do codigo (depois de 'INF') devem estar entre 100 e 999. Tente novamente.\n";
                 continue;
             }
