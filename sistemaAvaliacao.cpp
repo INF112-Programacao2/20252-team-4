@@ -56,30 +56,30 @@ SistemaAvaliacao::~SistemaAvaliacao() {
 
 // gerar novo id para cada tipo
 
-    int SistemaAvaliacao::ProximoIdUsuarios(const std::vector<Usuario*> &v) {
-        
-        int ultimoId = 0;
-        for (auto u : v) if (u->getId() > ultimoId) ultimoId = u->getId();
-        return ultimoId + 1;
-    }
+int SistemaAvaliacao::ProximoIdUsuarios(const std::vector<Usuario*> &v) {
+    
+    int ultimoId = 0;
+    for (auto u : v) if (u->getId() > ultimoId) ultimoId = u->getId();
+    return ultimoId + 1;
+}
 
-    int SistemaAvaliacao::ProximoIdDisciplinas(const std::vector<Disciplina> &v) {
-        int ultimoId = 0;
-        for (auto &d : v) if (d.getId() > ultimoId) ultimoId = d.getId();
-        return ultimoId + 1;
-    }
+int SistemaAvaliacao::ProximoIdDisciplinas(const std::vector<Disciplina> &v) {
+    int ultimoId = 0;
+    for (auto &d : v) if (d.getId() > ultimoId) ultimoId = d.getId();
+    return ultimoId + 1;
+}
 
-    int SistemaAvaliacao::ProximoIdTurmas(const std::vector<Turma> &v) {
-        int ultimoId = 0;
-        for (auto &t : v) if (t.getId() > ultimoId) ultimoId = t.getId();
-        return ultimoId + 1;
-    }
+int SistemaAvaliacao::ProximoIdTurmas(const std::vector<Turma> &v) {
+    int ultimoId = 0;
+    for (auto &t : v) if (t.getId() > ultimoId) ultimoId = t.getId();
+    return ultimoId + 1;
+}
 
-    int SistemaAvaliacao::ProximoIdAvaliacoes(const std::vector<Avaliacao> &v) {
-        int ultimoId = 0;
-        for (auto &a : v) if (a.getId() > ultimoId) ultimoId = a.getId();
-        return ultimoId + 1;
-    }
+int SistemaAvaliacao::ProximoIdAvaliacoes(const std::vector<Avaliacao> &v) {
+    int ultimoId = 0;
+    for (auto &a : v) if (a.getId() > ultimoId) ultimoId = a.getId();
+    return ultimoId + 1;
+}
 
 // get
 std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
@@ -115,14 +115,32 @@ void SistemaAvaliacao::cadastrarDisciplina() {
     int profId, coordId;
     // bool codigoValido = false; FAZER O TRATAMENTO DE EXCECAO (VERIFICAR SE O CODIGO DIGITADO NAO CORRESPONDE A NENHUMA OUTRA DISCIPLINA JA' CADASTRADA).
     // ABAIXOOOOOOOO!!!!!
-    std::cout << "Codigo da disciplina (ex: INF112): ";
-    std::cin >> codigo;
+    while (true) {
+        std::cout << "Codigo da disciplina (ex: INF112): ";
+        std::cin >> codigo;
+
+        bool codigoExiste = false;
+        for (const auto &d : _disciplinas) {
+            if (d.getCodigo() == codigo) {
+                codigoExiste = true;
+                break;
+            }
+        }
+
+        if (codigoExiste) {
+            std::cerr << "ERRO: Codigo de disciplina '" << codigo << "' ja' cadastrado. Tente outro.\n";
+            continue; 
+        } 
+        else {
+            // Código é válido e único, sai do loop
+            break; }
+    }
 
     std::cout << "Nome da disciplina: ";
     std::getline(std::cin >> std::ws, nome);
 
     std::cout << "Professores disponiveis para coordenador:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR")
+    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DO_CURSO")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
 
         std::cout << "Escolha o ID do professor da disciplina: ";
@@ -155,7 +173,7 @@ void SistemaAvaliacao::cadastrarTurma() {
     std::cin >> codigoTurma;
 
     std::cout << "Professores disponiveis:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR")
+    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA" || u->getTipo() == "COORDENADOR_DO_CURSO")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
     std::cout << "Escolha ID do professor para a turma: ";
     std::cin >> professorId;

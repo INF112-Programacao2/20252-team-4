@@ -3,3 +3,4 @@
 3;INF123;TCC2;10;11
 4;INF110;Introducao a programacao;0;11
 5;INF450;Arquitetura de computadores;29466;10
+6;INF130;Teoria da Computacao;206;8
