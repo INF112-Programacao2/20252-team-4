@@ -106,3 +106,14 @@ alvoId;tipo;nota;comentario;data
 ```
 
 Nenhuma informação de identificação pessoal é salva nos arquivos de avaliações.
+
+---
+
+## Como Compilar e Executar
+
+No terminal do Vs code com a extensão do Makefile instalada, o usuário deve inserir:
+
+```
+make run
+```
+E irá compilar e inicializar o programa.
