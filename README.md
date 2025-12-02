@@ -109,7 +109,7 @@ Nenhuma informação de identificação pessoal é salva nos arquivos de avalia�
 
 ---
 
-## Como compilar 
+## Como Compilar e Executar
 
 No terminal do Vs code com a extensão do Makefile instalada, o usuário deve inserir:
 
