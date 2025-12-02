@@ -46,8 +46,7 @@ public:
     void cadastrarUsuario(const int &tipo);
     void cadastrarDisciplina();
     void cadastrarTurma();
-
-
+    void matricularAluno();
 
     // Avaliacao
     void avaliarDisciplina(Usuario* u);

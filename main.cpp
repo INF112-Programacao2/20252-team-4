@@ -102,15 +102,16 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
     int opc;
     do {
         std::cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
-        std::cout << "1 - Cadastrar usuario\n";
+        std::cout << "1 - Cadastrar usuario (Aluno/Professor)\n"; // Manter o cadastro em um sub-menu
         std::cout << "2 - Cadastrar disciplina\n";
         std::cout << "3 - Cadastrar turma\n";
-        std::cout << "4 - Ver avaliacoes gerais\n";
+        std::cout << "4 - Matricular aluno em turma\n"; // NOVA OPÇÃO PRINCIPAL
+        std::cout << "5 - Ver avaliacoes gerais\n";    // Opção 4 anterior
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
         switch (opc) {
-            case 1: {
+            case 1: { // Cadastrar Usuario (sub-menu mantido para escolha de tipo)
                 do {
                     feito = false;
                     std::cout << "\n";
@@ -127,7 +128,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                         // 1. Limpa o estado de erro
                         std::cin.clear(); 
                         
-                        // 2. Descarta o buffer (MAX_SIZE é um valor grande para garantir que tudo seja lido, \n é o delimitador)
+                        // 2. Descarta o buffer 
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
                         
                         continue; // Vai para a próxima iteração do 'do-while'
@@ -157,7 +158,13 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cerr << e << std::endl;
                 }
                 break;
-            case 4: sistema.listarAvaliacoes("GERAL"); menuFeito = true; break;
+            case 4: // Matricular Aluno em Turma (Nova posição)
+                try {sistema.matricularAluno(); menuFeito = true;}
+                catch (char const* e) {
+                    std::cerr << e << std::endl;
+                }
+                break;
+            case 5: sistema.listarAvaliacoes("GERAL"); menuFeito = true; break; // Antiga opção 4
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
             default: std::cout << "Opcao invalida!\n";
         }

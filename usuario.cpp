@@ -22,6 +22,7 @@
     std::string Usuario::getTipo() const { return _tipo; }
     const std::vector<Turma*> Usuario::getMinhasDisciplinas() const {return _minhasDisciplinas;}
 
+    void Usuario::addTurma(Turma* t) { _minhasDisciplinas.push_back(t); }
     
     // Sera usada pelo gerenciadorDados para gravar no TXT
     std::string Usuario::getHash() const { return senha_hash; }

@@ -275,6 +275,113 @@ void SistemaAvaliacao::cadastrarTurma() {
     std::cout << "Turma cadastrada (ID=" << id << ")\n";
 }
 
+void SistemaAvaliacao::matricularAluno() {
+    // 1. Verificar se há alunos e turmas
+    std::vector<Usuario*> alunos;
+    for(auto u : _usuarios) {
+        if (u->getTipo() == "ALUNO") {
+            alunos.push_back(u);
+        }
+    }
+    
+    if (alunos.empty()) {
+        std::cerr << "ERRO: Nenhum aluno cadastrado no sistema.\n";
+        return;
+    }
+
+    if (_turmas.empty()) {
+        std::cerr << "ERRO: Nenhuma turma cadastrada no sistema.\n";
+        return;
+    }
+
+    // 2. Escolher o aluno
+    std::cout << "\nAlunos disponi'veis:\n";
+    for(const auto* a : alunos) {
+        std::cout << "ID: " << a->getId() << " - " << a->getNome() << " (" << a->getemail() << ")\n";
+    }
+
+    int alunoId;
+    Usuario* alunoSelecionado = nullptr;
+    while(alunoSelecionado == nullptr) {
+        std::cout << "Escolha o ID do aluno para matricular: ";
+        if (!(std::cin >> alunoId)) {
+            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        for(auto a : alunos) {
+            if (a->getId() == alunoId) {
+                alunoSelecionado = a;
+                break;
+            }
+        }
+        if (alunoSelecionado == nullptr) {
+            std::cerr << "ERRO: ID de aluno inva'lido ou aluno na'o e' do tipo ALUNO. Tente novamente.\n";
+        }
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+    // 3. Escolher a turma
+    std::cout << "\nTurmas disponi'veis:\n";
+    std::vector<Turma*> turmasPtr; 
+    for(auto &t : _turmas) {
+        std::string discInfo = "Disciplina Desconhecida";
+        // Busca o código da disciplina para melhor visualização
+        for (auto &d : _disciplinas) {
+            if (d.getId() == t.getDisciplinaId()) {
+                discInfo = d.getCodigo();
+                break;
+            }
+        }
+        std::cout << t.getId() << " - Disciplina: " << discInfo << " | Turma: " << t.getCodigoTurma() << '\n';
+        turmasPtr.push_back(&t);
+    }
+
+    int turmaId;
+    Turma* turmaSelecionada = nullptr;
+    while(turmaSelecionada == nullptr) {
+        std::cout << "Escolha o ID da turma para matricular: ";
+        if (!(std::cin >> turmaId)) {
+            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+        
+        for(auto t : turmasPtr) {
+            if (t->getId() == turmaId) {
+                turmaSelecionada = t;
+                break;
+            }
+        }
+        if (turmaSelecionada == nullptr) {
+            std::cerr << "ERRO: ID de turma inva'lido. Tente novamente.\n";
+        }
+    }
+    
+    // 4. Checar se o aluno já está matriculado nessa turma
+    bool jaMatriculado = false;
+    for (const auto* t : alunoSelecionado->getMinhasDisciplinas()) {
+        if (t->getId() == turmaSelecionada->getId()) {
+            jaMatriculado = true;
+            break;
+        }
+    }
+
+    if (jaMatriculado) {
+        std::cout << "ERRO: O aluno " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
+        return;
+    }
+
+    // 5. Matricular o aluno (adicionar a turma ao vetor _minhasDisciplinas do aluno)
+    alunoSelecionado->addTurma(turmaSelecionada);
+
+    std::cout << "\nAluno " << alunoSelecionado->getNome() << " matriculado com sucesso na Turma " << turmaSelecionada->getCodigoTurma() << ".\n";
+}
+
 // AVALIACOES
 void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
@@ -508,7 +615,63 @@ void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
         std::cout << " Avaliacoes disponiveis : \n";
 
         for (auto &a : _avaliacoes) {
-            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << a.getAlvoId() << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            // Lógica para identificar e formatar as informações do alvo
+            std::string alvoInfo;
+            if (a.getTipo() == "TURMA") {
+                Turma* turma = nullptr;
+                for (auto &t : _turmas) {
+                    if (t.getId() == a.getAlvoId()) {
+                        turma = &t;
+                        break;
+                    }
+                }
+                if (turma) {
+                    Disciplina* disciplina = nullptr;
+                    for (auto &d : _disciplinas) {
+                        if (d.getId() == turma->getDisciplinaId()) {
+                            disciplina = &d;
+                            break;
+                        }
+                    }
+                    if (disciplina) {
+                        alvoInfo = disciplina->getCodigo() + " - Turma " + turma->getCodigoTurma();
+                    } else {
+                        alvoInfo = "Turma ID: " + std::to_string(a.getAlvoId()) + " (Disciplina Desconhecida)";
+                    }
+                } else {
+                     alvoInfo = "Turma ID Desconhecido: " + std::to_string(a.getAlvoId());
+                }
+            } else if (a.getTipo() == "DISCIPLINA") {
+                Disciplina* disciplina = nullptr;
+                for (auto &d : _disciplinas) {
+                    if (d.getId() == a.getAlvoId()) {
+                        disciplina = &d;
+                        break;
+                    }
+                }
+                if (disciplina) {
+                    alvoInfo = "Disciplina: " + disciplina->getCodigo() + " (" + disciplina->getNome() + ")";
+                } else {
+                    alvoInfo = "Disciplina ID Desconhecida: " + std::to_string(a.getAlvoId());
+                }
+            } else if (a.getTipo() == "PROFESSOR") {
+                Usuario* professor = nullptr;
+                for (auto *u : _usuarios) {
+                    if (u->getId() == a.getAlvoId() && (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA" || u->getTipo() == "COORDENADOR_DO_CURSO")) {
+                        professor = u;
+                        break;
+                    }
+                }
+                if (professor) {
+                    alvoInfo = "Professor: " + professor->getNome() + " (ID: " + std::to_string(a.getAlvoId()) + ")";
+                } else {
+                    alvoInfo = "Professor ID Desconhecido: " + std::to_string(a.getAlvoId());
+                }
+            } else {
+                 alvoInfo = "Alvo ID: " + std::to_string(a.getAlvoId());
+            }
+
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
         }
         return;
     }
@@ -517,7 +680,63 @@ void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
     std::cout << " Avaliacoes do tipo " << tipo << std::endl;
     for (auto &a : _avaliacoes) {
         if (a.getTipo() == tipo) {
-            std::cout << "ID: " << a.getId() << " |  Disciplina: "<< a.get << "- Turma: " << a.getAlvoId() << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            std::string alvoInfo;
+            
+            if (a.getTipo() == "TURMA") {
+                Turma* turma = nullptr;
+                for (auto &t : _turmas) {
+                    if (t.getId() == a.getAlvoId()) {
+                        turma = &t;
+                        break;
+                    }
+                }
+                if (turma) {
+                    Disciplina* disciplina = nullptr;
+                    for (auto &d : _disciplinas) {
+                        if (d.getId() == turma->getDisciplinaId()) {
+                            disciplina = &d;
+                            break;
+                        }
+                    }
+                    if (disciplina) {
+                        alvoInfo = disciplina->getCodigo() + " - Turma " + turma->getCodigoTurma();
+                    } else {
+                        alvoInfo = "Turma ID: " + std::to_string(a.getAlvoId()) + " (Disciplina Desconhecida)";
+                    }
+                } else {
+                     alvoInfo = "Turma ID Desconhecido: " + std::to_string(a.getAlvoId());
+                }
+            } else if (a.getTipo() == "DISCIPLINA") {
+                Disciplina* disciplina = nullptr;
+                for (auto &d : _disciplinas) {
+                    if (d.getId() == a.getAlvoId()) {
+                        disciplina = &d;
+                        break;
+                    }
+                }
+                if (disciplina) {
+                    alvoInfo = "Disciplina: " + disciplina->getCodigo() + " (" + disciplina->getNome() + ")";
+                } else {
+                    alvoInfo = "Disciplina ID Desconhecida: " + std::to_string(a.getAlvoId());
+                }
+            } else if (a.getTipo() == "PROFESSOR") {
+                Usuario* professor = nullptr;
+                for (auto *u : _usuarios) {
+                    if (u->getId() == a.getAlvoId() && (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA" || u->getTipo() == "COORDENADOR_DO_CURSO")) {
+                        professor = u;
+                        break;
+                    }
+                }
+                if (professor) {
+                    alvoInfo = "Professor: " + professor->getNome() + " (ID: " + std::to_string(a.getAlvoId()) + ")";
+                } else {
+                    alvoInfo = "Professor ID Desconhecido: " + std::to_string(a.getAlvoId());
+                }
+            } else {
+                 alvoInfo = "Alvo ID: " + std::to_string(a.getAlvoId());
+            }
+            
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
         }
     }
 }

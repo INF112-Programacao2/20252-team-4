@@ -39,6 +39,8 @@ public:
     std::string getTipo() const;
     const std::vector<Turma*> getMinhasDisciplinas() const;
 
+    void addTurma(Turma* t);
+
     // Sera usada pelo gerenciadorDados para gravar no TXT
     std::string getHash() const ;
 
