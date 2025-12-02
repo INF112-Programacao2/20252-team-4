@@ -49,6 +49,27 @@ SistemaAvaliacao::SistemaAvaliacao() {
     }
 }
 
+Disciplina* SistemaAvaliacao::getDisciplinaById(int id) {
+    for (auto &d : _disciplinas) {
+        if (d.getId() == id) return &d;
+    }
+    return nullptr;
+}
+
+Turma* SistemaAvaliacao::getTurmaById(int id) {
+    for (auto &t : _turmas) {
+        if (t.getId() == id) return &t;
+    }
+    return nullptr;
+}
+
+Usuario* SistemaAvaliacao::getUsuarioById(int id) {
+    for (auto *u : _usuarios) {
+        if (u->getId() == id) return u;
+    }
+    return nullptr;
+}
+
 // libera ponteiros de _usuarios
 SistemaAvaliacao::~SistemaAvaliacao() {
     for (auto u : _usuarios) delete u;
@@ -609,6 +630,233 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
 }
 
 //LISTAGEM
+// Implementação da listagem e filtragem avançada para Professores/Coordenadores (Pontos 1 e 2)
+void SistemaAvaliacao::visualizarAvaliacoesProfessor(Usuario* u) {
+    std::string tipoUsuario = u->getTipo();
+    int userId = u->getId();
+
+    std::vector<int> discIdsCoordenadas;
+    if (tipoUsuario == "COORDENADOR_DISCIPLINA") {
+        for (const auto& d : _disciplinas) {
+            if (d.getCoordenadorDiscId() == userId) {
+                discIdsCoordenadas.push_back(d.getId());
+            }
+        }
+    }
+
+    std::cout << "\n===== VISUALIZACAO DE AVALIACOES (" << (tipoUsuario == "COORDENADOR_DISCIPLINA" ? "COORDENADOR" : "PROFESSOR") << ") =====\n";
+    std::cout << std::fixed << std::setprecision(2);
+
+    int count = 0;
+    for (const auto& a : _avaliacoes) {
+        bool show = false;
+        std::string alvoInfo = "ID: " + std::to_string(a.getAlvoId());
+
+        if (tipoUsuario == "COORDENADOR_DISCIPLINA") {
+            // Ponto 1: Professor Coordenador (vê tudo envolvido com sua disciplina)
+            
+            if (a.getTipo() == "DISCIPLINA") {
+                if (std::find(discIdsCoordenadas.begin(), discIdsCoordenadas.end(), a.getAlvoId()) != discIdsCoordenadas.end()) {
+                    show = true;
+                }
+            } else if (a.getTipo() == "PROFESSOR") {
+                // Vê avaliações de professores que lecionam nas disciplinas que coordena
+                for (const auto& dId : discIdsCoordenadas) {
+                    Disciplina* d = getDisciplinaById(dId);
+                    if (d && d->getProfessorId() == a.getAlvoId()) {
+                        show = true;
+                        break;
+                    }
+                }
+            } else if (a.getTipo() == "TURMA") {
+                Turma* t = getTurmaById(a.getAlvoId());
+                if (t && std::find(discIdsCoordenadas.begin(), discIdsCoordenadas.end(), t->getDisciplinaId()) != discIdsCoordenadas.end()) {
+                    show = true;
+                }
+            }
+
+        } else if (tipoUsuario == "PROFESSOR") {
+            // Ponto 2: Professor Comum (vê avaliações destinadas a ele ou à sua disciplina)
+            
+            if (a.getTipo() == "PROFESSOR" && a.getAlvoId() == userId) {
+                show = true; // Avaliações destinadas a ele
+            } else if (a.getTipo() == "DISCIPLINA") {
+                Disciplina* d = getDisciplinaById(a.getAlvoId());
+                // Verifica se ele é o professor principal de alguma turma dessa disciplina
+                bool leciona = false;
+                for (const auto& t : _turmas) {
+                    if (t.getDisciplinaId() == a.getAlvoId() && t.getProfessorId() == userId) {
+                        leciona = true;
+                        break;
+                    }
+                }
+                if (leciona) {
+                    show = true; // Avaliações destinadas à disciplina que ele leciona
+                }
+            }
+        }
+        
+        // Se a avaliação deve ser exibida, formata a informação do alvo
+        if (show) {
+            count++;
+            if (a.getTipo() == "TURMA") {
+                Turma* t = getTurmaById(a.getAlvoId());
+                Disciplina* d = t ? getDisciplinaById(t->getDisciplinaId()) : nullptr;
+                alvoInfo = (d ? d->getCodigo() : "DESC.") + " - Turma " + (t ? t->getCodigoTurma() : "DESC.");
+            } else if (a.getTipo() == "DISCIPLINA") {
+                Disciplina* d = getDisciplinaById(a.getAlvoId());
+                alvoInfo = "Disciplina: " + (d ? d->getCodigo() : "DESC.");
+            } else if (a.getTipo() == "PROFESSOR") {
+                Usuario* p = getUsuarioById(a.getAlvoId());
+                alvoInfo = "Professor: " + (p ? p->getNome() : "DESC.");
+            }
+            
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+        }
+    }
+    if (count == 0) {
+        std::cout << "Nenhuma avaliacao encontrada com base nas suas credenciais.\n";
+    }
+}
+
+// Implementação do cálculo de médias para o Aluno (Ponto 3)
+void SistemaAvaliacao::visualizarMediasAluno(Usuario* u) {
+    if (u->getTipo() != "ALUNO") {
+        std::cerr << "ERRO: Funcionalidade restrita a alunos.\n";
+        return;
+    }
+
+    std::vector<Turma*> turmasAluno = u->getMinhasDisciplinas();
+    if (turmasAluno.empty()) {
+        std::cout << "Voce não está matriculado em nenhuma turma.\n";
+        return;
+    }
+
+    // Usar um mapa para garantir que cada professor/disciplina seja listado apenas uma vez
+    std::map<int, std::pair<std::string, std::vector<double>>> mediasPorProfessor; // ID -> {Nome/Codigo, Lista de Notas}
+    std::map<int, std::pair<std::string, std::vector<double>>> mediasPorDisciplina; // ID -> {Nome/Codigo, Lista de Notas}
+
+    for (const auto* turma : turmasAluno) {
+        int profId = turma->getProfessorId();
+        int discId = turma->getDisciplinaId();
+        Disciplina* disc = getDisciplinaById(discId);
+        Usuario* prof = getUsuarioById(profId);
+
+        // Processar Avaliações de PROFESSOR
+        if (prof) {
+            if (mediasPorProfessor.find(profId) == mediasPorProfessor.end()) {
+                mediasPorProfessor[profId].first = prof->getNome();
+            }
+        }
+
+        // Processar Avaliações de DISCIPLINA
+        if (disc) {
+            if (mediasPorDisciplina.find(discId) == mediasPorDisciplina.end()) {
+                mediasPorDisciplina[discId].first = disc->getCodigo();
+            }
+        }
+    }
+
+    // Coletar todas as notas
+    for (const auto& a : _avaliacoes) {
+        if (a.getTipo() == "PROFESSOR" && mediasPorProfessor.count(a.getAlvoId())) {
+            mediasPorProfessor[a.getAlvoId()].second.push_back(a.getNota());
+        } else if (a.getTipo() == "DISCIPLINA" && mediasPorDisciplina.count(a.getAlvoId())) {
+            mediasPorDisciplina[a.getAlvoId()].second.push_back(a.getNota());
+        }
+    }
+
+    std::cout << "\n===== SUAS MEDIAS DE AVALIAÇÃO (ALUNO) =====\n";
+    std::cout << std::fixed << std::setprecision(2);
+
+    // Exibir Médias de Professor
+    std::cout << "\n--- Media de Avaliacoes de Professores ---\n";
+    for (const auto& pair : mediasPorProfessor) {
+        if (!pair.second.second.empty()) {
+            double media = std::accumulate(pair.second.second.begin(), pair.second.second.end(), 0.0) / pair.second.second.size();
+            std::cout << "Professor: " << pair.second.first << " | Media: " << media << '\n';
+        } else {
+            std::cout << "Professor: " << pair.second.first << " | Media: N/A (Sem avaliacoes)\n";
+        }
+    }
+    
+    // Exibir Médias de Disciplina (Opcional, mas útil para o aluno)
+    std::cout << "\n--- Media de Avaliacoes de Disciplinas ---\n";
+    for (const auto& pair : mediasPorDisciplina) {
+        if (!pair.second.second.empty()) {
+            double media = std::accumulate(pair.second.second.begin(), pair.second.second.end(), 0.0) / pair.second.second.size();
+            std::cout << "Disciplina: " << pair.second.first << " | Media: " << media << '\n';
+        } else {
+            std::cout << "Disciplina: " << pair.second.first << " | Media: N/A (Sem avaliacoes)\n";
+        }
+    }
+}
+
+// Implementação do Relatório Geral para o Coordenador de Curso (Ponto 4)
+void SistemaAvaliacao::relatorioGeralCoordenador() {
+    std::cout << "\n===== RELATORIO GERAL (COORDENADOR DE CURSO) =====\n";
+    std::cout << std::fixed << std::setprecision(2);
+
+    // Estrutura para armazenar todas as notas e comentários agrupados
+    std::map<std::string, std::map<int, std::pair<std::string, std::vector<std::pair<double, std::string>>>>> relatorio; 
+    // Tipo -> ID Alvo -> {Nome Alvo, Lista de {Nota, Comentario}}
+
+    // Mapeamento de IDs para Nomes/Códigos para facilitar a exibição
+    auto mapTargetInfo = [&](const std::string& tipo, int id) -> std::string {
+        if (tipo == "DISCIPLINA") {
+            Disciplina* d = getDisciplinaById(id);
+            return d ? d->getCodigo() + " (" + d->getNome() + ")" : "Disciplina Desconhecida";
+        } else if (tipo == "PROFESSOR") {
+            Usuario* u = getUsuarioById(id);
+            return u ? u->getNome() : "Professor Desconhecido";
+        } else if (tipo == "TURMA") {
+            Turma* t = getTurmaById(id);
+            if (t) {
+                Disciplina* d = getDisciplinaById(t->getDisciplinaId());
+                return (d ? d->getCodigo() : "DESC.") + " - Turma " + t->getCodigoTurma();
+            }
+            return "Turma Desconhecida";
+        }
+        return "Alvo ID: " + std::to_string(id);
+    };
+
+    // 1. Coletar e agrupar todas as avaliações
+    for (const auto& a : _avaliacoes) {
+        std::string alvoNome = mapTargetInfo(a.getTipo(), a.getAlvoId());
+        
+        relatorio[a.getTipo()][a.getAlvoId()].first = alvoNome;
+        relatorio[a.getTipo()][a.getAlvoId()].second.push_back({a.getNota(), a.getComentario()});
+    }
+
+    // 2. Exibir o Relatório
+    for (const auto& tipoPair : relatorio) {
+        std::cout << "\n--- Avaliacoes do Tipo: " << tipoPair.first << " ---\n";
+        
+        for (const auto& alvoPair : tipoPair.second) {
+            const std::string& alvoNome = alvoPair.second.first;
+            const auto& notasComentarios = alvoPair.second.second;
+            
+            if (!notasComentarios.empty()) {
+                double totalNotas = 0.0;
+                for (const auto& nc : notasComentarios) totalNotas += nc.first;
+                double media = totalNotas / notasComentarios.size();
+
+                std::cout << "\nAlvo: " << alvoNome << " (Total Avaliacoes: " << notasComentarios.size() << ")\n";
+                std::cout << "Media: " << media << '\n';
+                std::cout << "Comentarios:\n";
+                
+                for (const auto& nc : notasComentarios) {
+                    std::cout << "  - [Nota " << nc.first << "]: \"" << nc.second << "\"\n";
+                }
+            }
+        }
+    }
+
+    if (_avaliacoes.empty()) {
+        std::cout << "Nenhuma avaliacao registrada no sistema.\n";
+    }
+}
+
 void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
 
     if (tipo == "GERAL") {

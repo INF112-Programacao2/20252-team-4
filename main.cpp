@@ -17,6 +17,7 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
         std::cout << "\n===== MENU ALUNO =====\n";
         std::cout << "1 - Avaliar disciplina\n";
         std::cout << "2 - Avaliar professor\n";
+        std::cout << "3 - Ver Medias de Avaliacao\n"; // NOVA OPÇÃO
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
@@ -35,6 +36,10 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cerr << e;
                 }
                 break;
+            case 3: // NOVA OPÇÃO
+                sistema.visualizarMediasAluno(u);
+                feito = true; menuFeito = false;
+                break;
             case 0: std::cout << "Saindo...\n"; feito = true; menuFeito = true; break;
             default: std::cout << "Opcao invalida!\n";
         }
@@ -44,56 +49,113 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
 void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
     feito = false;
     menuFeito = false;
+    std::string tipo = u->getTipo();
+    bool isCoordDisc = (tipo == "COORDENADOR_DISCIPLINA");
     int opc;
     do {
-        std::cout << "\n===== MENU PROFESSOR =====\n";
-        std::cout << "1 - Ver avaliacoes da minha disciplina\n";
-        std::cout << "2 - Ver avaliacoes das minhas turmas\n";
-        std::cout << "3 - Avaliar turma\n";
+        std::cout << "\n===== MENU PROFESSOR (" << tipo << ") =====\n";
+        
+        // Professor Coordenador de Disciplina (Ponto 1)
+        if (isCoordDisc) {
+            std::cout << "1 - Ver avaliacoes da minha disciplina (Geral)\n"; 
+            std::cout << "2 - Ver avaliacoes dos professores (Geral)\n";
+        }
+        
+        // Opções para Professor Comum (Ponto 2)
+        int opc_visualizar = isCoordDisc ? 3 : 1;
+        int opc_avaliar_turma = isCoordDisc ? 4 : 2;
+
+        std::cout << opc_visualizar << " - Visualizar minhas Avaliacoes (Filtradas)\n"; 
+        std::cout << opc_avaliar_turma << " - Avaliar turma\n"; 
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
-        std::cin >> opc;
-
-        switch (opc) {
-            case 1: sistema.listarAvaliacoes("DISCIPLINA"); feito = true; menuFeito = false; break;
-            case 2: sistema.listarAvaliacoes("TURMA"); feito = true; menuFeito = false; break;
-            case 3: 
-                try {
-                    sistema.avaliarTurma(u);
-                    feito = true;
-                    menuFeito = false;
-                }
-                catch (const char* e) {
-                    std::cerr << e;
-                }
-                break;
-            case 0: std::cout << "Saindo...\n"; feito = true; menuFeito = true; break;
-            default: std::cout << "Opcao invalida!\n";
+        
+        if (!(std::cin >> opc)) { // Leitura segura para evitar problemas no loop
+             std::cout << "Opcao invalida!\n";
+             std::cin.clear(); 
+             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+             continue; // Recomeça o loop
         }
+
+        if (opc == 0) {
+            std::cout << "Saindo...\n"; 
+            feito = true; 
+            menuFeito = true; 
+            break;
+        }
+
+        if (isCoordDisc) {
+            switch (opc) {
+                case 1: 
+                case 2: 
+                    sistema.listarAvaliacoes(opc == 1 ? "DISCIPLINA" : "PROFESSOR"); 
+                    feito = true; 
+                    menuFeito = false; 
+                    break;
+                case 3: 
+                    if (opc == opc_visualizar) {
+                         sistema.visualizarAvaliacoesProfessor(u); // FILTRAGEM AVANÇADA
+                         feito = true; 
+                         menuFeito = false; 
+                    } else {
+                        std::cout << "Opcao invalida!\n";
+                    }
+                    break;
+                case 4: 
+                    if (opc == opc_avaliar_turma) {
+                        try {
+                            sistema.avaliarTurma(u);
+                            feito = true;
+                            menuFeito = false;
+                        }
+                        catch (const char* e) {
+                            std::cerr << e;
+                        }
+                    } else {
+                        std::cout << "Opcao invalida!\n";
+                    }
+                    break;
+                default: 
+                    std::cout << "Opcao invalida!\n";
+            }
+        } else { // Professor Comum (Ponto 2)
+            switch (opc) {
+                case 1: // Visualizar minhas Avaliacoes (Filtradas)
+                    if (opc == opc_visualizar) {
+                        sistema.visualizarAvaliacoesProfessor(u); // FILTRAGEM AVANÇADA
+                        feito = true; 
+                        menuFeito = false; 
+                    } else {
+                        std::cout << "Opcao invalida!\n";
+                    }
+                    break;
+                case 2: // Avaliar turma
+                    if (opc == opc_avaliar_turma) {
+                        try {
+                            sistema.avaliarTurma(u);
+                            feito = true;
+                            menuFeito = false;
+                        }
+                        catch (const char* e) {
+                            std::cerr << e;
+                        }
+                    } else {
+                         std::cout << "Opcao invalida!\n";
+                    }
+                    break;
+                default: 
+                    std::cout << "Opcao invalida!\n";
+            }
+        }
+
+        if (!menuFeito) {
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+        }
+        
     } while (!menuFeito);
-}
-
-void menuCoordDisciplina(SistemaAvaliacao &sistema, Usuario* u) {
-
-    // FAZER TRATAMENTO DE EXCECAO AQUI !!!!!!!!!!!
-
-    feito = false;
-    int opc;
-    do {
-        std::cout << "\n===== MENU COORDENADOR DE DISCIPLINA =====\n";
-        std::cout << "1 - Ver avaliacoes da minha disciplina\n";
-        std::cout << "2 - Ver avaliacoes dos professores da disciplina\n";
-        std::cout << "3 - Ver avaliacoes das turmas\n";
-        std::cout << "0 - Voltar para tela inicial\n";
-        std::cout << "Escolha: ";
-        std::cin >> opc;
-
-        switch (opc) {
-            case 1: sistema.listarAvaliacoes("DISCIPLINA"); break;
-            case 0: std::cout << "Saindo...\n"; break;
-            default: std::cout << "Opcao invalida!\n";
-        }
-    } while (opc != 0);
 }
 
 void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
@@ -102,16 +164,17 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
     int opc;
     do {
         std::cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
-        std::cout << "1 - Cadastrar usuario (Aluno/Professor)\n"; // Manter o cadastro em um sub-menu
+        std::cout << "1 - Cadastrar usuario (Aluno/Professor)\n"; 
         std::cout << "2 - Cadastrar disciplina\n";
         std::cout << "3 - Cadastrar turma\n";
-        std::cout << "4 - Matricular aluno em turma\n"; // NOVA OPÇÃO PRINCIPAL
-        std::cout << "5 - Ver avaliacoes gerais\n";    // Opção 4 anterior
+        std::cout << "4 - Matricular aluno em turma\n"; 
+        std::cout << "5 - Ver avaliacoes gerais (Sem detalhes)\n";    
+        std::cout << "6 - Relatorio Geral Detalhado (Medias e Comentarios)\n"; // NOVA OPÇÃO (Ponto 4)
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
         switch (opc) {
-            case 1: { // Cadastrar Usuario (sub-menu mantido para escolha de tipo)
+            case 1: { // Cadastrar Usuario
                 do {
                     feito = false;
                     std::cout << "\n";
@@ -122,16 +185,11 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cout << "0 - Voltar ao menu anterior \n";
                     std::cout << "Escolha: ";
                     
-                    if (!(std::cin >> tipo)) { // Verifica se a leitura falhou
+                    if (!(std::cin >> tipo)) { 
                         std::cerr << "Caractere invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
-                        
-                        // 1. Limpa o estado de erro
                         std::cin.clear(); 
-                        
-                        // 2. Descarta o buffer 
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
-                        
-                        continue; // Vai para a próxima iteração do 'do-while'
+                        continue; 
                     }
  
                     std::cout << std::endl;
@@ -151,26 +209,28 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                 } while (!feito);
                 break;
             }
-            case 2: sistema.cadastrarDisciplina(); menuFeito = true; break;
+            case 2: sistema.cadastrarDisciplina(); break;
             case 3: 
-                try {sistema.cadastrarTurma(); menuFeito = true;}
+                try {sistema.cadastrarTurma();}
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
                 break;
-            case 4: // Matricular Aluno em Turma (Nova posição)
-                try {sistema.matricularAluno(); menuFeito = true;}
+            case 4: 
+                try {sistema.matricularAluno();}
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
                 break;
-            case 5: sistema.listarAvaliacoes("GERAL"); menuFeito = true; break; // Antiga opção 4
+            case 5: sistema.listarAvaliacoes("GERAL"); break; 
+            case 6: // Relatório Geral Detalhado (Ponto 4)
+                sistema.relatorioGeralCoordenador(); 
+                break;
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
             default: std::cout << "Opcao invalida!\n";
         }
     } while (!menuFeito);
 }
-
 
 int main() {
     SistemaAvaliacao sistema;
@@ -212,7 +272,6 @@ int main() {
             // Redireciona para o menu apropriado
             if (u->getTipo() == "ALUNO") menuAluno(sistema, u);
             else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema, u);
-            else if (u->getTipo() == "COORDENADOR_DISCIPLINA") menuCoordDisciplina(sistema, u);
             else if (u->getTipo() == "COORDENADOR_DO_CURSO") menuCoordCurso(sistema, u);
 
             // Salva tudo ao sair do menu
