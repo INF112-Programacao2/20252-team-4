@@ -44,7 +44,7 @@ Projeto desenvolvido por:
 
 ## Descrição Geral
 
-O Sistema Universitário de Avaliações é um software em C++ que opera via terminal e permite avaliações anônimas de:
+O Sistema de Avaliação do DPI é um software em C++ que opera via terminal e permite avaliações anônimas de:
 
 - Disciplinas  
 - Professores  

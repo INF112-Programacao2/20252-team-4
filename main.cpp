@@ -6,9 +6,6 @@
 #include "login.hpp"
 #include "usuario.hpp"
 
-using namespace std;
-
-// ===== FUNÇÕES AUXILIARES DE MENUS =====
 
 bool feito = false;
 bool menuFeito = false;
@@ -17,12 +14,12 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
     menuFeito = false;
     int opc;
     do {
-        cout << "\n===== MENU ALUNO =====\n";
-        cout << "1 - Avaliar disciplina\n";
-        cout << "2 - Avaliar professor\n";
-        cout << "0 - Sair\n";
-        cout << "Escolha: ";
-        cin >> opc;
+        std::cout << "\n===== MENU ALUNO =====\n";
+        std::cout << "1 - Avaliar disciplina\n";
+        std::cout << "2 - Avaliar professor\n";
+        std::cout << "0 - Voltar para tela inicial\n";
+        std::cout << "Escolha: ";
+        std::cin >> opc;
 
         switch (opc) {
             case 1: 
@@ -38,8 +35,8 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cerr << e;
                 }
                 break;
-            case 0: cout << "Saindo...\n"; feito = true; menuFeito = true; break;
-            default: cout << "Opcao invalida!\n";
+            case 0: std::cout << "Saindo...\n"; feito = true; menuFeito = true; break;
+            default: std::cout << "Opcao invalida!\n";
         }
     } while (!menuFeito);
 }
@@ -49,13 +46,13 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
     menuFeito = false;
     int opc;
     do {
-        cout << "\n===== MENU PROFESSOR =====\n";
-        cout << "1 - Ver avaliacoes da minha disciplina\n";
-        cout << "2 - Ver avaliacoes das minhas turmas\n";
-        cout << "3 - Avaliar turma\n";
-        cout << "0 - Sair\n";
-        cout << "Escolha: ";
-        cin >> opc;
+        std::cout << "\n===== MENU PROFESSOR =====\n";
+        std::cout << "1 - Ver avaliacoes da minha disciplina\n";
+        std::cout << "2 - Ver avaliacoes das minhas turmas\n";
+        std::cout << "3 - Avaliar turma\n";
+        std::cout << "0 - Voltar para tela inicial\n";
+        std::cout << "Escolha: ";
+        std::cin >> opc;
 
         switch (opc) {
             case 1: sistema.listarAvaliacoes("DISCIPLINA"); feito = true; menuFeito = false; break;
@@ -70,8 +67,8 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cerr << e;
                 }
                 break;
-            case 0: cout << "Saindo...\n"; feito = true; menuFeito = true; break;
-            default: cout << "Opcao invalida!\n";
+            case 0: std::cout << "Saindo...\n"; feito = true; menuFeito = true; break;
+            default: std::cout << "Opcao invalida!\n";
         }
     } while (!menuFeito);
 }
@@ -83,40 +80,45 @@ void menuCoordDisciplina(SistemaAvaliacao &sistema, Usuario* u) {
     feito = false;
     int opc;
     do {
-        cout << "\n===== MENU COORDENADOR DE DISCIPLINA =====\n";
-        cout << "1 - Ver avaliacoes das minhas disciplinas\n";
-        cout << "0 - Sair\n";
-        cout << "Escolha: ";
-        cin >> opc;
+        std::cout << "\n===== MENU COORDENADOR DE DISCIPLINA =====\n";
+        std::cout << "1 - Ver avaliacoes da minha disciplina\n";
+        std::cout << "2 - Ver avaliacoes dos professores da disciplina\n";
+        std::cout << "3 - Ver avaliacoes das turmas\n";
+        std::cout << "0 - Voltar para tela inicial\n";
+        std::cout << "Escolha: ";
+        std::cin >> opc;
 
         switch (opc) {
             case 1: sistema.listarAvaliacoes("DISCIPLINA"); break;
-            case 0: cout << "Saindo...\n"; break;
-            default: cout << "Opcao invalida!\n";
+            case 0: std::cout << "Saindo...\n"; break;
+            default: std::cout << "Opcao invalida!\n";
         }
     } while (opc != 0);
 }
 
 void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
+    menuFeito = false;
     feito = false;
     int opc;
     do {
-        cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
-        cout << "1 - Cadastrar usuario\n";
-        cout << "2 - Cadastrar disciplina\n";
-        cout << "3 - Cadastrar turma\n";
-        cout << "4 - Ver avaliacoes gerais\n";
-        cout << "0 - Sair\n";
-        cout << "Escolha: ";
-        cin >> opc;
+        std::cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
+        std::cout << "1 - Cadastrar usuario\n";
+        std::cout << "2 - Cadastrar disciplina\n";
+        std::cout << "3 - Cadastrar turma\n";
+        std::cout << "4 - Ver avaliacoes gerais\n";
+        std::cout << "0 - Voltar para tela inicial\n";
+        std::cout << "Escolha: ";
+        std::cin >> opc;
         switch (opc) {
             case 1: {
                 do {
+                    feito = false;
                     std::cout << "\n";
                     int tipo;
-                    std::cout << "Escolha o tipo de usuario:\n";
-                    std::cout << "1 - Aluno\n";
-                    std::cout << "2 - Professor\n";
+                    std::cout << "O que deseja fazer?:\n";
+                    std::cout << "\n1 - Cadastrar um Aluno\n";
+                    std::cout << "2 - Cadastrar um Professor\n";
+                    std::cout << "0 - Voltar ao menu anterior \n";
                     std::cout << "Escolha: ";
                     
                     if (!(std::cin >> tipo)) { // Verifica se a leitura falhou
@@ -128,47 +130,49 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                         // 2. Descarta o buffer (MAX_SIZE é um valor grande para garantir que tudo seja lido, \n é o delimitador)
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
                         
-                        feito = false; // Repete o loop
                         continue; // Vai para a próxima iteração do 'do-while'
+                    }
+ 
+                    std::cout << std::endl;
+
+                    if(tipo == 0){
+                        feito = true;
+                        continue;
                     }
 
                     try {
                         sistema.cadastrarUsuario(tipo);
-                        feito = true;
-                        menuFeito = false;
+                        std::cout << "\nCadastro concluido! \n";
                     }
                     catch (const char* e) {
                         std::cerr << e << std::endl;
-                        feito = false; // Repete o loop se o tipo for (ex: 3)
                     }
                 } while (!feito);
                 break;
             }
-            case 2: sistema.cadastrarDisciplina(); feito = true; menuFeito = false; break;
+            case 2: sistema.cadastrarDisciplina(); menuFeito = true; break;
             case 3: 
-                try {sistema.cadastrarTurma(); feito = true; menuFeito = false;}
+                try {sistema.cadastrarTurma(); menuFeito = true;}
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
                 break;
-            case 4: sistema.listarAvaliacoes("GERAL"); feito = true; menuFeito = false; break;
-            case 0: cout << "Saindo...\n"; feito = true; menuFeito = true; break;
-            default: cout << "Opcao invalida!\n";
+            case 4: sistema.listarAvaliacoes("GERAL"); menuFeito = true; break;
+            case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
+            default: std::cout << "Opcao invalida!\n";
         }
     } while (!menuFeito);
 }
 
-
-// =================== MAIN ===================
 
 int main() {
     SistemaAvaliacao sistema;
     Login log;
 
     while (true) {
-        string email, senha;
+        std::string email, senha;
 
-        cout << "\n===== SISTEMA DE AVALIACAO =====\n";
+        std::cout << "\n===== SISTEMA DE AVALIACAO DO DPI =====\n";
 
         int opcao;
         std::cout << "Escolha uma opcao: \n";
@@ -176,26 +180,27 @@ int main() {
         std::cout << "0 - Encerrar \n"; 
         std::cout << "Escolha: ";
         std::cin >> opcao;
+        std::cout << std::endl;
 
         if(opcao == 0){
             std::cout << "Encerrando programa... \n";
             break;
         }
         else if(opcao == 1){
-            cout << "\n===== LOGIN =====\n";
-            cout << "email: ";
-            cin >> email;
-            cout << "Senha: ";
-            cin >> senha;
+            std::cout << "\n===== LOGIN =====\n";
+            std::cout << "email: ";
+            std::cin >> email;
+            std::cout << "Senha: ";
+            std::cin >> senha;
 
             Usuario* u = log.login(sistema.getUsuarios(), email, senha);
 
             if (u == nullptr) {
-                cout << "Credenciais incorretas! Tente novamente.\n";
+                std::cout << "Credenciais incorretas! Tente novamente.\n";
                 continue;
             }
 
-            cout << "\nBem-vindo, " << u->getNome() << " (" << u->getTipo() << ")\n";
+            std::cout << "\nBem-vindo, " << u->getNome() << " (" << u->getTipo() << ")\n";
 
             // Redireciona para o menu apropriado
             if (u->getTipo() == "ALUNO") menuAluno(sistema, u);

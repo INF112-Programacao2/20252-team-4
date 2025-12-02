@@ -280,7 +280,7 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
 
     if (turmasemaildas.empty()) {
-        throw "Voce nao esta emaildo em nenhuma disciplina. Nenhuma disciplina disponivel para avaliacao.\n";
+        throw "Voce nao esta matriculado em nenhuma disciplina. Nenhuma disciplina disponivel para avaliacao.\n";
     }
 
     std::vector<int> disciplinasIds;
@@ -355,7 +355,7 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
 
     if (turmasemaildas.empty()) {
-        throw "Voce nao esta' emaildo em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
+        throw "Voce nao esta' matriculado em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
     }
 
     std::vector<int> professoresIds;
@@ -469,7 +469,7 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         }
 
         if (!idValido) {
-            std::cerr << "ID de turma inva'lido ou voce nao ministra esta turma.\n";
+            std::cerr << "\nID de turma inva'lido ou voce nao ministra esta turma.\n";
             continue;
         }
     } while (!idValido);
@@ -477,22 +477,22 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         int nota[5]; 
-        std::cout << "Como voce avalia a turma? (0-5)\n";
-        std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
+        std::cout << "\nComo voce avalia a turma? (0-5)\n";
+        std::cout << "Sendo 0 discordo totalmente e 5 concordo plenamente.\n";
 
-        nota[0] = lerInteiroComExcecao("A turma e' participativa?: ");
+        nota[0] = lerInteiroComExcecao("\nA turma e' participativa?: ");
         nota[1] = lerInteiroComExcecao("\nVoce considera que os alunos se preparavam com antecendencia?: ");
         nota[2] = lerInteiroComExcecao("\nVoce considera que a turma possui lacuna quanto aos pre'-requisitos da disciplina?: ");
         nota[3] = lerInteiroComExcecao("\nOs alunos foram assi'duos?: ");
         nota[4] = lerInteiroComExcecao("\nA turma se mostrou interessada em integrar os conhecimentos a sua formacao profissional?: ");
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         std::string comentario; 
-        std::cout << "Comentario: "; 
+        std::cout << "\nComentario: "; 
         std::getline(std::cin >> std::ws, comentario);
 
-        int mediaNotas = 0;
+        double mediaNotas = 0;
         for (int i=0; i<5; i++)
             mediaNotas += nota[i];
         mediaNotas /= 5.0;
@@ -517,7 +517,7 @@ void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
     std::cout << " Avaliacoes do tipo " << tipo << std::endl;
     for (auto &a : _avaliacoes) {
         if (a.getTipo() == tipo) {
-            std::cout << "ID: " << a.getId() << " | Alvo: " << a.getAlvoId() << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            std::cout << "ID: " << a.getId() << " |  Disciplina: "<< a.get << "- Turma: " << a.getAlvoId() << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
         }
     }
 }
