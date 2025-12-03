@@ -32,16 +32,18 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
     while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
 
-        std::stringstream fluxo(linha);
-        std::string idTexto, nome, email, hash, tipo;
+        auto campos = dividirLinha(linha, ';');
+        if (campos.size() < 5) {
+            std::cerr << "ERRO: Linha de usuario invalida: " << linha << std::endl;
+            continue;
+        }
+        
+        int id = std::stoi(campos[0]);
+        std::string nome = campos[1];
+        std::string email = campos[2];
+        std::string hash = campos[3];
+        std::string tipo = campos[4];
 
-        std::getline(fluxo, idTexto, ';');
-        std::getline(fluxo, nome, ';');
-        std::getline(fluxo, email, ';');
-        std::getline(fluxo, hash, ';');
-        std::getline(fluxo, tipo, ';');
-
-        int id = std::stoi(idTexto);
         Usuario* u= nullptr;
        
         if (tipo == "ALUNO") {
