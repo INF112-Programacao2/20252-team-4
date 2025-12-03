@@ -192,11 +192,12 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
         
         int numCodigo;
+
         try {
             std::string numStr = codigo.substr(3); 
             numCodigo = std::stoi(numStr);
 
-            if (numCodigo <= 100 || numCodigo >= 999) {
+            if (numCodigo < 100 || numCodigo > 999) {
                 std::cerr << "ERRO: Os tres numeros do codigo (depois de 'INF') devem estar entre 100 e 999. Tente novamente.\n";
                 continue;
             }
@@ -309,35 +310,59 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
 void SistemaAvaliacao::cadastrarTurma() {
 
-    int disciplinaId;
+
+    try {
+    int disciplinaId, professorId;
     std::string codigoTurma;
-    int professorId;
 
     if (_disciplinas.empty()) {
         throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
     }
+
     std::cout << "Disciplinas disponiveis:\n";
-
-
-    for (auto &d : _disciplinas) 
+        for (auto &d : _disciplinas) 
         std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
 
     std::cout << "Escolha ID da disciplina: ";
     std::cin >> disciplinaId;
 
-    std::cout << "Codigo da turma (ex: 1): ";
-    std::cin >> codigoTurma;
+    bool codigoJaExiste;
+    do {
+        std::cout << "Codigo da turma (ex: 1): ";
+        std::cin >> codigoTurma;
+
+        codigoJaExiste = false;
+
+        for (const auto& t : _turmas) {
+            if (t.getDisciplinaId() == disciplinaId &&
+                t.getCodigoTurma() == codigoTurma)
+            {
+                codigoJaExiste = true;
+                std::cout << "Erro: ja existe uma turma com esse codigo. Tente outro: \n";
+                break;
+            }
+        }
+
+    } while (codigoJaExiste);
 
     std::cout << "Professores disponiveis:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")
+        for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
-    std::cout << "Escolha ID do professor para a turma: ";
-    std::cin >> professorId;
+        std::cout << "Escolha ID do professor para a turma: ";
+        std::cin >> professorId;
 
     int id = ProximoIdTurmas(_turmas);
     _turmas.emplace_back(id, disciplinaId, codigoTurma, professorId);
     std::cout << "Turma cadastrada (ID=" << id << ")\n";
 }
+    catch (const std::runtime_error& e) {
+        std::cerr << e.what() << '\n';
+    }
+    catch (const char* msg) {
+        std::cerr << msg << '\n';
+    }
+  }
+
 
 void SistemaAvaliacao::matricularAluno() {
     // 1. Verificar se há alunos e turmas
@@ -464,7 +489,7 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     //disciplinasIds.erase(std::unique(disciplinasIds.begin(), disciplinasIds.end()), disciplinasIds.end());
 
     // 4. Listar apenas as disciplinas que o aluno está cursando
-    std::cout << "Disciplinas emaildas disponiveis para avaliacao:\n";
+    std::cout << "Disciplinas matriculadas disponiveis para avaliacao:\n";
     std::vector<Disciplina*> disciplinasDisponiveis;
     for (int discId : disciplinasIds) {
         for (auto &d : _disciplinas) {
@@ -506,8 +531,6 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     nota[2] = lerInteiroComExcecao("\nOs meios de avaliar a aprendizagem foram eficazes? (ex.: provas e seminarios): ");
     nota[3] = lerInteiroComExcecao("\nO conteudo planejado foi compativel com a carga horaria da disciplina?: ");
     nota[4] = lerInteiroComExcecao("\nA disciplina complementa/agrega conhecimento para o restante do curso?: ");
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string comentario;
     std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da disciplina: ";
@@ -702,8 +725,6 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         nota[2] = lerInteiroComExcecao("\nVoce considera que a turma possui lacuna quanto aos pre'-requisitos da disciplina?: ");
         nota[3] = lerInteiroComExcecao("\nOs alunos foram assi'duos?: ");
         nota[4] = lerInteiroComExcecao("\nA turma se mostrou interessada em integrar os conhecimentos a sua formacao profissional?: ");
-
-        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         std::string comentario; 
         std::cout << "\nComentario: "; 

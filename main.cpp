@@ -9,6 +9,7 @@
 
 bool feito = false;
 bool menuFeito = false;
+
 void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
     feito = false;
     menuFeito = false;
@@ -218,17 +219,31 @@ int main() {
     Login log;
 
     while (true) {
+
         std::string email, senha;
 
         std::cout << "\n===== SISTEMA DE AVALIACAO DO DPI =====\n";
 
         int opcao;
+        std::string opcaoStr;
         std::cout << "Escolha uma opcao: \n";
         std::cout << "1 - fazer login \n";
         std::cout << "0 - Encerrar \n"; 
         std::cout << "Escolha: ";
-        std::cin >> opcao;
+        std::cin >> opcaoStr;
         std::cout << std::endl;
+
+        try {opcao = std::stoi(opcaoStr);}
+
+        catch (const std::invalid_argument& e) {
+            std::cerr << "ERRO:: Entrada inválida. Digite apenas 0 ou 1.\n";
+            continue; // volta para o início do while
+        }
+
+        catch (const std::out_of_range& e) {
+            std::cerr << "ERRO:: Número fora do intervalo. Digite 0 ou 1.\n";
+            continue;
+        }
 
         if(opcao == 0){
             std::cout << "Encerrando programa... \n";
