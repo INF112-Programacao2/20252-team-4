@@ -232,12 +232,33 @@ Como coordenador do curso, desejo cumprir o papel de administrador do sistema, r
 O sistema utiliza arquivos `.txt` para guardar informações, sem uso de banco de dados.  
 As avaliações são anônimas e armazenadas de forma serializada, seguindo o padrão:
 
+avaliacoes.txt
 ```
 Id;alvoId;tipo;nota;comentario;data
 ```
 Sendo alvoId o Id do objeto que está sendo avaliado.
 
-- Nenhuma informação de identificação pessoal é salva nos arquivos de avaliações.
+Os cadastramentos feitos pelo Coordenador do Curso (Disciplinas/Turmas/Matriculas/Usuários) também são armazenadas de forma serializada, seguindo o padrão:
+
+disciplinas.txt
+```
+Id;Codigo;Nome;ProfessorId;CoordenadorDiscId
+```
+
+turmas.txt
+```
+Id;DisciplinaId;CodigoTurma;ProfessorId
+```
+
+Matriculas.txt
+```
+IdAluno;IdTurma
+```
+
+Usuarios.txt
+```
+Id;Nome;Email;Senha;Tipo
+```
 
 ---
 
