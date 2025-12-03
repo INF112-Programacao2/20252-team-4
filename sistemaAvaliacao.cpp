@@ -310,58 +310,57 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
 void SistemaAvaliacao::cadastrarTurma() {
 
-
     try {
-    int disciplinaId, professorId;
-    std::string codigoTurma;
+        int disciplinaId, professorId;
+        std::string codigoTurma;
 
-    if (_disciplinas.empty()) {
-        throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
-    }
-
-    std::cout << "Disciplinas disponiveis:\n";
-        for (auto &d : _disciplinas) 
-        std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
-
-    std::cout << "Escolha ID da disciplina: ";
-    std::cin >> disciplinaId;
-
-    bool codigoJaExiste;
-    do {
-        std::cout << "Codigo da turma (ex: 1): ";
-        std::cin >> codigoTurma;
-
-        codigoJaExiste = false;
-
-        for (const auto& t : _turmas) {
-            if (t.getDisciplinaId() == disciplinaId &&
-                t.getCodigoTurma() == codigoTurma)
-            {
-                codigoJaExiste = true;
-                std::cout << "Erro: ja existe uma turma com esse codigo. Tente outro: \n";
-                break;
-            }
+        if (_disciplinas.empty()) {
+            throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
         }
 
-    } while (codigoJaExiste);
+        std::cout << "Disciplinas disponiveis:\n";
+            for (auto &d : _disciplinas) 
+            std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
 
-    std::cout << "Professores disponiveis:\n";
-        for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")
-        std::cout << u->getId() << " - " << u->getNome() << '\n';
-        std::cout << "Escolha ID do professor para a turma: ";
-        std::cin >> professorId;
+        std::cout << "Escolha ID da disciplina: ";
+        std::cin >> disciplinaId;
 
-    int id = ProximoIdTurmas(_turmas);
-    _turmas.emplace_back(id, disciplinaId, codigoTurma, professorId);
-    std::cout << "Turma cadastrada (ID=" << id << ")\n";
+        bool codigoJaExiste;
+        do {
+            std::cout << "Codigo da turma (ex: 1): ";
+            std::cin >> codigoTurma;
+
+            codigoJaExiste = false;
+
+            for (const auto& t : _turmas) {
+                if (t.getDisciplinaId() == disciplinaId &&
+                    t.getCodigoTurma() == codigoTurma)
+                {
+                    codigoJaExiste = true;
+                    std::cout << "Erro: ja existe uma turma com esse codigo. Tente outro: \n";
+                    break;
+                }
+            }
+
+        } while (codigoJaExiste);
+
+        std::cout << "Professores disponiveis:\n";
+            for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")
+            std::cout << u->getId() << " - " << u->getNome() << '\n';
+            std::cout << "Escolha ID do professor para a turma: ";
+            std::cin >> professorId;
+
+        int id = ProximoIdTurmas(_turmas);
+        _turmas.emplace_back(id, disciplinaId, codigoTurma, professorId);
+        std::cout << "Turma cadastrada (ID=" << id << ")\n";
+    }
+        catch (const std::runtime_error& e) {
+            std::cerr << e.what() << '\n';
+        }
+        catch (const char* msg) {
+            std::cerr << msg << '\n';
+        }
 }
-    catch (const std::runtime_error& e) {
-        std::cerr << e.what() << '\n';
-    }
-    catch (const char* msg) {
-        std::cerr << msg << '\n';
-    }
-  }
 
 
 void SistemaAvaliacao::matricularAluno() {
