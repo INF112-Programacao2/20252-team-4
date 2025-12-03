@@ -55,26 +55,26 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
     do {
         std::cout << "\n===== MENU PROFESSOR (" << tipo << ") =====\n";
         
-        // Professor Coordenador de Disciplina (Ponto 1)
         if (isCoordDisc) {
+            // Opções completas para Coordenador de Disciplina
             std::cout << "1 - Ver avaliacoes da minha disciplina (Geral)\n"; 
             std::cout << "2 - Ver avaliacoes dos professores (Geral)\n";
+            std::cout << "3 - Visualizar minhas Avaliacoes (Filtradas)\n"; // Avaliações relacionadas à sua coordenação (Ponto 1)
+            std::cout << "4 - Avaliar turma\n"; 
+        } else { 
+            // Opções para Professor Comum
+            std::cout << "1 - Visualizar minhas Avaliacoes (Filtradas)\n"; // Avaliações dele e da sua disciplina (Ponto 2)
+            std::cout << "2 - Avaliar turma\n"; 
         }
         
-        // Opções para Professor Comum (Ponto 2)
-        int opc_visualizar = isCoordDisc ? 3 : 1;
-        int opc_avaliar_turma = isCoordDisc ? 4 : 2;
-
-        std::cout << opc_visualizar << " - Visualizar minhas Avaliacoes (Filtradas)\n"; 
-        std::cout << opc_avaliar_turma << " - Avaliar turma\n"; 
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         
-        if (!(std::cin >> opc)) { // Leitura segura para evitar problemas no loop
+        if (!(std::cin >> opc)) { // Leitura segura
              std::cout << "Opcao invalida!\n";
              std::cin.clear(); 
              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-             continue; // Recomeça o loop
+             continue;
         }
 
         if (opc == 0) {
@@ -86,61 +86,31 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
 
         if (isCoordDisc) {
             switch (opc) {
-                case 1: 
-                case 2: 
-                    sistema.listarAvaliacoes(opc == 1 ? "DISCIPLINA" : "PROFESSOR"); 
-                    feito = true; 
-                    menuFeito = false; 
-                    break;
-                case 3: 
-                    if (opc == opc_visualizar) {
-                         sistema.visualizarAvaliacoesProfessor(u); // FILTRAGEM AVANÇADA
-                         feito = true; 
-                         menuFeito = false; 
-                    } else {
-                        std::cout << "Opcao invalida!\n";
-                    }
-                    break;
+                case 1: sistema.listarAvaliacoes("DISCIPLINA"); feito = true; menuFeito = false; break;
+                case 2: sistema.listarAvaliacoes("PROFESSOR"); feito = true; menuFeito = false; break;
+                case 3: sistema.visualizarAvaliacoesProfessor(u); feito = true; menuFeito = false; break;
                 case 4: 
-                    if (opc == opc_avaliar_turma) {
-                        try {
-                            sistema.avaliarTurma(u);
-                            feito = true;
-                            menuFeito = false;
-                        }
-                        catch (const char* e) {
-                            std::cerr << e;
-                        }
-                    } else {
-                        std::cout << "Opcao invalida!\n";
+                    try {
+                        sistema.avaliarTurma(u);
+                        feito = true;
+                        menuFeito = false;
+                    } catch (const char* e) {
+                        std::cerr << e;
                     }
                     break;
                 default: 
                     std::cout << "Opcao invalida!\n";
             }
-        } else { // Professor Comum (Ponto 2)
+        } else { // Professor Comum
             switch (opc) {
-                case 1: // Visualizar minhas Avaliacoes (Filtradas)
-                    if (opc == opc_visualizar) {
-                        sistema.visualizarAvaliacoesProfessor(u); // FILTRAGEM AVANÇADA
-                        feito = true; 
-                        menuFeito = false; 
-                    } else {
-                        std::cout << "Opcao invalida!\n";
-                    }
-                    break;
-                case 2: // Avaliar turma
-                    if (opc == opc_avaliar_turma) {
-                        try {
-                            sistema.avaliarTurma(u);
-                            feito = true;
-                            menuFeito = false;
-                        }
-                        catch (const char* e) {
-                            std::cerr << e;
-                        }
-                    } else {
-                         std::cout << "Opcao invalida!\n";
+                case 1: sistema.visualizarAvaliacoesProfessor(u); feito = true; menuFeito = false; break;
+                case 2: 
+                    try {
+                        sistema.avaliarTurma(u);
+                        feito = true;
+                        menuFeito = false;
+                    } catch (const char* e) {
+                        std::cerr << e;
                     }
                     break;
                 default: 
@@ -164,12 +134,12 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
     int opc;
     do {
         std::cout << "\n===== MENU COORDENADOR DE CURSO (ADMIN) =====\n";
-        std::cout << "1 - Cadastrar usuario (Aluno/Professor)\n"; 
+        std::cout << "1 - Cadastrar usuario (Aluno/Professor)\n"; // Opção 1 agora é só para cadastro
         std::cout << "2 - Cadastrar disciplina\n";
         std::cout << "3 - Cadastrar turma\n";
         std::cout << "4 - Matricular aluno em turma\n"; 
         std::cout << "5 - Ver avaliacoes gerais (Sem detalhes)\n";    
-        std::cout << "6 - Relatorio Geral Detalhado (Medias e Comentarios)\n"; // NOVA OPÇÃO (Ponto 4)
+        std::cout << "6 - Relatorio Geral Detalhado (Medias e Comentarios)\n"; 
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
@@ -180,13 +150,15 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     std::cout << "\n";
                     int tipo;
                     std::cout << "O que deseja fazer?:\n";
-                    std::cout << "\n1 - Cadastrar um Aluno\n";
-                    std::cout << "2 - Cadastrar um Professor\n";
+                    
+                    // As opções são reindexadas após a remoção do promoverProfessor
+                    std::cout << "\n1 - Cadastrar um Aluno\n"; 
+                    std::cout << "2 - Cadastrar um Professor\n"; 
                     std::cout << "0 - Voltar ao menu anterior \n";
                     std::cout << "Escolha: ";
                     
                     if (!(std::cin >> tipo)) { 
-                        std::cerr << "Caractere invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
+                        std::cerr << "Caractere invalido. Tente novamente.\n";
                         std::cin.clear(); 
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
                         continue; 
@@ -200,8 +172,15 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     }
 
                     try {
-                        sistema.cadastrarUsuario(tipo);
-                        std::cout << "\nCadastro concluido! \n";
+                        if (tipo == 1) {
+                            sistema.cadastrarUsuario(1); // Cadastrar Aluno
+                            std::cout << "\nCadastro concluido! \n";
+                        } else if (tipo == 2) {
+                            sistema.cadastrarUsuario(2); // Cadastrar Professor
+                            std::cout << "\nCadastro concluido! \n";
+                        } else {
+                            std::cerr << "Opcao invalida.\n";
+                        }
                     }
                     catch (const char* e) {
                         std::cerr << e << std::endl;
@@ -209,27 +188,29 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                 } while (!feito);
                 break;
             }
-            case 2: sistema.cadastrarDisciplina(); break;
+            case 2: sistema.cadastrarDisciplina();  break;
             case 3: 
-                try {sistema.cadastrarTurma();}
+                try {sistema.cadastrarTurma(); }
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
                 break;
             case 4: 
-                try {sistema.matricularAluno();}
+                try {sistema.matricularAluno(); }
                 catch (char const* e) {
                     std::cerr << e << std::endl;
                 }
                 break;
-            case 5: sistema.listarAvaliacoes("GERAL"); break; 
-            case 6: // Relatório Geral Detalhado (Ponto 4)
+            case 5: sistema.listarAvaliacoes("GERAL");  break; 
+            case 6: // Relatório Geral Detalhado
                 sistema.relatorioGeralCoordenador(); 
+                
                 break;
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
             default: std::cout << "Opcao invalida!\n";
         }
     } while (!menuFeito);
+
 }
 
 int main() {
@@ -272,6 +253,7 @@ int main() {
             // Redireciona para o menu apropriado
             if (u->getTipo() == "ALUNO") menuAluno(sistema, u);
             else if (u->getTipo() == "PROFESSOR") menuProfessor(sistema, u);
+            else if (u->getTipo() == "COORDENADOR_DISCIPLINA") menuProfessor(sistema, u);
             else if (u->getTipo() == "COORDENADOR_DO_CURSO") menuCoordCurso(sistema, u);
 
             // Salva tudo ao sair do menu

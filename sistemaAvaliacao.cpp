@@ -2,6 +2,10 @@
 #include <iostream>
 #include <algorithm>
 #include <limits>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+
 
 int lerInteiroComExcecao(const std::string& pergunta) {
     std::string entrada;
@@ -33,7 +37,7 @@ SistemaAvaliacao::SistemaAvaliacao() {
     _disciplinas = arquivo.carregarDisciplinas();
     _turmas = arquivo.carregarTurmas();
     _avaliacoes = arquivo.carregarAvaliacoes();
-
+    arquivo.carregarMatriculas(_usuarios, _turmas);
 
     // Se nao existir nenhum coordenador do curso, cria um padrao
     bool temCoord = false;
@@ -49,21 +53,21 @@ SistemaAvaliacao::SistemaAvaliacao() {
     }
 }
 
-Disciplina* SistemaAvaliacao::getDisciplinaById(int id) {
+Disciplina* SistemaAvaliacao::getDisciplinaPorID(int id) {
     for (auto &d : _disciplinas) {
         if (d.getId() == id) return &d;
     }
     return nullptr;
 }
 
-Turma* SistemaAvaliacao::getTurmaById(int id) {
+Turma* SistemaAvaliacao::getTurmaPorID(int id) {
     for (auto &t : _turmas) {
         if (t.getId() == id) return &t;
     }
     return nullptr;
 }
 
-Usuario* SistemaAvaliacao::getUsuarioById(int id) {
+Usuario* SistemaAvaliacao::getUsuarioPorID(int id) {
     for (auto *u : _usuarios) {
         if (u->getId() == id) return u;
     }
@@ -169,7 +173,7 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
 void SistemaAvaliacao::cadastrarDisciplina() {
 
     std::string codigo, nome;
-    int profId, coordId;
+    int coordenadorId;
     
     //Tratamento de excecao para o codigo da disciplina
     while (true) {
@@ -248,20 +252,59 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
     }
 
-    std::cout << "Professores disponiveis para coordenador:\n";
+  std::cout << "Professores disponiveis para coordenador:\n";
+    // LISTAGEM DE PROFESSORES PARA ESCOLHA DO COORDENADOR
+    std::vector<Usuario*> professoresDisponiveis;
     for (auto u : _usuarios) {
         std::string tipo = u->getTipo();
-        if (tipo == "PROFESSOR" || tipo == "COORDENADOR_DO_CURSO") {
-            std::cout << u->getId() << " - " << u->getNome() << '\n';
+        // Permite coordenadores de curso, disciplina ou professor comum como coordenador
+        if (tipo == "PROFESSOR" || tipo == "COORDENADOR_DISCIPLINA" || tipo == "COORDENADOR_DO_CURSO") {
+            std::cout << u->getId() << " - " << u->getNome() << " (" << tipo << ")\n";
+            professoresDisponiveis.push_back(u);
         }
     }
 
-    std::cout << "Escolha o ID do professor da disciplina: ";
-    std::cin >> coordId;
+    Usuario* profCoordenador = nullptr;
+    while(profCoordenador == nullptr) {
+        std::cout << "Escolha o ID do professor para COORDENADOR da disciplina: ";
+        if (!(std::cin >> coordenadorId)) {
+            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
 
-    int id = ProximoIdDisciplinas(_disciplinas);
-    _disciplinas.emplace_back(id, codigo, nome, profId, coordId);
-    std::cout << "Disciplina cadastrada (ID=" << id << ")\n";
+        for (auto p : professoresDisponiveis) {
+            if (p->getId() == coordenadorId) {
+                profCoordenador = p;
+                break;
+            }
+        }
+        if (profCoordenador == nullptr) {
+            std::cerr << "ERRO: ID de professor inva'lido. Tente novamente.\n";
+        }
+    }
+
+    // 1. PROMOÇÃO AUTOMÁTICA: se for um PROFESSOR comum, é promovido.
+    if (profCoordenador->getTipo() == "PROFESSOR") {
+        profCoordenador->setTipo("COORDENADOR_DISCIPLINA"); // AGORA FUNCIONARÁ
+        std::cout << "\nProfessor " << profCoordenador->getNome() << " promovido para COORDENADOR_DISCIPLINA.\n";
+    }
+
+    int novaDiscId = ProximoIdDisciplinas(_disciplinas);
+    int profIdResponsavel = coordenadorId; // O coordenador é o professor responsável pela disciplina
+    
+    // 2. CADASTRO DA DISCIPLINA
+    _disciplinas.emplace_back(novaDiscId, codigo, nome, profIdResponsavel, coordenadorId);
+    std::cout << "Disciplina cadastrada (ID=" << novaDiscId << ")\n";
+    
+    // 3. CRIAÇÃO AUTOMÁTICA DA TURMA 1
+    int novaTurmaId = ProximoIdTurmas(_turmas);
+    std::string codigoTurma = "1";
+    int professorTurmaId = coordenadorId; // O coordenador é o professor da Turma 1
+
+    _turmas.emplace_back(novaTurmaId, novaDiscId, codigoTurma, professorTurmaId);
+    std::cout << "Turma 1 automatica cadastrada (ID=" << novaTurmaId << "). Professor: " << profCoordenador->getNome() << ".\n";
 }
 
 void SistemaAvaliacao::cadastrarTurma() {
@@ -286,7 +329,7 @@ void SistemaAvaliacao::cadastrarTurma() {
     std::cin >> codigoTurma;
 
     std::cout << "Professores disponiveis:\n";
-    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA" || u->getTipo() == "COORDENADOR_DO_CURSO")
+    for (auto u : _usuarios) if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")
         std::cout << u->getId() << " - " << u->getNome() << '\n';
     std::cout << "Escolha ID do professor para a turma: ";
     std::cin >> professorId;
@@ -480,50 +523,97 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
 }
 
 void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
-    std::vector<Turma*> turmasemaildas = u->getMinhasDisciplinas();
+    std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
 
-    if (turmasemaildas.empty()) {
+    if (turmasMatriculadas.empty()) {
         throw "Voce nao esta' matriculado em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
     }
 
-    std::vector<int> professoresIds;
-    for (const auto* t : turmasemaildas) {
-        int profId = t->getProfessorId(); // Turma sabe quem é o professor
-        if (profId > 0) { 
-            professoresIds.push_back(profId); 
-        }
-    }
+    // Usaremos um mapa para agrupar as disciplinas por Professor ID.
+    // Map: [Professor ID] -> Vector of {Disciplina ID, Disciplina Código}
+    std::map<int, std::vector<std::pair<int, std::string>>> professoresDisciplinas; 
 
-    std::cout << "Professores disponiveis para avaliacao:\n";
-    std::vector<Usuario*> professoresDisponiveis;
-    for (int profId : professoresIds) {
-        for (auto &usuario : _usuarios) {
-            if (usuario->getId() == profId && usuario->getTipo() == "PROFESSOR") {
-                std::cout << usuario->getId() << " - " << usuario->getNome() << '\n';
-                professoresDisponiveis.push_back(usuario);
-                break;
+    for (const auto* t : turmasMatriculadas) {
+        int profId = t->getProfessorId();
+        int discId = t->getDisciplinaId();
+        Disciplina* disc = getDisciplinaPorID(discId);
+
+        if (profId > 0 && disc) { 
+            bool jaAdicionado = false;
+            // Verifica se a disciplina já foi adicionada para este professor (para evitar duplicatas)
+            for (const auto& pair : professoresDisciplinas[profId]) {
+                if (pair.first == discId) {
+                    jaAdicionado = true;
+                    break;
+                }
+            }
+            if (!jaAdicionado) {
+                professoresDisciplinas[profId].push_back({discId, disc->getCodigo()});
             }
         }
     }
 
-    bool idValido = false;
+    // 1. Listar professores disponíveis para avaliação
+    std::cout << "Professores disponiveis para avaliacao:\n";
+    std::map<int, Usuario*> listaProfessores;
+
+    for (auto const& [profId, discs] : professoresDisciplinas) {
+        Usuario* usuario = getUsuarioPorID(profId);
+        if (usuario && (usuario->getTipo() == "PROFESSOR" || usuario->getTipo() == "COORDENADOR_DISCIPLINA" || usuario->getTipo() == "COORDENADOR_DO_CURSO")) {
+            std::cout << usuario->getId() << " - " << usuario->getNome() << '\n';
+            listaProfessores[profId] = usuario;
+        }
+    }
+    
+    // 2. Escolher o professor
+    bool idProfValido = false;
     int profId;
     do {
         std::cout << "Escolha ID do professor: "; 
         std::cin >> profId;
 
-        for(const auto* p : professoresDisponiveis) {
-            if (p->getId() == profId) {
-                idValido = true;
+        if (listaProfessores.count(profId)) {
+            idProfValido = true;
+        } else {
+            std::cerr << "ID de professor invalido. Tente novamente\n";
+        }
+    } while (!idProfValido);
+    
+    // 3. Mostrar disciplinas disponíveis para avaliação para o professor escolhido
+    std::cout << "\nDisciplinas em que " << listaProfessores[profId]->getNome() << " leciona (Escolha para qual avaliar):\n";
+    
+    const auto& disciplinasDoProfessor = professoresDisciplinas[profId];
+    for (const auto& pair : disciplinasDoProfessor) {
+        std::cout << pair.first << " - " << pair.second << '\n';
+    }
+    
+    // 4. Escolher a disciplina
+    bool idDiscValido = false;
+    int discId;
+    std::string codigoDisciplina;
+    do {
+        std::cout << "Escolha ID da disciplina para avaliar: ";
+        std::cin >> discId;
+
+        for (const auto& pair : disciplinasDoProfessor) {
+            if (pair.first == discId) {
+                idDiscValido = true;
+                codigoDisciplina = pair.second;
                 break;
             }
         }
-        if (!idValido) {
-            std::cerr << "ID de professor invalido. Tente novamente\n";
+        if (!idDiscValido) {
+            std::cerr << "ID de disciplina invalido para este professor. Tente novamente.\n";
         }
-    } while (!idValido);
+    } while (!idDiscValido);
+    
+    // O professor será avaliado, mas a disciplina será mencionada no prompt.
+    std::cout << "\nAvaliacao para o Professor " << listaProfessores[profId]->getNome() << " na disciplina " << codigoDisciplina << ".\n";
 
+
+    // Continua com a coleta de notas (Mesmo código)
     int nota[5]; 
+    // ... [Resto do código para coletar notas e comentário] ...
     std::cout << "Como voce avalia o professor? (0-5)\n";
     std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
 
@@ -532,8 +622,6 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     nota[2] = lerInteiroComExcecao("\nO professor incentivou os alunos a participarem das aulas?: ");
     nota[3] = lerInteiroComExcecao("\nO professor demonstrou domi'nio no conteu'do da disciplina?: ");
     nota[4] = lerInteiroComExcecao("\nA dida'tica do professor foi objetiva e clara?: ");
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string comentario; 
     std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da metodologia utilizada: ";
@@ -545,6 +633,7 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     mediaNotas /= 5.0;
     int id = ProximoIdAvaliacoes(_avaliacoes);
 
+    // O alvo da avaliação (profId) permanece, mas agora foi feita após a escolha da disciplina.
     _avaliacoes.emplace_back(id, profId, "PROFESSOR", mediaNotas, comentario, getDataAtual());
     std::cout << "Avaliacao de professor registrada.\n";
 }
@@ -662,14 +751,14 @@ void SistemaAvaliacao::visualizarAvaliacoesProfessor(Usuario* u) {
             } else if (a.getTipo() == "PROFESSOR") {
                 // Vê avaliações de professores que lecionam nas disciplinas que coordena
                 for (const auto& dId : discIdsCoordenadas) {
-                    Disciplina* d = getDisciplinaById(dId);
+                    Disciplina* d = getDisciplinaPorID(dId);
                     if (d && d->getProfessorId() == a.getAlvoId()) {
                         show = true;
                         break;
                     }
                 }
             } else if (a.getTipo() == "TURMA") {
-                Turma* t = getTurmaById(a.getAlvoId());
+                Turma* t = getTurmaPorID(a.getAlvoId());
                 if (t && std::find(discIdsCoordenadas.begin(), discIdsCoordenadas.end(), t->getDisciplinaId()) != discIdsCoordenadas.end()) {
                     show = true;
                 }
@@ -681,7 +770,6 @@ void SistemaAvaliacao::visualizarAvaliacoesProfessor(Usuario* u) {
             if (a.getTipo() == "PROFESSOR" && a.getAlvoId() == userId) {
                 show = true; // Avaliações destinadas a ele
             } else if (a.getTipo() == "DISCIPLINA") {
-                Disciplina* d = getDisciplinaById(a.getAlvoId());
                 // Verifica se ele é o professor principal de alguma turma dessa disciplina
                 bool leciona = false;
                 for (const auto& t : _turmas) {
@@ -700,14 +788,14 @@ void SistemaAvaliacao::visualizarAvaliacoesProfessor(Usuario* u) {
         if (show) {
             count++;
             if (a.getTipo() == "TURMA") {
-                Turma* t = getTurmaById(a.getAlvoId());
-                Disciplina* d = t ? getDisciplinaById(t->getDisciplinaId()) : nullptr;
+                Turma* t = getTurmaPorID(a.getAlvoId());
+                Disciplina* d = t ? getDisciplinaPorID(t->getDisciplinaId()) : nullptr;
                 alvoInfo = (d ? d->getCodigo() : "DESC.") + " - Turma " + (t ? t->getCodigoTurma() : "DESC.");
             } else if (a.getTipo() == "DISCIPLINA") {
-                Disciplina* d = getDisciplinaById(a.getAlvoId());
+                Disciplina* d = getDisciplinaPorID(a.getAlvoId());
                 alvoInfo = "Disciplina: " + (d ? d->getCodigo() : "DESC.");
             } else if (a.getTipo() == "PROFESSOR") {
-                Usuario* p = getUsuarioById(a.getAlvoId());
+                Usuario* p = getUsuarioPorID(a.getAlvoId());
                 alvoInfo = "Professor: " + (p ? p->getNome() : "DESC.");
             }
             
@@ -739,8 +827,8 @@ void SistemaAvaliacao::visualizarMediasAluno(Usuario* u) {
     for (const auto* turma : turmasAluno) {
         int profId = turma->getProfessorId();
         int discId = turma->getDisciplinaId();
-        Disciplina* disc = getDisciplinaById(discId);
-        Usuario* prof = getUsuarioById(profId);
+        Disciplina* disc = getDisciplinaPorID(discId);
+        Usuario* prof = getUsuarioPorID(profId);
 
         // Processar Avaliações de PROFESSOR
         if (prof) {
@@ -804,15 +892,15 @@ void SistemaAvaliacao::relatorioGeralCoordenador() {
     // Mapeamento de IDs para Nomes/Códigos para facilitar a exibição
     auto mapTargetInfo = [&](const std::string& tipo, int id) -> std::string {
         if (tipo == "DISCIPLINA") {
-            Disciplina* d = getDisciplinaById(id);
+            Disciplina* d = getDisciplinaPorID(id);
             return d ? d->getCodigo() + " (" + d->getNome() + ")" : "Disciplina Desconhecida";
         } else if (tipo == "PROFESSOR") {
-            Usuario* u = getUsuarioById(id);
+            Usuario* u = getUsuarioPorID(id);
             return u ? u->getNome() : "Professor Desconhecido";
         } else if (tipo == "TURMA") {
-            Turma* t = getTurmaById(id);
+            Turma* t = getTurmaPorID(id);
             if (t) {
-                Disciplina* d = getDisciplinaById(t->getDisciplinaId());
+                Disciplina* d = getDisciplinaPorID(t->getDisciplinaId());
                 return (d ? d->getCodigo() : "DESC.") + " - Turma " + t->getCodigoTurma();
             }
             return "Turma Desconhecida";
@@ -984,7 +1072,7 @@ void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
                  alvoInfo = "Alvo ID: " + std::to_string(a.getAlvoId());
             }
             
-            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
         }
     }
 }
@@ -996,5 +1084,7 @@ void SistemaAvaliacao::salvarTudo() {
     arquivo.salvarDisciplinas(_disciplinas);
     arquivo.salvarTurmas(_turmas);
     arquivo.salvarAvaliacoes(_avaliacoes);
+    arquivo.salvarMatriculas(_usuarios);
+
     std::cout << "Dados salvos em disco (data/)\n";
 }

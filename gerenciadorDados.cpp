@@ -4,6 +4,7 @@
 #include <iostream>
 #include <filesystem>
 
+const std::string ARQUIVO_MATRICULAS = "data/matriculas.txt";
 
 static std::vector<std::string> dividirLinha(const std::string &linha, char delim=';') {
     std::vector<std::string> partes;
@@ -79,6 +80,79 @@ void GerenciadorDados::salvarUsuarios(const std::vector<Usuario*>& lista) {
             
     }
     arquivoSaida.close();
+}
+
+void GerenciadorDados::carregarMatriculas(std::vector<Usuario*>& usuarios, std::vector<Turma>& turmas) {
+    std::ifstream arquivo(ARQUIVO_MATRICULAS);
+
+    if (!arquivo.is_open()) {
+        std::cerr << "AVISO: Arquivo de matriculas nao encontrado. Criando novo arquivo na proxima gravacao.\n";
+        return;
+    }
+
+    std::string linha;
+    while (std::getline(arquivo, linha)) {
+        if (linha.empty()) continue;
+
+        auto campos = dividirLinha(linha, ';');
+        if (campos.size() != 2) {
+            std::cerr << "AVISO: Linha ignorada em matriculas.txt: Formato invalido: " << linha << "\n";
+            continue;
+        }
+
+        try {
+            int alunoId = std::stoi(campos[0]);
+            int turmaId = std::stoi(campos[1]);
+            
+            Usuario* aluno = nullptr;
+            for (auto* u : usuarios) {
+                if (u->getId() == alunoId && u->getTipo() == "ALUNO") {
+                    aluno = u;
+                    break;
+                }
+            }
+
+            Turma* turma = nullptr;
+            for (auto& t : turmas) {
+                if (t.getId() == turmaId) {
+                    turma = &t;
+                    break;
+                }
+            }
+
+            // Apenas matricula se o usuário for um ALUNO e a turma existir
+            if (aluno && turma) {
+                aluno->addTurma(turma); 
+            } else {
+                 std::cerr << "AVISO: Matricula (Aluno ID:" << alunoId << ", Turma ID:" << turmaId << ") nao pode ser carregada (usuario/turma nao existe ou usuario nao e' aluno).\n";
+            }
+        } catch (const std::exception& e) {
+             std::cerr << "ERRO de parsing em matriculas.txt: " << linha << "\n";
+        }
+    }
+    arquivo.close();
+    std::cout << "Matriculas carregadas.\n";
+}
+
+void GerenciadorDados::salvarMatriculas(const std::vector<Usuario*>& lista) const {
+    std::ofstream arquivo(ARQUIVO_MATRICULAS, std::ios::trunc);
+
+    if (!arquivo.is_open()) {
+        std::cerr << "ERRO FATAL: Nao foi possivel abrir o arquivo para salvar as matriculas: " << ARQUIVO_MATRICULAS << "\n";
+        return;
+    }
+    
+    // Itera sobre todos os usuários e salva apenas as matrículas dos alunos.
+    for (const auto* u : lista) {
+        if (u->getTipo() == "ALUNO") {
+            for (const auto* turma : u->getMinhasDisciplinas()) {
+                // Formato: ID_ALUNO;ID_TURMA
+                arquivo << u->getId() << ";" << turma->getId() << "\n";
+            }
+        }
+    }
+
+    arquivo.close();
 }
 
 

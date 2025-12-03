@@ -32,12 +32,14 @@ public:
     std::vector<Disciplina> carregarDisciplinas();
     std::vector<Turma> carregarTurmas();
     std::vector<Avaliacao> carregarAvaliacoes();
+    void carregarMatriculas(std::vector<Usuario*>& usuarios, std::vector<Turma>& turmas);
 
     // SALVAMENTO
     void salvarUsuarios(const std::vector<Usuario*>& lista);
     void salvarDisciplinas(const std::vector<Disciplina>& lista);
     void salvarTurmas(const std::vector<Turma>& lista);
     void salvarAvaliacoes(const std::vector<Avaliacao>& lista);
+    void salvarMatriculas(const std::vector<Usuario*>& lista) const;    
 };
 
 #endif

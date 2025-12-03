@@ -41,6 +41,8 @@ public:
 
     void addTurma(Turma* t);
 
+    void setTipo(const std::string& newType);
+
     // Sera usada pelo gerenciadorDados para gravar no TXT
     std::string getHash() const ;
 

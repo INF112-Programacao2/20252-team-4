@@ -39,9 +39,9 @@ private:
     std::vector<Turma> _turmas;
     std::vector<Avaliacao> _avaliacoes;
 
-    Disciplina* getDisciplinaById(int id);
-    Turma* getTurmaById(int id);
-    Usuario* getUsuarioById(int id);
+    Disciplina* getDisciplinaPorID(int id);
+    Turma* getTurmaPorID(int id);
+    Usuario* getUsuarioPorID(int id);
 
 public:
     SistemaAvaliacao();
