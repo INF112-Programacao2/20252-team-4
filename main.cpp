@@ -5,6 +5,7 @@
 #include "sistemaAvaliacao.hpp"
 #include "login.hpp"
 #include "usuario.hpp"
+#include "senhaMascarada.hpp"
 
 
 bool feito = false;
@@ -253,8 +254,13 @@ int main() {
             std::cout << "\n===== LOGIN =====\n";
             std::cout << "email: ";
             std::cin >> email;
-            std::cout << "Senha: ";
-            std::cin >> senha;
+            
+            // LIMPEZA DE BUFFER: Necessário após std::cin >> email para
+            // remover o '\n' (Enter) do buffer antes de usar getchar() em lerSenhaMascarada.
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            
+            // SUBSTITUIÇÃO: Chama a função mascarada para ler a senha
+            senha = lerSenhaMascarada("Senha: ");
 
             Usuario* u = log.login(sistema.getUsuarios(), email, senha);
 

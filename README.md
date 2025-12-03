@@ -272,9 +272,3 @@ make run
 E irá compilar e inicializar o programa.
 
 - [Sumário](#sumário)
-No terminal do Vs code com a extensão do Makefile instalada, o usuário deve inserir:
-
-```
-make run
-```
-E irá compilar e inicializar o programa.
