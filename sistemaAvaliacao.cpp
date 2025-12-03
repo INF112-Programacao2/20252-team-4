@@ -168,6 +168,8 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
 
     _usuarios.push_back(novo);
     std::cout << "Usuario cadastrado com ID: " << id << "\n";
+
+    arquivo.salvarUsuarios(_usuarios);
 }
 
 void SistemaAvaliacao::cadastrarDisciplina() {
@@ -306,6 +308,8 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
     _turmas.emplace_back(novaTurmaId, novaDiscId, codigoTurma, professorTurmaId);
     std::cout << "Turma 1 automatica cadastrada (ID=" << novaTurmaId << "). Professor: " << profCoordenador->getNome() << ".\n";
+
+    arquivo.salvarDisciplinas(_disciplinas);
 }
 
 void SistemaAvaliacao::cadastrarTurma() {
@@ -360,10 +364,12 @@ void SistemaAvaliacao::cadastrarTurma() {
         catch (const char* msg) {
             std::cerr << msg << '\n';
         }
+    arquivo.salvarTurmas(_turmas);
 }
 
 
 void SistemaAvaliacao::matricularAluno() {
+
     // 1. Verificar se há alunos e turmas
     std::vector<Usuario*> alunos;
     for(auto u : _usuarios) {
@@ -381,6 +387,7 @@ void SistemaAvaliacao::matricularAluno() {
         std::cerr << "ERRO: Nenhuma turma cadastrada no sistema.\n";
         return;
     }
+
 
     // 2. Escolher o aluno
     std::cout << "\nAlunos disponi'veis:\n";
@@ -409,65 +416,118 @@ void SistemaAvaliacao::matricularAluno() {
             std::cerr << "ERRO: ID de aluno inva'lido ou aluno na'o e' do tipo ALUNO. Tente novamente.\n";
         }
     }
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 
-    // 3. Escolher a turma
-    std::cout << "\nTurmas disponi'veis:\n";
-    std::vector<Turma*> turmasPtr; 
-    for(auto &t : _turmas) {
-        std::string discInfo = "Disciplina Desconhecida";
-        // Busca o código da disciplina para melhor visualização
-        for (auto &d : _disciplinas) {
-            if (d.getId() == t.getDisciplinaId()) {
-                discInfo = d.getCodigo();
-                break;
-            }
-        }
-        std::cout << t.getId() << " - Disciplina: " << discInfo << " | Turma: " << t.getCodigoTurma() << '\n';
-        turmasPtr.push_back(&t);
+    // 3. Escolher a disciplina da turma
+    int disciplinaIdEscolhida = -1;
+
+    // lista disciplinas
+    std::cout << "\nDisciplinas disponi'veis:\n";
+    for (const auto &d : _disciplinas) {
+        std::cout << d.getId() << " - " << d.getCodigo() << " - " << d.getNome() << '\n';
     }
 
-    int turmaId;
-    Turma* turmaSelecionada = nullptr;
-    while(turmaSelecionada == nullptr) {
-        std::cout << "Escolha o ID da turma para matricular: ";
-        if (!(std::cin >> turmaId)) {
+    bool discValida = false;
+    while (!discValida) {
+        std::cout << "Escolha o ID da disciplina para matricular o aluno: ";
+        if (!(std::cin >> disciplinaIdEscolhida)) {
             std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
-        
-        for(auto t : turmasPtr) {
-            if (t->getId() == turmaId) {
-                turmaSelecionada = t;
+
+        for (const auto &d : _disciplinas) {
+            if (d.getId() == disciplinaIdEscolhida) {
+                discValida = true;
                 break;
             }
         }
-        if (turmaSelecionada == nullptr) {
-            std::cerr << "ERRO: ID de turma inva'lido. Tente novamente.\n";
-        }
-    }
-    
-    // 4. Checar se o aluno já está matriculado nessa turma
-    bool jaMatriculado = false;
-    for (const auto* t : alunoSelecionado->getMinhasDisciplinas()) {
-        if (t->getId() == turmaSelecionada->getId()) {
-            jaMatriculado = true;
-            break;
+        if (!discValida) {
+            std::cerr << "ERRO: ID de disciplina inva'lido. Tente novamente.\n";
         }
     }
 
-    if (jaMatriculado) {
-        std::cout << "ERRO: O aluno " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
+    std::vector<Turma*> turmasDaDisciplina;
+    std::cout << "\nTurmas disponi'veis para essa disciplina:\n";
+    for (auto &t : _turmas) {
+        if (t.getDisciplinaId() == disciplinaIdEscolhida) {
+            std::cout << t.getId()
+                    << " - Turma: " << t.getCodigoTurma()
+                    << " (Disciplina ID=" << t.getDisciplinaId() << ")\n";
+            turmasDaDisciplina.push_back(&t);
+        }
+    }
+
+    if (turmasDaDisciplina.empty()) {
+        std::cerr << "ERRO: Nao ha turmas cadastradas para essa disciplina.\n";
         return;
     }
 
-    // 5. Matricular o aluno (adicionar a turma ao vetor _minhasDisciplinas do aluno)
-    alunoSelecionado->addTurma(turmaSelecionada);
+        int turmaId;
+        Turma* turmaSelecionada = nullptr;
+        while (turmaSelecionada == nullptr) {
+            std::cout << "Escolha o ID da turma para matricular: ";
+            if (!(std::cin >> turmaId)) {
+                std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                continue;
+            }
 
-    std::cout << "\nAluno " << alunoSelecionado->getNome() << " matriculado com sucesso na Turma " << turmaSelecionada->getCodigoTurma() << ".\n";
+            for (auto t : turmasDaDisciplina) {
+                if (t->getId() == turmaId) {
+                    turmaSelecionada = t;
+                    break;
+                }
+            }
+            if (turmaSelecionada == nullptr) {
+                std::cerr << "ERRO: ID de turma inva'lido para essa disciplina. Tente novamente.\n";
+            }
+        }
+        
+        // 4. Checar se o aluno já está matriculado nessa turma
+        bool jaMatriculado = false;
+        for (const auto* t : alunoSelecionado->getMinhasDisciplinas()) {
+            if (t->getId() == turmaSelecionada->getId()) {
+                jaMatriculado = true;
+                break;
+            }
+        }
+
+        if (jaMatriculado) {
+            std::cout << "ERRO: O aluno " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
+            return;
+        }
+
+        int disciplinaDaTurmaSelecionada = turmaSelecionada->getDisciplinaId();
+
+        // 4.1 Checar se o aluno já está matriculado em outra turma
+        bool jaMatriculadoNaDisciplina = false;
+
+        for (const auto* t : alunoSelecionado->getMinhasDisciplinas()) {
+            if (t->getDisciplinaId() == disciplinaDaTurmaSelecionada) {
+                jaMatriculadoNaDisciplina = true;
+                break;
+            }
+        }
+
+        if (jaMatriculadoNaDisciplina) {
+            std::cout << "\nERRO: O aluno "
+                    << alunoSelecionado->getNome()
+                    << " ja' esta' matriculado em outra turma dessa mesma disciplina.\n";
+            std::cout << "Escolha uma turma de outra disciplina.\n";
+            return;
+        }
+
+
+        // 5. Matricular o aluno (adicionar a turma ao vetor _minhasDisciplinas do aluno)
+        alunoSelecionado->addTurma(turmaSelecionada);
+
+        std::cout << "\nAluno " << alunoSelecionado->getNome() << " matriculado com sucesso na Turma " << turmaSelecionada->getCodigoTurma() << ".\n";
+
+        arquivo.salvarMatriculas(_usuarios);
 }
 
 // AVALIACOES
@@ -542,6 +602,8 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     int id = ProximoIdAvaliacoes(_avaliacoes);
     _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", mediaNotas, comentario, getDataAtual());
     std::cout << "Avaliacao de disciplina registrada.\n";
+
+    arquivo.salvarAvaliacoes(_avaliacoes);
 }
 
 void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
@@ -658,6 +720,8 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     // O alvo da avaliação (profId) permanece, mas agora foi feita após a escolha da disciplina.
     _avaliacoes.emplace_back(id, profId, "PROFESSOR", mediaNotas, comentario, getDataAtual());
     std::cout << "Avaliacao de professor registrada.\n";
+
+    arquivo.salvarAvaliacoes(_avaliacoes);
 }
 
 void SistemaAvaliacao::avaliarTurma(Usuario* u) {
@@ -736,6 +800,8 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         int id = ProximoIdAvaliacoes(_avaliacoes);
         _avaliacoes.emplace_back(id, turmaId, "TURMA", mediaNotas, comentario, getDataAtual());
         std::cout << "Avaliacao de turma registrada.\n";
+
+        arquivo.salvarAvaliacoes(_avaliacoes);
 }
 
 //LISTAGEM
