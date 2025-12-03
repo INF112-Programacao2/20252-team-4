@@ -236,7 +236,7 @@ avaliacoes.txt
 ```
 Id;alvoId;tipo;nota;comentario;data
 ```
-Sendo alvoId o Id do objeto que está sendo avaliado.
+Sendo alvoId o Id do objeto que está sendo avaliado, e tipo sendo o tipo do objeto avaliado (Turma/Disciplina/Professor)
 
 Os cadastramentos feitos pelo Coordenador do Curso (Disciplinas/Turmas/Matriculas/Usuários) também são armazenadas de forma serializada, seguindo o padrão:
 
