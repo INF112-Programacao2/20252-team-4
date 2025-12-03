@@ -133,7 +133,6 @@ void GerenciadorDados::carregarMatriculas(std::vector<Usuario*>& usuarios, std::
         }
     }
     arquivo.close();
-    std::cout << "Matriculas carregadas.\n";
 }
 
 void GerenciadorDados::salvarMatriculas(const std::vector<Usuario*>& lista) const {

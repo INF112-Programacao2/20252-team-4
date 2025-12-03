@@ -12,7 +12,7 @@ int lerInteiroComExcecao(const std::string& pergunta) {
 
     while (true) {
         std::cout << pergunta;
-        std::getline(std::cin, entrada);
+        std::getline(std::cin >> std::ws, entrada);
 
         try {
             int valor = std::stoi(entrada);
@@ -189,7 +189,8 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
 
         if (codigo.length() != 6 || codigo.substr(0, 3) != "INF") {
-            std::cerr << "ERRO: O codigo da disciplina deve ter 6 caracteres, começando com 'INF' (em maiusculas) e seguido por tres numeros (ex: INF112). Tente novamente.\n";
+            std::cerr << "ERRO: O codigo da disciplina deve ter 6 caracteres, começando com 'INF' (em maiusculas) e seguido por tres numeros (ex.: INF112). Tente novamente.\n";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
         
@@ -312,11 +313,11 @@ void SistemaAvaliacao::cadastrarDisciplina() {
     arquivo.salvarDisciplinas(_disciplinas);
 }
 
-void SistemaAvaliacao::cadastrarTurma() {
+/* void SistemaAvaliacao::cadastrarTurma() {
 
     try {
         int disciplinaId, professorId;
-        std::string codigoTurma;
+        std::string codigoTurma, disciplinaIdStr;
 
         if (_disciplinas.empty()) {
             throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
@@ -327,7 +328,9 @@ void SistemaAvaliacao::cadastrarTurma() {
             std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
 
         std::cout << "Escolha ID da disciplina: ";
-        std::cin >> disciplinaId;
+        std::cin >> disciplinaIdStr;
+        disciplinaId = std::stoi(disciplinaIdStr);
+
 
         bool codigoJaExiste;
         do {
@@ -357,16 +360,182 @@ void SistemaAvaliacao::cadastrarTurma() {
         int id = ProximoIdTurmas(_turmas);
         _turmas.emplace_back(id, disciplinaId, codigoTurma, professorId);
         std::cout << "Turma cadastrada (ID=" << id << ")\n";
+
+        arquivo.salvarTurmas(_turmas);
     }
+        catch (std::invalid_argument& e) {
+            std::cerr << "ERRO: ID de disciplina invalido. Tente novamente\n";
+        }
         catch (const std::runtime_error& e) {
             std::cerr << e.what() << '\n';
         }
         catch (const char* msg) {
             std::cerr << msg << '\n';
         }
-    arquivo.salvarTurmas(_turmas);
 }
+*/
 
+void SistemaAvaliacao::cadastrarTurma() {
+    
+    // Variáveis que armazenarão os dados da nova turma
+    int disciplinaId = -1; // Inicializa com valor inválido
+    int professorId = -1;
+    std::string codigoTurma;
+    std::string disciplinaIdStr; // Para leitura robusta
+
+    try {
+        // --- 1. Pré-verificação de Disciplinas ---
+        if (_disciplinas.empty()) {
+            throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
+        }
+
+        // --- 2. Leitura e Validação do ID da Disciplina ---
+        std::cout << "\nDisciplinas disponiveis:\n";
+        for (auto &d : _disciplinas) {
+            std::cout << d.getId() << " - " << d.getCodigo() << " " << d.getNome() << '\n';
+        }
+        
+        bool idDisciplinaValido = false;
+        while (!idDisciplinaValido) {
+            std::cout << "Escolha ID da disciplina: ";
+            
+            // Leitura como string para evitar falhas de estado do std::cin
+            if (!(std::cin >> disciplinaIdStr)) {
+                // Tratamento de erro de leitura de cin (improvável para string)
+                std::cerr << "ERRO: Falha de leitura. Tente novamente.\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                continue;
+            }
+            // Consome o resto da linha (incluindo o Enter) imediatamente
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            
+            try {
+                // Tenta a conversão: pode lançar std::invalid_argument ou std::out_of_range
+                disciplinaId = std::stoi(disciplinaIdStr);
+                
+                // Verifica se a disciplina ID realmente existe no sistema
+                bool disciplinaExiste = false;
+                for (const auto& d : _disciplinas) {
+                    if (d.getId() == disciplinaId) {
+                        disciplinaExiste = true;
+                        break;
+                    }
+                }
+                
+                if (disciplinaExiste) {
+                    idDisciplinaValido = true;
+                } else {
+                    std::cerr << "ERRO: Disciplina com ID " << disciplinaId << " nao encontrada. Tente novamente.\n";
+                }
+                
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "ERRO: O ID da disciplina deve ser um numero inteiro valido. Tente novamente.\n";
+            } catch (const std::out_of_range& e) {
+                std::cerr << "ERRO: Numero fora do intervalo permitido. Tente novamente.\n";
+            }
+        }
+
+        // --- 3. Leitura e Validação do Código da Turma ---
+        bool codigoJaExiste;
+        do {
+            std::cout << "Codigo da turma (ex: 1): ";
+            std::cin >> codigoTurma;
+            
+            // Consome o resto da linha para limpar o buffer após a leitura da string
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            
+            codigoJaExiste = false;
+
+            for (const auto& t : _turmas) {
+                // Verifica se o código já existe PARA A MESMA DISCIPLINA
+                if (t.getDisciplinaId() == disciplinaId &&
+                    t.getCodigoTurma() == codigoTurma)
+                {
+                    codigoJaExiste = true;
+                    std::cerr << "ERRO: Ja existe uma turma com esse codigo (" << codigoTurma << ") para esta disciplina. Tente outro.\n";
+                    break;
+                }
+            }
+
+        } while (codigoJaExiste);
+
+        // --- 4. Leitura e Validação do ID do Professor ---
+        bool idProfessorValido = false;
+        std::string professorIdStr;
+        
+        while (!idProfessorValido) {
+            std::cout << "\nProfessores disponiveis:\n";
+            bool professorEncontrado = false;
+            for (auto u : _usuarios) {
+                if (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA") {
+                    std::cout << u->getId() << " - " << u->getNome() << "\n";
+                    professorEncontrado = true;
+                }
+            }
+            if (!professorEncontrado) {
+                 throw "Nao ha professores ou coordenadores disponiveis para atribuicao.";
+            }
+
+            std::cout << "Escolha ID do professor para a turma: ";
+            
+            // Leitura como string para evitar falhas de estado do std::cin
+            if (!(std::cin >> professorIdStr)) {
+                std::cerr << "ERRO: Falha de leitura. Tente novamente.\n";
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                continue;
+            }
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            try {
+                professorId = std::stoi(professorIdStr);
+                
+                // Verifica se o professor ID realmente existe e é do tipo correto
+                bool professorExiste = false;
+                for (const auto* u : _usuarios) {
+                    if (u->getId() == professorId && 
+                        (u->getTipo() == "PROFESSOR" || u->getTipo() == "COORDENADOR_DISCIPLINA")) {
+                        professorExiste = true;
+                        break;
+                    }
+                }
+                
+                if (professorExiste) {
+                    idProfessorValido = true;
+                } else {
+                    std::cerr << "ERRO: Usuario com ID " << professorId << " nao e' um professor ou nao existe. Tente novamente.\n";
+                }
+            
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "ERRO: O ID do professor deve ser um numero inteiro valido. Tente novamente.\n";
+            } catch (const std::out_of_range& e) {
+                std::cerr << "ERRO: Numero fora do intervalo permitido. Tente novamente.\n";
+            }
+        }
+        
+        // --- 5. Cadastro da Turma ---
+        int id = ProximoIdTurmas(_turmas);
+        _turmas.emplace_back(id, disciplinaId, codigoTurma, professorId);
+        std::cout << "\nTurma cadastrada com sucesso (ID=" << id << ")\n";
+
+        arquivo.salvarTurmas(_turmas);
+        
+    }
+    // --- 6. Tratamento de Exceções (erros graves ou erros de conversão) ---
+    catch (std::invalid_argument& e) {
+        // Esta exceção agora só é lançada se houver um erro de std::stoi não capturado
+        std::cerr << "ERRO: Erro de conversao de entrada. Tente novamente\n";
+    }
+    catch (const std::runtime_error& e) {
+        // Para outros erros de tempo de execução
+        std::cerr << "ERRO de execucao: " << e.what() << '\n';
+    }
+    catch (const char* msg) {
+        // Captura a exceção de string para erros de pré-verificação (disciplinas vazias)
+        std::cerr << "ERRO: " << msg << '\n';
+    }
+}
 
 void SistemaAvaliacao::matricularAluno() {
 
@@ -700,7 +869,7 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     // ... [Resto do código para coletar notas e comentário] ...
     std::cout << "Como voce avalia o professor? (0-5)\n";
     std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
-
+    
     nota[0] = lerInteiroComExcecao("O professor forneceu feedback das avaliacoes?: ");
     nota[1] = lerInteiroComExcecao("\nA metodologia de ensino do professor favoreceu a aprendizagem?: ");
     nota[2] = lerInteiroComExcecao("\nO professor incentivou os alunos a participarem das aulas?: ");
@@ -1034,6 +1203,10 @@ void SistemaAvaliacao::relatorioGeralCoordenador() {
 void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
 
     if (tipo == "GERAL") {
+        if (_avaliacoes.empty()) {
+            std::cerr << "Nenhuma avaliacao registrada no sistema.\n";
+            return;    
+        }
         std::cout << " Avaliacoes disponiveis : \n";
 
         for (auto &a : _avaliacoes) {
