@@ -1,7 +1,9 @@
 #include "avaliacao.hpp"
 
+//construtor padrao
 Avaliacao::Avaliacao() = default;
-        
+ 
+//construtor com parametros
 Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, double nota, const std::string &comentario, const std::string &data){
     this-> _id = id;
     this-> _alvoId = alvoId;
@@ -11,6 +13,7 @@ Avaliacao::Avaliacao(int id, int alvoId, const std::string &tipo, double nota, c
     this-> _data = data;
 }
 
+//getters
 int Avaliacao::getId() const { 
     return _id; 
 }

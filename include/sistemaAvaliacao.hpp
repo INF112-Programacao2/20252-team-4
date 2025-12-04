@@ -2,11 +2,11 @@
 #define SISTEMAAVALIACAO_HPP
 
 #include <iostream>
-#include <algorithm>
-#include <limits>
-#include <string> 
-#include <map>    // NEW: Necessário para std::map
-#include <numeric>// NEW: Necessário para std::accumulate
+#include <algorithm> // para std::find_if e std::sort
+#include <limits>   // para std::numeric_limits, serve para limpar o buffer do cin
+#include <string>   
+#include <map>    // para std::map, serve para armazenar pares chave-valor
+#include <numeric> // para std::accumulate, serve para somar elementos de um vetor
 #include <iomanip>
 #include <vector>
 
@@ -30,7 +30,8 @@
 
 class SistemaAvaliacao {
 private:
-    GerenciadorDados arquivo;
+
+    GerenciadorDados arquivo; // cria o gerenciador de dados para persistencia
 
     // Dados carregados na memoria
     std::vector<Usuario*> _usuarios;
@@ -38,39 +39,45 @@ private:
     std::vector<Turma> _turmas;
     std::vector<Avaliacao> _avaliacoes;
 
+ // funcoes auxiliares para buscar objetos por ID
     Disciplina* getDisciplinaPorID(int id);
     Turma* getTurmaPorID(int id);
     Usuario* getUsuarioPorID(int id);
 
 public:
+// construtor e destrutor
     SistemaAvaliacao();
     ~SistemaAvaliacao();
 
+    //funcoes para obter o proximo ID disponivel
     int ProximoIdUsuarios(const std::vector<Usuario*> &v);
     int ProximoIdDisciplinas(const std::vector<Disciplina> &v);
     int ProximoIdTurmas(const std::vector<Turma> &v);
     int ProximoIdAvaliacoes(const std::vector<Avaliacao> &v);
 
+    // get
     std::vector<Usuario*>& getUsuarios();
 
-    // Funcoes de cadastro
+    //funcoes de cadastro
     void cadastrarUsuario(const int &tipo);
     void cadastrarDisciplina();
     void cadastrarTurma();
     void matricularAluno();
 
-    // Avaliacao
+    //avaliacao
+    //para cada tipo de avaliacao
     void avaliarDisciplina(Usuario* u);
     void avaliarProfessor(Usuario *u);
     void avaliarTurma(Usuario* u);
 
-    // Visualizacao
+    //visualizacao
+    //para cada tipo de visualizacao
     void listarAvaliacoes(const std::string &tipo);
-    void visualizarAvaliacoesProfessor(Usuario* u); // Ponto 1 e 2: Professor e Coordenador de Discplina
-    void visualizarMediasAluno(Usuario* u);        // Ponto 3: Aluno
-    void relatorioGeralCoordenador();             // Ponto 4: Coordenador
+    void visualizarAvaliacoesProfessor(Usuario* u); 
+    void visualizarMediasAluno(Usuario* u);     
+    void relatorioGeralCoordenador();            
 
-    // Persistencia
+    //persistencia, salvar todos os dados
     void salvarTudo();
 
 

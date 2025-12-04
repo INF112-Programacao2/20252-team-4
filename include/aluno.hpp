@@ -11,6 +11,7 @@ class Aluno : public Usuario { //herda da classe usuario e so' tem direito a log
 
     // construtor default para criar o objeto vazio e preencher depois para os carregamentos de arquivos
     Aluno();
+    Aluno(int id, const std::string &nome, const std::string &email, const std::string &senha);
     // o construtor normal recebe senha como texto, porém a senha e' hashada antes de salvar
     Aluno(int id, const std::string& nome, const std::string& email, const std::string& hashPronto, const std::string& tipo,bool hashJaGerado);
 };
