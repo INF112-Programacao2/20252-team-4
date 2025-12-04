@@ -115,7 +115,7 @@ std::vector<Usuario*>& SistemaAvaliacao::getUsuarios() {
 
 void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
     if (tipo != 1 && tipo != 2) {
-        throw "Tipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
+        throw "\nTipo de usuario invalido. Escolha 1 (Aluno) ou 2 (Professor).\n";
     }
     std::string nome, email, senha;
     std::cout << "Nome: ";
@@ -128,7 +128,7 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
         std::cout << "email: ";
         
         if (!(std::cin >> email)) {
-            std::cerr << "Erro na leitura do email.\n";
+            std::cerr << "\nErro na leitura do email.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -138,7 +138,7 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
         if (email.length() < tamanhoEmail || 
             email.substr(email.length() - tamanhoEmail) != validarEmail ||
             email.length() == tamanhoEmail) {
-            std::cerr << "ERRO: O e-mail deve ser do dominio '@ufv.br'. Tente novamente.\n";
+            std::cerr << "\nERRO: O e-mail deve ser do dominio '@ufv.br'. Tente novamente.\n";
             continue;
         }
 
@@ -152,7 +152,7 @@ void SistemaAvaliacao::cadastrarUsuario(const int &tipo) {
         }
 
         if (emailExiste) {
-            std::cerr << "ERRO: Usuario " << email << " ja esta cadastrado no sistema. Tente novamente.\n";
+            std::cerr << "\nERRO: Usuario " << email << " ja esta cadastrado no sistema. Tente novamente.\n";
             continue;
         }
         break;
@@ -182,14 +182,14 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         std::cout << "Codigo da disciplina (ex: INF112): ";
         
         if (!(std::cin >> codigo)) {
-            std::cerr << "Erro na leitura do codigo.\n";
+            std::cerr << "\nErro na leitura do codigo.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
             continue;
         }
 
         if (codigo.length() != 6 || codigo.substr(0, 3) != "INF") {
-            std::cerr << "ERRO: O codigo da disciplina deve ter 6 caracteres, começando com 'INF' (em maiusculas) e seguido por tres numeros (ex.: INF112). Tente novamente.\n";
+            std::cerr << "\nERRO: O codigo da disciplina deve ter 6 caracteres, começando com 'INF' (em maiusculas) e seguido por tres numeros (ex.: INF112). Tente novamente.\n";
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
@@ -201,16 +201,16 @@ void SistemaAvaliacao::cadastrarDisciplina() {
             numCodigo = std::stoi(numStr);
 
             if (numCodigo < 100 || numCodigo > 999) {
-                std::cerr << "ERRO: Os tres numeros do codigo (depois de 'INF') devem estar entre 100 e 999. Tente novamente.\n";
+                std::cerr << "\nERRO: Os tres numeros do codigo (depois de 'INF') devem estar entre 100 e 999. Tente novamente.\n";
                 continue;
             }
         }
         catch (const std::invalid_argument&) {
-            std::cerr << "ERRO: Os caracteres apos 'INF' devem ser numeros validos. Tente novamente.\n";
+            std::cerr << "\nERRO: Os caracteres apos 'INF' devem ser numeros validos. Tente novamente.\n";
             continue; 
         } 
         catch (const std::out_of_range&) {
-            std::cerr << "ERRO: Numero fora do intervalo. Tente novamente.\n";
+            std::cerr << "\nERRO: Numero fora do intervalo. Tente novamente.\n";
             continue; 
         }
 
@@ -223,7 +223,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
 
         if (codigoExiste) {
-            std::cerr << "ERRO: Codigo de disciplina '" << codigo << "' ja' cadastrado. Tente outro.\n";
+            std::cerr << "\nERRO: Codigo de disciplina '" << codigo << "' ja' cadastrado. Tente outro.\n";
             continue; 
         } else {
             break; 
@@ -232,11 +232,11 @@ void SistemaAvaliacao::cadastrarDisciplina() {
     
     //Tratamento de excecao para o nome de disciplina
     while (true) {
-        std::cout << "Nome da disciplina: ";
+        std::cout << "\nNome da disciplina: ";
         std::getline(std::cin >> std::ws, nome);
 
         if (nome.empty()) {
-            std::cerr << "ERRO: O nome da disciplina nao pode ser vazio. Tente novamente.\n";
+            std::cerr << "\nERRO: O nome da disciplina nao pode ser vazio. Tente novamente.\n";
             continue;
         }
         
@@ -249,14 +249,14 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
 
         if (nomeExiste) {
-            std::cerr << "ERRO: Nome de disciplina '" << nome << "' ja' cadastrado. Tente outro.\n";
+            std::cerr << "\nERRO: Nome de disciplina '" << nome << "' ja' cadastrado. Tente outro.\n";
             continue;
         } else {
             break;
         }
     }
 
-  std::cout << "Professores disponiveis para coordenador:\n";
+  std::cout << "\nProfessores disponiveis para coordenador:\n";
     // LISTAGEM DE PROFESSORES PARA ESCOLHA DO COORDENADOR
     std::vector<Usuario*> professoresDisponiveis;
     for (auto u : _usuarios) {
@@ -270,9 +270,9 @@ void SistemaAvaliacao::cadastrarDisciplina() {
 
     Usuario* profCoordenador = nullptr;
     while(profCoordenador == nullptr) {
-        std::cout << "Escolha o ID do professor para COORDENADOR da disciplina: ";
+        std::cout << "\nEscolha o ID do professor para COORDENADOR da disciplina: ";
         if (!(std::cin >> coordenadorId)) {
-            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cerr << "\nERRO: Entrada inva'lida. Tente novamente.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -285,7 +285,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
             }
         }
         if (profCoordenador == nullptr) {
-            std::cerr << "ERRO: ID de professor inva'lido. Tente novamente.\n";
+            std::cerr << "\nERRO: ID de professor inva'lido. Tente novamente.\n";
         }
     }
 

@@ -19,10 +19,11 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
         std::cout << "\n===== MENU ALUNO =====\n";
         std::cout << "1 - Avaliar disciplina\n";
         std::cout << "2 - Avaliar professor\n";
-        std::cout << "3 - Ver Medias de Avaliacao\n"; // NOVA OPÇÃO
+        std::cout << "3 - Ver Medias de Avaliacao\n";
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
+        std::cout << std::endl;
 
         switch (opc) {
             case 1: 
@@ -55,7 +56,7 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
     bool isCoordDisc = (tipo == "COORDENADOR_DISCIPLINA");
     int opc;
     do {
-        std::cout << "\n===== MENU PROFESSOR (" << tipo << ") =====\n";
+        std::cout << "\n===== MENU PROFESSOR =====\n";
         
         if (isCoordDisc) {
             // Opções completas para Coordenador de Disciplina
@@ -72,15 +73,15 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         
-        if (!(std::cin >> opc)) { // Leitura segura
-             std::cout << "Opcao invalida!\n";
+        if (!(std::cin >> opc)) {
+             std::cout << "\nOpcao invalida!\n";
              std::cin.clear(); 
              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
              continue;
         }
 
         if (opc == 0) {
-            std::cout << "Saindo...\n"; 
+            std::cout << "\nSaindo...\n"; 
             feito = true; 
             menuFeito = true; 
             break;
@@ -101,7 +102,7 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
                     }
                     break;
                 default: 
-                    std::cout << "Opcao invalida!\n";
+                    std::cout << "\nOpcao invalida!\n";
             }
         } else { // Professor Comum
             switch (opc) {
@@ -116,7 +117,7 @@ void menuProfessor(SistemaAvaliacao &sistema, Usuario* u) {
                     }
                     break;
                 default: 
-                    std::cout << "Opcao invalida!\n";
+                    std::cout << "\nOpcao invalida!\n";
             }
         }
 
@@ -145,15 +146,15 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
         std::cin >> opc;
+        std::cout << std::endl;
+
         switch (opc) {
             case 1: { // Cadastrar Usuario
                 do {
                     feito = false;
                     std::cout << "\n";
                     int tipo;
-                    std::cout << "O que deseja fazer?:\n";
-                    
-                    // As opções são reindexadas após a remoção do promoverProfessor
+                    std::cout << "\nO que deseja fazer?:\n";
                     std::cout << "\n1 - Cadastrar um Aluno\n"; 
                     std::cout << "2 - Cadastrar um Professor\n"; 
                     std::cout << "0 - Voltar ao menu anterior \n";
@@ -181,7 +182,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                             sistema.cadastrarUsuario(2); // Cadastrar Professor
                             std::cout << "\nCadastro concluido! \n";
                         } else {
-                            std::cerr << "Opcao invalida.\n";
+                            std::cerr << "\nOpcao invalida.\n";
                         }
                     }
                     catch (const char* e) {
@@ -209,7 +210,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                 
                 break;
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
-            default: std::cout << "Opcao invalida!\n";
+            default: std::cout << "\nOpcao invalida!\n";
         }
     } while (!menuFeito);
 
@@ -237,17 +238,17 @@ int main() {
         try {opcao = std::stoi(opcaoStr);}
 
         catch (const std::invalid_argument& e) {
-            std::cerr << "ERRO:: Entrada inválida. Digite apenas 0 ou 1.\n";
+            std::cerr << "\nERRO:: Entrada inválida. Digite apenas 0 ou 1.\n";
             continue; // volta para o início do while
         }
 
         catch (const std::out_of_range& e) {
-            std::cerr << "ERRO:: Número fora do intervalo. Digite 0 ou 1.\n";
+            std::cerr << "\nERRO:: Número fora do intervalo. Digite 0 ou 1.\n";
             continue;
         }
 
         if(opcao == 0){
-            std::cout << "Encerrando programa... \n";
+            std::cout << "\nEncerrando programa... \n";
             break;
         }
         else if(opcao == 1){
@@ -265,7 +266,7 @@ int main() {
             Usuario* u = log.login(sistema.getUsuarios(), email, senha);
 
             if (u == nullptr) {
-                std::cout << "Credenciais incorretas! Tente novamente.\n";
+                std::cout << "\nCredenciais incorretas! Tente novamente.\n";
                 continue;
             }
 
@@ -281,7 +282,7 @@ int main() {
             sistema.salvarTudo();
         }
         else {
-            std::cerr << "ERRO:: Opcao invalida. Escolha 1 - Login ou 0 - Encerrar \n";
+            std::cerr << "\nERRO:: Opcao invalida. Escolha 1 - Login ou 0 - Encerrar \n";
         }
     }
 
