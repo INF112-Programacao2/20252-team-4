@@ -582,7 +582,7 @@ void SistemaAvaliacao::matricularAluno() {
             }
         }
         if (alunoSelecionado == nullptr) {
-            std::cerr << "ERRO: ID de aluno inva'lido ou aluno na'o e' do tipo ALUNO. Tente novamente.\n";
+            std::cerr << "ERRO: ID de aluno inva'lido!! Tente novamente.\n";
         }
     }
     //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -622,9 +622,8 @@ void SistemaAvaliacao::matricularAluno() {
     std::cout << "\nTurmas disponi'veis para essa disciplina:\n";
     for (auto &t : _turmas) {
         if (t.getDisciplinaId() == disciplinaIdEscolhida) {
-            std::cout << t.getId()
-                    << " - Turma: " << t.getCodigoTurma()
-                    << " (Disciplina ID=" << t.getDisciplinaId() << ")\n";
+            std::cout << "ID: " << t.getId()
+                    << " - Turma " << t.getCodigoTurma() << std::endl;
             turmasDaDisciplina.push_back(&t);
         }
     }
@@ -666,7 +665,7 @@ void SistemaAvaliacao::matricularAluno() {
         }
 
         if (jaMatriculado) {
-            std::cout << "ERRO: O aluno " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
+            std::cout << "ERRO: Estudante " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
             return;
         }
 
@@ -683,10 +682,9 @@ void SistemaAvaliacao::matricularAluno() {
         }
 
         if (jaMatriculadoNaDisciplina) {
-            std::cout << "\nERRO: O aluno "
+            std::cout << "\nERRO: Estudante "
                     << alunoSelecionado->getNome()
                     << " ja' esta' matriculado em outra turma dessa mesma disciplina.\n";
-            std::cout << "Escolha uma turma de outra disciplina.\n";
             return;
         }
 
