@@ -5,21 +5,22 @@
 #include <vector>
 #include "turma.hpp"
 
-// Objeto basico da avaliacao.
-// Referencia professor e coordenador.
+//objeto basico da avaliacao
+//referencia professor e coordenador
 class Disciplina {
 private:
-    int _id;
-    std::string _codigo;
-    std::string _nome;
-    int _professorId;
-    int _coordenadorDiscId;
-    std::vector<Turma*> _turmasDisciplina;
+    int _id;                //id da disciplina
+    std::string _codigo;    //codigo da disciplina
+    std::string _nome;    //nome da disciplina
+    int _professorId;        // professor dela
+    int _coordenadorDiscId;            //coordenador da disciplina
+    std::vector<Turma*> _turmasDisciplina;   //turmas dessa disciplina
 public:
     Disciplina();
-
+    //construtor
     Disciplina(int id, const std::string &codigo, const std::string &nome, int professorId, int coordenadorDiscId);
 
+    //getters
     int getId() const;
     std::string getCodigo() const;
     std::string getNome() const;

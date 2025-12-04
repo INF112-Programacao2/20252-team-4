@@ -24,8 +24,8 @@
 
     void Usuario::addTurma(Turma* t) { _minhasDisciplinas.push_back(t); }
 
-    void Usuario::setTipo(const std::string& newType) {
-        _tipo = newType;
+    void Usuario::setTipo(const std::string& novoTipo) {
+        _tipo = novoTipo;
     }
     
     // Sera usada pelo gerenciadorDados para gravar no TXT

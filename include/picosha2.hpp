@@ -7,12 +7,24 @@
 #include <iomanip>
 #include <stdint.h>
 
+//importacao de biblioteca terceira
+// essa e' um biblioteca de SHA-256.
+// ela vai gerar um hash em hexadecimal a partir de um texto para senha e e salvar/validar
+
+//usamos tipo assim: std::string hash = picosha2::hash256_hex_string("senha");
+//depois ele so' compara o hash calculado com o hash salvo no arquivo
+
 namespace picosha2 {
 
 typedef uint32_t uint32;
 typedef uint8_t uint8;
 
+
+//fica no namespace detail pra separar o que é motor do algoritmo
+//do que e' API que você chama no sistema
 namespace detail {
+
+//funcoes auxiliares do algoritmo SHA-256
 inline uint32 ch(uint32 x, uint32 y, uint32 z) { return (x & y) ^ ((~x) & z); }
 inline uint32 maj(uint32 x, uint32 y, uint32 z) { return (x & y) ^ (x & z) ^ (y & z); }
 inline uint32 rotr(uint32 x, uint32 n) { return (x >> n) | (x << (32 - n)); }
@@ -20,8 +32,9 @@ inline uint32 bsig0(uint32 x) { return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22); }
 inline uint32 bsig1(uint32 x) { return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25); }
 inline uint32 ssig0(uint32 x) { return rotr(x, 7) ^ rotr(x, 18) ^ (x >> 3); }
 inline uint32 ssig1(uint32 x) { return rotr(x, 17) ^ rotr(x, 19) ^ (x >> 10); }
-}  // namespace detail
+}
 
+// Constantes fixas do SHA-256
 static const uint32 k[64] = {
     0x428a2f98ul,0x71374491ul,0xb5c0fbcful,0xe9b5dba5ul,0x3956c25bul,0x59f111f1ul,0x923f82a4ul,0xab1c5ed5ul,
     0xd807aa98ul,0x12835b01ul,0x243185beul,0x550c7dc3ul,0x72be5d74ul,0x80deb1feul,0x9bdc06a7ul,0xc19bf174ul,
@@ -33,6 +46,7 @@ static const uint32 k[64] = {
     0x748f82eeul,0x78a5636ful,0x84c87814ul,0x8cc70208ul,0x90befffaul,0xa4506cebul,0xbef9a3f7ul,0xc67178f2ul
 };
 
+// Gera o SHA-256 em bytes (32 bytes) a partir de uma string
 inline void hash256(const std::string& src, std::vector<uint8>& dst) {
     static const uint32 initial_hash[8] = {
         0x6a09e667ul,0xbb67ae85ul,0x3c6ef372ul,0xa54ff53aul,
@@ -106,6 +120,6 @@ inline std::string hash256_hex_string(const std::string& src) {
     return bytes_to_hex_string(hash);
 }
 
-} // namespace picosha2
+}
 
 #endif

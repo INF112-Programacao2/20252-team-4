@@ -3,10 +3,10 @@
 
 #include <string>
 #include <iostream>
-#include <termios.h> // Para sistemas Unix-like (Linux/macOS)
-#include <unistd.h>  // Para STDIN_FILENO
+#include <termios.h> 
+#include <unistd.h> 
 
 
 std::string lerSenhaMascarada(const std::string& mensagem);
 
-#endif // SENHAMASCARADA_HPP
+#endif 
