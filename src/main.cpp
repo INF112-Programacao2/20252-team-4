@@ -15,6 +15,7 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
     feito = false;
     menuFeito = false;
     int opc;
+    std::string opcStr;
     do {
         std::cout << "\n===== MENU ALUNO =====\n";
         std::cout << "1 - Avaliar disciplina\n";
@@ -22,8 +23,13 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
         std::cout << "3 - Ver Medias de Avaliacao\n";
         std::cout << "0 - Voltar para tela inicial\n";
         std::cout << "Escolha: ";
-        std::cin >> opc;
+        std::cin >> opcStr;
         std::cout << std::endl;
+
+        opc = -1;
+        try {opc = std::stoi(opcStr);}
+        catch (std::invalid_argument& e) {std::cerr << "ERRO: Entrada deve ser um nu'mero inteiro entre 0 e 3.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "ERRO: Entrada deve ser um nu'mero inteiro entre 0 e 3.\n"; continue;}
 
         switch (opc) {
             case 1: 
@@ -177,12 +183,12 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     try {
                         if (tipo == 1) {
                             sistema.cadastrarUsuario(1); // Cadastrar Aluno
-                            std::cout << "\nCadastro concluido! \n";
+                            std::cout << "\nCadastro conclui'do! \n";
                         } else if (tipo == 2) {
                             sistema.cadastrarUsuario(2); // Cadastrar Professor
-                            std::cout << "\nCadastro concluido! \n";
+                            std::cout << "\nCadastro conclui'do! \n";
                         } else {
-                            std::cerr << "\nOpcao invalida.\n";
+                            std::cerr << "\nOpcao inva'lida.\n";
                         }
                     }
                     catch (const char* e) {
@@ -210,7 +216,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                 
                 break;
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
-            default: std::cout << "\nOpcao invalida!\n";
+            default: std::cout << "\nOpcao inva'lida!\n";
         }
     } while (!menuFeito);
 
@@ -229,7 +235,7 @@ int main() {
         int opcao;
         std::string opcaoStr;
         std::cout << "Escolha uma opcao: \n";
-        std::cout << "1 - fazer login \n";
+        std::cout << "1 - Fazer login \n";
         std::cout << "0 - Encerrar \n"; 
         std::cout << "Escolha: ";
         std::cin >> opcaoStr;
@@ -238,12 +244,12 @@ int main() {
         try {opcao = std::stoi(opcaoStr);}
 
         catch (const std::invalid_argument& e) {
-            std::cerr << "\nERRO:: Entrada inválida. Digite apenas 0 ou 1.\n";
+            std::cerr << "\nERRO:: Entrada invalida. Digite apenas 0 ou 1.\n";
             continue; // volta para o início do while
         }
 
         catch (const std::out_of_range& e) {
-            std::cerr << "\nERRO:: Número fora do intervalo. Digite 0 ou 1.\n";
+            std::cerr << "\nERRO:: Numero fora do intervalo. Digite 0 ou 1.\n";
             continue;
         }
 

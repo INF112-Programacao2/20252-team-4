@@ -665,12 +665,18 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
         }
     }
 
-    int idDisc;
+    int idDisc = -1;
+    std::string idDiscStr;
     bool idValido = false;
     do {
-
+        idDisc = -1;
+        idValido = false;
         std::cout << "Escolha ID da disciplina: ";
-        std::cin >> idDisc;
+        std::cin >> idDiscStr;
+
+        try {idDisc = std::stoi(idDiscStr);}
+        catch (std::invalid_argument& e) {std::cerr << "ID invalido. Tente novamente.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "ID invalido. Tente novamente.\n"; continue;}
 
         for(const auto* d : disciplinasDisponiveis) {
             if (d->getId() == idDisc) {
@@ -756,10 +762,18 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     
     // 2. Escolher o professor
     bool idProfValido = false;
-    int profId;
+    int profId = -1;
+    std::string profIdStr;
     do {
+        profId = -1;
+        idProfValido = false;
+
         std::cout << "Escolha ID do professor: "; 
-        std::cin >> profId;
+        std::cin >> profIdStr;
+
+        try {profId = std::stoi(profIdStr);}
+        catch (std::invalid_argument& e) {std::cerr << "ID de professor invalido. Tente novamente.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "ID de professor invalido. Tente novamente.\n"; continue;}
 
         if (listaProfessores.count(profId)) {
             idProfValido = true;
@@ -778,11 +792,18 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     
     // 4. Escolher a disciplina
     bool idDiscValido = false;
-    int discId;
+    int discId = -1;
+    std::string discIdStr;
     std::string codigoDisciplina;
     do {
+        discId = -1;
+        idDiscValido = false;
         std::cout << "Escolha ID da disciplina para avaliar: ";
-        std::cin >> discId;
+        std::cin >> discIdStr;
+
+        try {discId = std::stoi(discIdStr);}
+        catch (std::invalid_argument& e) {std::cerr << "ID de disciplina invalido para este professor. Tente novamente.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "ID de disciplina invalido para este professor. Tente novamente.\n"; continue;}
 
         for (const auto& pair : disciplinasDoProfessor) {
             if (pair.first == discId) {
@@ -863,11 +884,19 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
     }
 
 
-    int turmaId;
+    int turmaId = -1;
     bool idValido = false;
+    std::string turmaIdStr;
     do {
+        turmaId = -1;
+        idValido = false;
+
         std::cout << "Escolha ID da turma: "; 
-        std::cin >> turmaId;
+        std::cin >> turmaIdStr;
+
+        try {turmaId = std::stoi(turmaIdStr);}
+        catch (std::invalid_argument& e) {std::cerr << "\nID de turma invalido ou voce nao ministra esta turma.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "\nID de turma invalido ou voce nao ministra esta turma.\n"; continue;}
 
         for(const auto* t : turmasMinistradas) {
             if (t->getId() == turmaId) {
@@ -877,7 +906,7 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         }
 
         if (!idValido) {
-            std::cerr << "\nID de turma inva'lido ou voce nao ministra esta turma.\n";
+            std::cerr << "\nID de turma invalido ou voce nao ministra esta turma.\n";
             continue;
         }
     } while (!idValido);

@@ -1,5 +1,5 @@
-#ifndef PICOSHA2_H
-#define PICOSHA2_H
+#ifndef PICOSHA2_HPP
+#define PICOSHA2_HPP
 
 #include <vector>
 #include <string>
