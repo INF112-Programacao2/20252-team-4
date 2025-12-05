@@ -5,9 +5,9 @@
 #include "sistemaAvaliacao.hpp"
 #include "login.hpp"
 #include "usuario.hpp"
-#include "senhaMascarada.hpp"
+#include "utilidades.hpp"
 
-
+Utilidades _utilidades; //objeto que possibiltia o uso de funcao que "oculta" a senha utilizando asteriscos.
 bool feito = false;
 bool menuFeito = false;
 
@@ -28,8 +28,8 @@ void menuAluno(SistemaAvaliacao &sistema, Usuario* u) {
 
         opc = -1;
         try {opc = std::stoi(opcStr);}
-        catch (std::invalid_argument& e) {std::cerr << "ERRO: Entrada deve ser um nu'mero inteiro entre 0 e 3.\n"; continue;}
-        catch (std::out_of_range& e) {std::cerr << "ERRO: Entrada deve ser um nu'mero inteiro entre 0 e 3.\n"; continue;}
+        catch (std::invalid_argument& e) {std::cerr << "ERRO: Entrada deve ser um numero inteiro entre 0 e 3.\n"; continue;}
+        catch (std::out_of_range& e) {std::cerr << "ERRO: Entrada deve ser um numero inteiro entre 0 e 3.\n"; continue;}
 
         switch (opc) {
             case 1: 
@@ -183,12 +183,12 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                     try {
                         if (tipo == 1) {
                             sistema.cadastrarUsuario(1); // Cadastrar Aluno
-                            std::cout << "\nCadastro conclui'do! \n";
+                            std::cout << "\nCadastro concluido! \n";
                         } else if (tipo == 2) {
                             sistema.cadastrarUsuario(2); // Cadastrar Professor
-                            std::cout << "\nCadastro conclui'do! \n";
+                            std::cout << "\nCadastro concluido! \n";
                         } else {
-                            std::cerr << "\nOpcao inva'lida.\n";
+                            std::cerr << "\nOpcao invalida.\n";
                         }
                     }
                     catch (const char* e) {
@@ -216,7 +216,7 @@ void menuCoordCurso(SistemaAvaliacao &sistema, Usuario* u) {
                 
                 break;
             case 0: std::cout << "Saindo...\n"; menuFeito = true; break;
-            default: std::cout << "\nOpcao inva'lida!\n";
+            default: std::cout << "\nOpcao invalida!\n";
         }
     } while (!menuFeito);
 
@@ -267,7 +267,7 @@ int main() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             
             // SUBSTITUIÇÃO: Chama a função mascarada para ler a senha
-            senha = lerSenhaMascarada("Senha: ");
+            senha = _utilidades.lerSenhaMascarada("Senha: ");
 
             Usuario* u = log.login(sistema.getUsuarios(), email, senha);
 

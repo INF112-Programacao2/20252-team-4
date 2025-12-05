@@ -12,7 +12,7 @@
 #include "disciplina.hpp"
 #include "turma.hpp"
 #include "avaliacao.hpp"
-#include "getDataAtual.hpp"
+#include "utilidades.hpp"
 
 // Classe responsavel por ler e salvar arquivos .txt do sistema
 // Cada entidade tem seu proprio arquivo
@@ -21,6 +21,8 @@
 //   turmas.txt
 //   avaliacoes.txt
 class GerenciadorDados {
+private:
+Utilidades _utilidades; //objeto que possibilita o uso de funcoes de leituras personalizadas.
 public:
     //o destrutor e' útil para abrir arquivos, gerenciar recursos, etc
     GerenciadorDados();

@@ -19,7 +19,6 @@
 #include "turma.hpp"
 #include "avaliacao.hpp"
 #include "gerenciadorDados.hpp"
-#include "getDataAtual.hpp"
 
 // Essa classe e' o nucleo do sistema
 // ela controla:
@@ -32,7 +31,7 @@ class SistemaAvaliacao {
 private:
 
     GerenciadorDados arquivo; // cria o gerenciador de dados para persistencia
-
+    Utilidades _utilidades; //objeto que possibilita o uso de funcoes de leituras personalizadas.
     // Dados carregados na memoria
     std::vector<Usuario*> _usuarios;
     std::vector<Disciplina> _disciplinas;

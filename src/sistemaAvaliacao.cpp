@@ -1,35 +1,11 @@
 #include "sistemaAvaliacao.hpp"
+#include "utilidades.hpp"
 #include <iostream>
 #include <algorithm>
 #include <limits>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-
-//essa funcao le um inteiro com tratamento de excecoes, garantindo que o valor esteja entre o intervalo permitido
-int lerInteiroComExcecao(const std::string& pergunta) {
-    std::string entrada;
-
-    while (true) {
-        std::cout << pergunta;
-        std::getline(std::cin >> std::ws, entrada);
-
-        try {
-            int valor = std::stoi(entrada); //converte a string para inteiro
-
-            // Verifica intervalo permitido
-            if (valor < 0 || valor > 5) {
-                std::cout << "Erro: o valor deve estar entre 0 e 5.\n";
-                continue; // volta ao inicio do loop
-            }
-
-            return valor; // valor valido
-        }
-        catch (const std::invalid_argument&) {
-            std::cout << "Erro: digite apenas números inteiros.\n";
-        }
-    }
-}
 
 // carrega tudo
 SistemaAvaliacao::SistemaAvaliacao() {
@@ -239,7 +215,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
         //verifica se o codigo ja existe
         if (codigoExiste) {
-            std::cerr << "\nERRO: Codigo de disciplina '" << codigo << "' ja' cadastrado. Tente outro.\n";
+            std::cerr << "\nERRO: Codigo de disciplina '" << codigo << "' ja cadastrado. Tente outro.\n";
             continue;  //volta para o inicio do loop
         } else {
             break; 
@@ -266,7 +242,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
         //se o nome ja existir, volta para o inicio do loop
         if (nomeExiste) {
-            std::cerr << "\nERRO: Nome de disciplina '" << nome << "' ja' cadastrado. Tente outro.\n";
+            std::cerr << "\nERRO: Nome de disciplina '" << nome << "' ja cadastrado. Tente outro.\n";
             continue;
         } else {
             break; //nome valido, sai do loop
@@ -295,7 +271,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         std::cout << "\nEscolha o ID do professor para COORDENADOR da disciplina: ";
         if (!(std::cin >> coordenadorId)) {
 
-            std::cerr << "\nERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cerr << "\nERRO: Entrada invalida. Tente novamente.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue; //se a entrada for invalida, volta para o inicio do loop
@@ -310,7 +286,7 @@ void SistemaAvaliacao::cadastrarDisciplina() {
         }
         //se nao encontrar, mostra o erro
         if (profCoordenador == nullptr) {
-            std::cerr << "\nERRO: ID de professor inva'lido. Tente novamente.\n";
+            std::cerr << "\nERRO: ID de professor invalido. Tente novamente.\n";
         }
     }
 
@@ -349,7 +325,7 @@ void SistemaAvaliacao::cadastrarTurma() {
 
     try {
         if (_disciplinas.empty()) {
-            throw "Nao e' possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
+            throw "Nao e possivel cadastrar turmas. Nao existem disciplinas cadastradas. ";
         }
 
         std::cout << "\nDisciplinas disponiveis:\n";
@@ -472,7 +448,7 @@ void SistemaAvaliacao::cadastrarTurma() {
                 if (professorExiste) {
                     idProfessorValido = true;
                 } else {
-                    std::cerr << "ERRO: Usuario com ID " << professorId << " nao e' um professor ou nao existe. Tente novamente.\n";
+                    std::cerr << "ERRO: Usuario com ID " << professorId << " nao e um professor ou nao existe. Tente novamente.\n";
                 }
             //se nao existir, mostra o erro
             } catch (const std::invalid_argument& e) {
@@ -527,7 +503,7 @@ void SistemaAvaliacao::matricularAluno() {
 
 
     //entao inicia o processo de matricula
-    std::cout << "\nAlunos disponi'veis:\n";
+    std::cout << "\nAlunos disponiveis:\n";
     for(const auto* a : alunos) {
         std::cout << "ID: " << a->getId() << " - " << a->getNome() << " (" << a->getemail() << ")\n";
     }
@@ -538,7 +514,7 @@ void SistemaAvaliacao::matricularAluno() {
 
         std::cout << "Escolha o ID do aluno para matricular: ";
         if (!(std::cin >> alunoId)) {
-            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cerr << "ERRO: Entrada invalida. Tente novamente.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -551,7 +527,7 @@ void SistemaAvaliacao::matricularAluno() {
             }
         }
         if (alunoSelecionado == nullptr) {
-            std::cerr << "ERRO: ID de aluno inva'lido!! Tente novamente.\n";
+            std::cerr << "ERRO: ID de aluno invalido!! Tente novamente.\n";
         }
     }
 
@@ -559,7 +535,7 @@ void SistemaAvaliacao::matricularAluno() {
     int disciplinaIdEscolhida = -1;
 
     // lista disciplinas
-    std::cout << "\nDisciplinas disponi'veis:\n";
+    std::cout << "\nDisciplinas disponiveis:\n";
     for (const auto &d : _disciplinas) {
         std::cout << d.getId() << " - " << d.getCodigo() << " - " << d.getNome() << '\n';
     }
@@ -569,7 +545,7 @@ void SistemaAvaliacao::matricularAluno() {
     while (!discValida) { //enquanto nao encontrar uma disciplina valida
         std::cout << "Escolha o ID da disciplina para matricular o aluno: ";
         if (!(std::cin >> disciplinaIdEscolhida)) {
-            std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+            std::cerr << "ERRO: Entrada invalida. Tente novamente.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -582,12 +558,12 @@ void SistemaAvaliacao::matricularAluno() {
             }
         }
         if (!discValida) {
-            std::cerr << "ERRO: ID de disciplina inva'lido. Tente novamente.\n";
+            std::cerr << "ERRO: ID de disciplina invalido. Tente novamente.\n";
         }
     }
     // lista turmas da disciplina escolhida
     std::vector<Turma*> turmasDaDisciplina;
-    std::cout << "\nTurmas disponi'veis para essa disciplina:\n";
+    std::cout << "\nTurmas disponiveis para essa disciplina:\n";
     for (auto &t : _turmas) {
         if (t.getDisciplinaId() == disciplinaIdEscolhida) {
             std::cout << "ID: " << t.getId()
@@ -606,7 +582,7 @@ void SistemaAvaliacao::matricularAluno() {
         while (turmaSelecionada == nullptr) {
             std::cout << "Escolha o ID da turma para matricular: ";
             if (!(std::cin >> turmaId)) {
-                std::cerr << "ERRO: Entrada inva'lida. Tente novamente.\n";
+                std::cerr << "ERRO: Entrada invalida. Tente novamente.\n";
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 continue;
@@ -619,7 +595,7 @@ void SistemaAvaliacao::matricularAluno() {
                 }
             }
             if (turmaSelecionada == nullptr) {
-                std::cerr << "ERRO: ID de turma inva'lido para essa disciplina. Tente novamente.\n";
+                std::cerr << "ERRO: ID de turma invalido para essa disciplina. Tente novamente.\n";
             }
         }
         
@@ -633,7 +609,7 @@ void SistemaAvaliacao::matricularAluno() {
         }
         //se ja estiver matriculado, mostra o erro
         if (jaMatriculado) {
-            std::cout << "ERRO: Estudante " << alunoSelecionado->getNome() << " ja' esta' matriculado nesta turma.\n";
+            std::cout << "ERRO: Estudante " << alunoSelecionado->getNome() << " ja esta matriculado nesta turma.\n";
             return;
         }
 
@@ -652,7 +628,7 @@ void SistemaAvaliacao::matricularAluno() {
         if (jaMatriculadoNaDisciplina) {
             std::cout << "\nERRO: Estudante "
                     << alunoSelecionado->getNome()
-                    << " ja' esta' matriculado em outra turma dessa mesma disciplina.\n";
+                    << " ja esta matriculado em outra turma dessa mesma disciplina.\n";
             return;
         }
 
@@ -733,11 +709,11 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
     std::cout << "Como voce avalia a disciplina? (0-5)\n";
     std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
 
-    nota[0] = lerInteiroComExcecao("Em relacao a ementa: ");
-    nota[1] = lerInteiroComExcecao("\nVoce considera o conteudo da disciplina relevante para sua formacao?: ");
-    nota[2] = lerInteiroComExcecao("\nOs meios de avaliar a aprendizagem foram eficazes? (ex.: provas e seminarios): ");
-    nota[3] = lerInteiroComExcecao("\nO conteudo planejado foi compativel com a carga horaria da disciplina?: ");
-    nota[4] = lerInteiroComExcecao("\nA disciplina complementa/agrega conhecimento para o restante do curso?: ");
+    nota[0] = _utilidades.lerInteiroComExcecao("Em relacao a ementa: ");
+    nota[1] = _utilidades.lerInteiroComExcecao("\nVoce considera o conteudo da disciplina relevante para sua formacao?: ");
+    nota[2] = _utilidades.lerInteiroComExcecao("\nOs meios de avaliar a aprendizagem foram eficazes? (ex.: provas e seminarios): ");
+    nota[3] = _utilidades.lerInteiroComExcecao("\nO conteudo planejado foi compativel com a carga horaria da disciplina?: ");
+    nota[4] = _utilidades.lerInteiroComExcecao("\nA disciplina complementa/agrega conhecimento para o restante do curso?: ");
 
     std::string comentario;
     std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da disciplina: ";
@@ -751,7 +727,7 @@ void SistemaAvaliacao::avaliarDisciplina(Usuario* u) {
 
     // cria a avaliacao e adiciona ao vetor
     int id = ProximoIdAvaliacoes(_avaliacoes);
-    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", mediaNotas, comentario, getDataAtual());
+    _avaliacoes.emplace_back(id, idDisc, "DISCIPLINA", mediaNotas, comentario, _utilidades.getDataAtual());
     std::cout << "Avaliacao de disciplina registrada.\n";
 
     arquivo.salvarAvaliacoes(_avaliacoes);
@@ -761,7 +737,7 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     std::vector<Turma*> turmasMatriculadas = u->getMinhasDisciplinas();
 
     if (turmasMatriculadas.empty()) {
-        throw "Voce nao esta' matriculado em nenhuma turma. Nenhum professor disponi'vel para avaliacao.\n";
+        throw "Voce nao esta matriculado em nenhuma turma. Nenhum professor disponivel para avaliacao.\n";
     }
 
     //mapeia professores para as disciplinas que lecionam nas turmas em que o aluno esta matriculado
@@ -866,14 +842,14 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     std::cout << "Como voce avalia o professor? (0-5)\n";
     std::cout << "Sendo 0 discordo totalmente, e 5 concordo plenamente.\n";
     
-    nota[0] = lerInteiroComExcecao("O professor forneceu feedback das avaliacoes?: ");
-    nota[1] = lerInteiroComExcecao("\nA metodologia de ensino do professor favoreceu a aprendizagem?: ");
-    nota[2] = lerInteiroComExcecao("\nO professor incentivou os alunos a participarem das aulas?: ");
-    nota[3] = lerInteiroComExcecao("\nO professor demonstrou domi'nio no conteu'do da disciplina?: ");
-    nota[4] = lerInteiroComExcecao("\nA dida'tica do professor foi objetiva e clara?: ");
+    nota[0] = _utilidades.lerInteiroComExcecao("O professor forneceu feedback das avaliacoes?: ");
+    nota[1] = _utilidades.lerInteiroComExcecao("\nA metodologia de ensino do professor favoreceu a aprendizagem?: ");
+    nota[2] = _utilidades.lerInteiroComExcecao("\nO professor incentivou os alunos a participarem das aulas?: ");
+    nota[3] = _utilidades.lerInteiroComExcecao("\nO professor demonstrou dominio no conteudo da disciplina?: ");
+    nota[4] = _utilidades.lerInteiroComExcecao("\nA didatica do professor foi objetiva e clara?: ");
 
     std::string comentario; 
-    std::cout << "\nDeixe aqui elogios, sugestoes ou cri'ticas para aprimoramento da metodologia utilizada: ";
+    std::cout << "\nDeixe aqui elogios, sugestoes ou criticas para aprimoramento da metodologia utilizada: ";
     std::getline(std::cin >> std::ws, comentario);
 
     double mediaNotas = 0.0;
@@ -883,7 +859,7 @@ void SistemaAvaliacao::avaliarProfessor(Usuario* u) {
     int id = ProximoIdAvaliacoes(_avaliacoes);
 
     // cria a avaliacao e adiciona ao vetor
-    _avaliacoes.emplace_back(id, profId, "PROFESSOR", mediaNotas, comentario, getDataAtual());
+    _avaliacoes.emplace_back(id, profId, "PROFESSOR", mediaNotas, comentario, _utilidades.getDataAtual());
     std::cout << "Avaliacao de professor registrada.\n";
 
     arquivo.salvarAvaliacoes(_avaliacoes);
@@ -905,7 +881,7 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
     }
 
     if (turmasMinistradas.empty()) {
-        throw "Nao e' possi'vel fazer uma avaliacao, pois voce nao leciona em nenhuma turma.\n";
+        throw "Nao e possi'vel fazer uma avaliacao, pois voce nao leciona em nenhuma turma.\n";
     }
 
     std::cout << "Suas Turmas (Turmas que voce ministra):\n";
@@ -965,11 +941,11 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
         std::cout << "\nComo voce avalia a turma? (0-5)\n";
         std::cout << "Sendo 0 discordo totalmente e 5 concordo plenamente.\n";
 
-        nota[0] = lerInteiroComExcecao("\nA turma e' participativa?: ");
-        nota[1] = lerInteiroComExcecao("\nVoce considera que os alunos se preparavam com antecendencia?: ");
-        nota[2] = lerInteiroComExcecao("\nVoce considera que a turma possui lacuna quanto aos pre'-requisitos da disciplina?: ");
-        nota[3] = lerInteiroComExcecao("\nOs alunos foram assi'duos?: ");
-        nota[4] = lerInteiroComExcecao("\nA turma se mostrou interessada em integrar os conhecimentos a sua formacao profissional?: ");
+        nota[0] = _utilidades.lerInteiroComExcecao("\nA turma e' participativa?: ");
+        nota[1] = _utilidades.lerInteiroComExcecao("\nVoce considera que os alunos se preparavam com antecendencia?: ");
+        nota[2] = _utilidades.lerInteiroComExcecao("\nVoce considera que a turma possui lacuna quanto aos pre-requisitos da disciplina?: ");
+        nota[3] = _utilidades.lerInteiroComExcecao("\nOs alunos foram assiduos?: ");
+        nota[4] = _utilidades.lerInteiroComExcecao("\nA turma se mostrou interessada em integrar os conhecimentos a sua formacao profissional?: ");
 
         std::string comentario; 
         std::cout << "\nComentario: "; 
@@ -981,7 +957,7 @@ void SistemaAvaliacao::avaliarTurma(Usuario* u) {
             mediaNotas /= 5.0;
         int id = ProximoIdAvaliacoes(_avaliacoes);
         // cria a avaliacao e adiciona ao vetor
-        _avaliacoes.emplace_back(id, turmaId, "TURMA", mediaNotas, comentario, getDataAtual());
+        _avaliacoes.emplace_back(id, turmaId, "TURMA", mediaNotas, comentario, _utilidades.getDataAtual());
         std::cout << "Avaliacao de turma registrada.\n";
 
         arquivo.salvarAvaliacoes(_avaliacoes);
@@ -1075,7 +1051,7 @@ void SistemaAvaliacao::visualizarAvaliacoesProfessor(Usuario* u) {
                 alvoInfo = "Professor: " + (p ? p->getNome() : "DESC.");
             }
             //exibe a avaliacao
-            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | Data: " << a.getData() << " | \"" << a.getComentario() << "\"\n";
         }
     }
     if (count == 0) {
@@ -1292,7 +1268,7 @@ void SistemaAvaliacao::listarAvaliacoes(const std::string &tipo) {
                  alvoInfo = "Alvo ID: " + std::to_string(a.getAlvoId());
             }
 
-            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | \"" << a.getComentario() << "\"\n";
+            std::cout << "ID: " << a.getId() << " | Tipo: " << a.getTipo() << " | Alvo: " << alvoInfo << " | Nota: " << a.getNota() << " | Data: " << a.getData() << " | \"" << a.getComentario() << "\"\n";
         }
         return;
     }

@@ -12,7 +12,7 @@
 // ela vai gerar um hash em hexadecimal a partir de um texto para senha e e salvar/validar
 
 //usamos tipo assim: std::string hash = picosha2::hash256_hex_string("senha");
-//depois ele so' compara o hash calculado com o hash salvo no arquivo
+//depois ele so compara o hash calculado com o hash salvo no arquivo
 
 namespace picosha2 {
 

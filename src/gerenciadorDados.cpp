@@ -7,14 +7,6 @@
 //define o caminho do arquivo de matriculas
 const std::string ARQUIVO_MATRICULAS = "data/matriculas.txt";
 
-//funcao auxiliar para dividir uma linha em partes com base em um delimitador
-static std::vector<std::string> dividirLinha(const std::string &linha, char delim=';') {
-    std::vector<std::string> partes; //vetor para armazenar as partes
-    std::stringstream fluxo(linha); //cria um fluxo de string a partir da linha
-    std::string campo; //variavel para armazenar cada campo
-    while (std::getline(fluxo, campo, delim)) partes.push_back(campo); //le cada campo e adiciona ao vetor
-    return partes; //retorna o vetor de partes
-}
 //funcao auxiliar para criar uma pasta data para armazenar os arquivos
 GerenciadorDados::GerenciadorDados() {
     std::filesystem::create_directories("data");
@@ -35,7 +27,7 @@ void GerenciadorDados::carregarUsuarios(std::vector<Usuario*>& usuarios) {
         if (linha.empty()) 
         continue;
 
-        auto campos = dividirLinha(linha, ';'); //divide a linha em campos
+        auto campos = _utilidades.dividirLinha(linha, ';'); //divide a linha em campos
         if (campos.size() < 5) {
             std::cerr << "ERRO: Linha de usuario invalida: " << linha << std::endl;
             continue;
@@ -106,7 +98,7 @@ void GerenciadorDados::carregarMatriculas(std::vector<Usuario*>& usuarios, std::
         if (linha.empty()) 
         continue;
 
-        auto campos = dividirLinha(linha, ';');
+        auto campos = _utilidades.dividirLinha(linha, ';');
         if (campos.size() != 2) {
             std::cerr << "AVISO: Linha ignorada em matriculas.txt: Formato invalido: " << linha << "\n";
             continue;
@@ -183,7 +175,7 @@ std::vector<Disciplina> GerenciadorDados::carregarDisciplinas() {
         if (linha.empty()) 
         continue;
 
-        auto campos = dividirLinha(linha, ';');
+        auto campos = _utilidades.dividirLinha(linha, ';');
         if (campos.size() < 5) 
         continue;
 
@@ -233,7 +225,7 @@ std::vector<Turma> GerenciadorDados::carregarTurmas() {
     while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
 
-        auto campos = dividirLinha(linha, ';');
+        auto campos = _utilidades.dividirLinha(linha, ';');
         if (campos.size() < 4) continue;
 
         int id = std::stoi(campos[0]);
@@ -279,7 +271,7 @@ std::vector<Avaliacao> GerenciadorDados::carregarAvaliacoes() {
     while (std::getline(arquivoEntrada, linha)) {
         if (linha.empty()) continue;
 
-        auto campos = dividirLinha(linha, ';');
+        auto campos = _utilidades.dividirLinha(linha, ';');
         if (campos.size() < 5) continue;
 
         int id = std::stoi(campos[0]);
@@ -306,7 +298,7 @@ void GerenciadorDados::salvarAvaliacoes(const std::vector<Avaliacao>& lista) {
     }
     //para cada avaliacao na lista, salva seus dados e imprime
     for (const auto &a : lista) {
-        arquivoSaida << a.getId() << ';' << a.getAlvoId() << ';' << a.getTipo() << ';' << a.getNota() << ';' << a.getComentario() << ';'  << getDataAtual() << '\n';
+        arquivoSaida << a.getId() << ';' << a.getAlvoId() << ';' << a.getTipo() << ';' << a.getNota() << ';' << a.getComentario() << ';'  << _utilidades.getDataAtual() << '\n';
     }
     arquivoSaida.close();
 }
